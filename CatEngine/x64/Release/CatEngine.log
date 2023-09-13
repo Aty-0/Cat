@@ -1,0 +1,42 @@
+﻿  engine.cpp
+  input_manager.cpp
+  logger.cpp
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\shared\minwindef.h(130,1): warning C4005: 'APIENTRY': macro redefinition
+C:\Users\User\source\repos\CatEngineRmk\Libs\glad\include\glad\glad.h(32): message : see previous definition of 'APIENTRY'
+  game_window.cpp
+  uuid.cpp
+  game_time.cpp
+  camera.cpp
+  component.cpp
+  drawable.cpp
+C:\Users\User\source\repos\CatEngineRmk\CatEngine\game\components\drawable.cpp(32,146): warning C4267: 'argument': conversion from 'size_t' to 'uint32_t', possible loss of data
+C:\Users\User\source\repos\CatEngineRmk\CatEngine\game\components\drawable.cpp(33,148): warning C4267: 'argument': conversion from 'size_t' to 'uint32_t', possible loss of data
+C:\Users\User\source\repos\CatEngineRmk\CatEngine\game\components\drawable.cpp(34,145): warning C4267: 'argument': conversion from 'size_t' to 'uint32_t', possible loss of data
+  test_comp_rotator.cpp
+  transform.cpp
+  game_object.cpp
+  scene.cpp
+  scene_manager.cpp
+  buffer.cpp
+  index_buffer.cpp
+  shader.cpp
+C:\Users\User\source\repos\CatEngineRmk\CatEngine\graphics\shader.cpp(122,29): warning C4244: 'argument': conversion from 'int32_t' to 'float', possible loss of data
+  vertex_buffer.cpp
+  resource_manager.cpp
+  imgui.cpp
+  Compiling...
+  imgui_demo.cpp
+  imgui_draw.cpp
+  imgui_impl_glfw.cpp
+  imgui_impl_opengl3.cpp
+  imgui_tables.cpp
+  imgui_widgets.cpp
+  renderer.cpp
+  glad.c
+     Creating library C:\Users\User\source\repos\CatEngineRmk\x64\Release\CatEngine.lib and object C:\Users\User\source\repos\CatEngineRmk\x64\Release\CatEngine.exp
+  Generating code
+  Previous IPDB not found, fall back to full compilation.
+C:\Users\User\source\repos\CatEngineRmk\CatEngine\core\utils\logger.cpp(36): warning C4172: returning address of local variable or temporary: buffer
+  All 2961 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  CatEngine.vcxproj -> C:\Users\User\source\repos\CatEngineRmk\x64\Release\CatEngine.dll

@@ -1,0 +1,14 @@
+﻿  engine.cpp
+  component.cpp
+  game_object.cpp
+  scene_manager.cpp
+  renderer.cpp
+  shader.cpp
+C:\Users\User\source\repos\CatEngineRmk\CatEngine\graphics\shader.cpp(122,29): warning C4244: 'argument': conversion from 'int32_t' to 'float', possible loss of data
+  vertex_buffer.cpp
+  resource_manager.cpp
+  scripts_core.cpp
+C:\Users\User\source\repos\CatEngineRmk\CatEngine\scripts\scripts_core.cpp(366,27): warning C4091: 'typedef ': ignored on left of 'cat::scripts::script' when no variable is declared
+  Generating Code...
+     Creating library C:\Users\User\source\repos\CatEngineRmk\x64\Debug\CatEngine.lib and object C:\Users\User\source\repos\CatEngineRmk\x64\Debug\CatEngine.exp
+  CatEngine.vcxproj -> C:\Users\User\source\repos\CatEngineRmk\x64\Debug\CatEngine.dll
