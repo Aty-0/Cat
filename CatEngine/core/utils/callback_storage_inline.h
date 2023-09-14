@@ -14,7 +14,7 @@ namespace cat::core::utils
 	callback_storage<T>::callback_storage(const T& callback)
 		: m_storage()
 	{
-		AddCallback(callback);
+		add(callback);
 	}
 
 	template<typename T>
@@ -26,8 +26,8 @@ namespace cat::core::utils
 	template<typename T>
 	void callback_storage<T>::update(const T& callback)
 	{
-		RemoveCallback(callback);
-		AddCallback(callback);
+		remove(callback);
+		add(callback);
 	}
 
 	template<typename T>
