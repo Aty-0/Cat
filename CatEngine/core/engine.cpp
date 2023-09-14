@@ -56,34 +56,8 @@ namespace cat::core
 
 		m_rm = io::resource_manager::get_instance();
 
-//#define TEST_RESOURCES		
-
-#ifdef TEST_RESOURCES		
-		auto r_exist = m_rm->is_exist<graphics::shader>("test_f", {"glsl"});
-		INFO("r_exist %s", r_exist == true ? "true" : "false");
-
-		auto r_size = m_rm->size<graphics::shader>("test_f", {"glsl"});
-		INFO("size in bytes %i", r_size);
-
-		auto r_data = m_rm->read<const char*, graphics::shader>("test_f", {"glsl"});
-		INFO("data \n\n %s", r_data);
-#endif
-
 		m_sm = game::scene::scene_manager::get_instance();
 		m_sm->create();
-		auto hui = m_sm->get_game_object_name("hui");
-
-		auto test_object = m_sm->create_game_object<game::game_object>("SomeTests", CAT_DEFAULT_GAMEOBJECT_TYPE, CAT_DEFAULT_GAMEOBJECT_PREFIX);
-		test_object->create_component<game::components::drawable>();
-		test_object->create_component<game::components::test_comp_rotator>();
-		 for (std::int32_t i = 1; i <= 2; i++)
-		 {
-		 	auto obj = m_sm->create_game_object<game::game_object>("SomeTests" + std::to_string(i),
-		 		CAT_DEFAULT_GAMEOBJECT_TYPE, CAT_DEFAULT_GAMEOBJECT_PREFIX,
-		 		glm::vec3(i * 2, 0, 0), VEC3_ZERO, glm::vec3(0.4f, 0.4f, 0.4f));
-		 	auto dr = obj->create_component<game::components::drawable>();
-		 }
-		 
 
 		m_input->add_listener(input_key_code::KEYBOARD_0, input_key_state::Press, input_device::Keyboard,
 			std::bind(&core::engine::run_test_script, this));
