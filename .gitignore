@@ -363,6 +363,6 @@ MigrationBackup/
 FodyWeavers.xsd
 
 # Don't include libs 
-.Libs/
-.Garbage/
+Libs/
+Garbage/
 
