@@ -394,11 +394,13 @@ namespace cat::scripts
 		PyErr_Fetch(&exc, &val, &tb);
 		handle<> hexc(exc), hval(allow_null(val)), htb(allow_null(tb));
 		object traceback(import("traceback"));
-		if (!tb) {
+		if (!tb) 
+		{
 			object format_exception_only(traceback.attr("format_exception_only"));
 			formatted_list = format_exception_only(hexc, hval);
 		}
-		else {
+		else 
+		{
 			object format_exception(traceback.attr("format_exception"));
 			formatted_list = format_exception(hexc, hval, htb);
 		}
@@ -406,7 +408,10 @@ namespace cat::scripts
 		return extract<std::string>(formatted);
 	}
 
-	void script_core::run(const char* name)
+	// Define script resource type for resource manager
+	struct script { };
+
+	bool script_core::run(const char* name)
 	{
 		// Import your module to embedded Python
 		if (PyImport_AppendInittab("CAT_API", 		
@@ -414,7 +419,8 @@ namespace cat::scripts
 		{
 			ERR("Failed to add CAT_API to the interpreter's "
 				"builtin modules");
-			return;
+
+			return false;
 		}
 
 		// Initialise Python
@@ -423,6 +429,12 @@ namespace cat::scripts
 		static const auto rm = io::resource_manager::get_instance();
 		const char* data = rm->read<const char*, script>(name, { "py" });
 		
+		if (data && !data[0])
+		{
+			ERR("file is not loaded or it's is empty!");
+			return false;
+		}
+
 		try
 		{
 			boost::python::exec(data);
@@ -444,11 +456,15 @@ namespace cat::scripts
 			{
 				ERR("Script exec failed: No details...");
 			}
+
+			return false;
 		}
 
 		// Nice, kekw	
 		// From boost docs:
 		// Boost.Python doesn't support Py_Finalize yet, so don't call it!
 		//Py_Finalize();
+
+		return true;
 	}
 }

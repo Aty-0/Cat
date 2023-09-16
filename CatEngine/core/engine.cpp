@@ -59,8 +59,8 @@ namespace cat::core
 		m_sm = game::scene::scene_manager::get_instance();
 		m_sm->create();
 
-		m_input->add_listener(input_key_code::KEYBOARD_0, input_key_state::Press, input_device::Keyboard,
-			std::bind(&core::engine::run_test_script, this));
+		if (!run_main_script())
+			return false;
 
 		// if window is active we are call onLoop function
 		while (!m_window->is_close())
@@ -74,10 +74,10 @@ namespace cat::core
 		return true;
 	}
 
-	void engine::run_test_script()
+	bool engine::run_main_script()
 	{
 		auto scripts = scripts::script_core::get_instance();
-		scripts->run("test");
+		return scripts->run("game");
 	}
 
 	void engine::on_update(float DeltaTime)

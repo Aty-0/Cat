@@ -9,7 +9,7 @@ namespace cat::scripts
         script_core();
         ~script_core();
 
-        void run(const char* name);
+        bool run(const char* name);
 
     private:
         std::string handle_pyerror();
