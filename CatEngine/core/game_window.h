@@ -6,6 +6,9 @@ namespace cat::core
 	class CATENGINE_API game_window : public core::utils::singleton<game_window>
 	{
 	public:
+		game_window();
+		~game_window();
+
 		bool create(std::uint32_t w = 1280, std::uint32_t h = 768, const char* title = "Engine");
 			 
 		void set_top(std::int32_t top);

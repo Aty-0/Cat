@@ -3,6 +3,17 @@
 
 namespace cat::core
 {
+	game_window::game_window() :
+		m_window(nullptr)
+	{
+
+	}
+
+	game_window::~game_window()
+	{
+
+	}
+
 	bool game_window::create(std::uint32_t w, std::uint32_t h, const char* title)
 	{		
 		INFO("Create game window...");

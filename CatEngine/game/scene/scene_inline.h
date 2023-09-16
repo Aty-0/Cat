@@ -32,7 +32,8 @@ namespace cat::game::scene
 		const auto go_shared = std::make_shared<T>(*g);
 		m_storage.push_back(std::move(std::make_pair(std::make_pair(g->get_name(), g->get_uuid()), go_shared)));
 		
-		return go_shared.get();
+		const auto object = go_shared.get();
+		return object;
 	}
 
 	template<typename T>

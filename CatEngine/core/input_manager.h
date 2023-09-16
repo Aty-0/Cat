@@ -33,7 +33,14 @@ namespace cat::core
 	class CATENGINE_API input_event
 	{
 	public:
-		input_event() = default;
+		input_event() : code(input_key_code::KEYBOARD_UNKNOWN),
+			state(input_key_state::Unknown),
+			device(input_device::Unknown),
+			func(nullptr)
+		{
+
+		}
+		
 		explicit input_event(input_key_code _code, input_key_state _keyState, input_device _device, input_function _func) :
 			code(_code),
 			state(_keyState), 
@@ -48,7 +55,7 @@ namespace cat::core
 		input_key_code 			code;
 		input_function			func;
 	};
-
+	// TODO: Unsubscribe from listener 
 	class CATENGINE_API input_manager : public cat::core::utils::singleton<input_manager>
 	{
 	public:
@@ -56,7 +63,7 @@ namespace cat::core
 		~input_manager();
 
 		void								init();
-		void update();
+		void update();		
 		// Add key listener 
 		void add_listener(input_key_code code = input_key_code::KEYBOARD_UNKNOWN, 
 						input_key_state keyState = input_key_state::Unknown, 

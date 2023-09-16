@@ -31,9 +31,17 @@ namespace cat::core::utils
 
 	const char* logger::parse_args_to_string(const char* text, ...)
 	{
-		char buffer[2048];
+		const auto BUFFER_SIZE = 2048;
+		char buffer[BUFFER_SIZE];
 		VA_LIST_OUTPUT(buffer);
-		return buffer;
+
+		const char* converted = buffer;
+
+		// cleanup 
+		memset(buffer, 0, sizeof(buffer));
+
+
+		return converted;
 	}
 
 	std::string logger::get_time(bool printMinAndSec)

@@ -29,9 +29,9 @@ namespace cat::game::components
 		m_index_buffer->gen();
 		m_index_buffer->set_buffer_data<std::uint32_t>(ib_data, GL_STATIC_DRAW);
 		
-		m_vertex_buffer->set_attrib(0, ib_data.size() / 2, GL_FLOAT, sizeof(graphics::vertex), reinterpret_cast<void*>(offsetof(graphics::vertex, pos)));
-		m_vertex_buffer->set_attrib(1, ib_data.size() / 2, GL_FLOAT, sizeof(graphics::vertex), reinterpret_cast<void*>(offsetof(graphics::vertex, color)));
-		m_vertex_buffer->set_attrib(2, ib_data.size() / 2, GL_FLOAT, sizeof(graphics::vertex), reinterpret_cast<void*>(offsetof(graphics::vertex, uv)));
+		m_vertex_buffer->set_attrib(0, static_cast<std::uint32_t>(ib_data.size() / 2), GL_FLOAT, sizeof(graphics::vertex), reinterpret_cast<void*>(offsetof(graphics::vertex, pos)));
+		m_vertex_buffer->set_attrib(1, static_cast<std::uint32_t>(ib_data.size() / 2), GL_FLOAT, sizeof(graphics::vertex), reinterpret_cast<void*>(offsetof(graphics::vertex, color)));
+		m_vertex_buffer->set_attrib(2, static_cast<std::uint32_t>(ib_data.size() / 2), GL_FLOAT, sizeof(graphics::vertex), reinterpret_cast<void*>(offsetof(graphics::vertex, uv)));
 
 		graphics::buffer::unbind_all();
 

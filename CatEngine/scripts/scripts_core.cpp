@@ -1,8 +1,16 @@
 #include "scripts_core.h"
 #include "io/resource_manager.h"
 
+#pragma warning(push)
+#pragma warning(disable : 26812)
+#pragma warning(disable : 26495)
 #define BOOST_PYTHON_STATIC_LIB 
 #include <boost/python.hpp>
+#include <boost/make_shared.hpp>
+#include <boost/foreach.hpp>
+#include <Python.h>
+#pragma warning(pop)
+
 // Core
 #include "core/utils/logger.h"
 #include "core/utils/game_time.h"
