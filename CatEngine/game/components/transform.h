@@ -39,9 +39,9 @@ namespace cat::game::components
         void set_child(game_object* go);
 
     public:
-        core::utils::callback_storage<core::utils::default_callback> onPositionChanged;
-        core::utils::callback_storage<core::utils::default_callback> onRotationChanged;
-        core::utils::callback_storage<core::utils::default_callback> onScaleChanged;
+        core::callback_storage onPositionChanged;
+        core::callback_storage onRotationChanged;
+        core::callback_storage onScaleChanged;
     private:        
         glm::vec3 m_position;
         glm::vec3 m_rotation;

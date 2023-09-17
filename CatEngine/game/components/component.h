@@ -1,7 +1,7 @@
 #pragma once
 #include "core/common.h"
 #include "core/uuid.h"
-#include "core/utils/callback_storage.h"
+#include "core/callback_storage.h"
 
 namespace cat::game
 {
@@ -40,8 +40,8 @@ namespace cat::game::components
 		bool				m_isSelected;
 
 	public:
-		core::utils::callback_storage<core::utils::default_callback> onCreate;
-		core::utils::callback_storage<core::utils::default_callback> onDestroy;
+		core::callback_storage onCreate;
+		core::callback_storage onDestroy;
 
 	};
 }

@@ -78,10 +78,7 @@
     <ClInclude Include="core\utils\singleton.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="core\utils\callback_storage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="core\utils\callback_storage_inline.h">
+    <ClInclude Include="core\callback_storage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="graphics\buffer.h">

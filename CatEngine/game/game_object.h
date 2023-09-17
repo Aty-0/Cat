@@ -1,7 +1,6 @@
 #pragma once
 #include "core/common.h"
 #include "core/uuid.h"
-#include "game/components/component.h"
 #include "game/components/transform.h"
 
 
@@ -78,8 +77,8 @@ namespace cat::game
 		components_list m_components;
 
 	public:
-		core::utils::callback_storage<core::utils::default_callback> onCreate;
-		core::utils::callback_storage<core::utils::default_callback> onDestroy;
+		core::callback_storage onCreate;
+		core::callback_storage onDestroy;
 	};
 }
 #include "game/game_object_inline.h"

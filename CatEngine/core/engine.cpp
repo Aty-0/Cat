@@ -1,19 +1,16 @@
 ﻿#include "engine.h"
 
 #include "core/input_manager.h"
-#include "core/utils/game_time.h"
 #include "core/game_window.h"
-#include "graphics/renderer.h"
 #include "core/utils/logger.h"
+#include "core/utils/game_time.h"
+#include "core/callback_storage.h"
+#include "graphics/renderer.h"
 #include "io/resource_manager.h"
-#include "game/scene/scene_manager.h"
 
 #include "scripts/scripts_core.h"
-// TODO: Remove
-#include "game/game_object.h"
-#include "game/components/drawable.h"
-#include "game/components/test_comp_rotator.h"
 
+#include "game/scene/scene_manager.h"
 
 namespace cat::core
 {
@@ -59,6 +56,7 @@ namespace cat::core
 		m_sm = game::scene::scene_manager::get_instance();
 		m_sm->create();
 
+		m_on_global_update = new core::callback_storage;
 		if (!run_main_script())
 			return false;
 
@@ -84,6 +82,8 @@ namespace cat::core
 	{
 		m_sm->update(DeltaTime);
 		m_input->update();
+
+		m_on_global_update->run_all();
 	}
 
 	bool engine::init_GLFW()
@@ -118,10 +118,17 @@ namespace cat::core
 	}
 
 
+	callback_storage* engine::get_on_global_update() const
+	{
+		return m_on_global_update;
+	}
+
 	void engine::destroy()
 	{
 		INFO("Engine destroy");
 		
+		m_on_global_update->clear();
+
 		m_window->destroy();
 		m_renderer->destroy();
 

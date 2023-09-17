@@ -14,8 +14,11 @@
 // Core
 #include "core/utils/logger.h"
 #include "core/utils/game_time.h"
+#include "core/engine.h"
 #include "core/game_window.h"
 #include "core/input_manager.h"
+//#include "core/utils/callback_storage.h"
+
 // Game
 #include "game/game_object.h"
 
@@ -27,14 +30,10 @@
 #include "game/scene/scene.h"
 #include "game/scene/scene_manager.h"
 
-#include <boost/make_shared.hpp>
-#include <boost/foreach.hpp>
-
-#include <Python.h>
 
 
 
-namespace cat::scripts
+namespace cat
 {
 	inline void log_info(std::string msg)
 	{
@@ -96,18 +95,18 @@ namespace cat::scripts
 		}
 	};
 
-	struct vec2_convert_list 
+	struct vec2_convert_list
 	{
 		static PyObject* convert(const glm::vec2& value)
 		{
-			boost::python::list result;			
-			result.append(value.x);		
-			result.append(value.y);		
+			boost::python::list result;
+			result.append(value.x);
+			result.append(value.y);
 			return boost::python::incref(result.ptr());
 		}
 	};
 
-	struct vec3_convert_list 
+	struct vec3_convert_list
 	{
 		static PyObject* convert(const glm::vec3& value)
 		{
@@ -167,9 +166,9 @@ namespace cat::scripts
 	}
 
 	// Add template defs for specific type
-	template<typename T>	
+	template<typename T>
 	inline void add_template_defs(boost::python::class_<game::scene::scene_manager, boost::noncopyable>& inst)
-	{		
+	{
 		inst.def("create_game_object", &game::scene::scene_manager::create_game_object<T>,
 			boost::python::return_value_policy<boost::python::reference_existing_object>());
 		inst.def("create_game_object_ninit", &game::scene::scene_manager::create_game_object_ninit<T>,
@@ -180,7 +179,7 @@ namespace cat::scripts
 
 	inline boost::python::class_<game::scene::scene_manager, boost::noncopyable> add_scene_manager()
 	{
-		auto sm_class = create_singleton_class<game::scene::scene_manager>("scene_manager");	
+		auto sm_class = create_singleton_class<game::scene::scene_manager>("scene_manager");
 		add_template_defs<game::game_object>(sm_class);
 
 		return sm_class;
@@ -241,7 +240,6 @@ namespace cat::scripts
 		return gm_class;
 	}
 
-	// TODO: Make function helper where we are already have singleton instance 
 	BOOST_PYTHON_MODULE(CAT_API)
 	{
 		// boost::python::def("print_varnames", &print_varnames);
@@ -249,11 +247,11 @@ namespace cat::scripts
 		// GLM Math defs
 		boost::python::to_python_converter<glm::vec4, vec4_convert_list>();
 		boost::python::class_<glm::vec4, boost::shared_ptr<glm::vec4>, boost::noncopyable>("vec4", boost::python::no_init).
-			 def("__init__", boost::python::make_constructor(&make_vec4)).
-			 def_readwrite("x", &glm::vec4::x).
-			 def_readwrite("y", &glm::vec4::y).
-			 def_readwrite("z", &glm::vec4::z).
-			 def_readwrite("w", &glm::vec4::w);
+			def("__init__", boost::python::make_constructor(&make_vec4)).
+			def_readwrite("x", &glm::vec4::x).
+			def_readwrite("y", &glm::vec4::y).
+			def_readwrite("z", &glm::vec4::z).
+			def_readwrite("w", &glm::vec4::w);
 
 		boost::python::to_python_converter<glm::vec3, vec3_convert_list>();
 		boost::python::class_<glm::vec3, boost::shared_ptr<glm::vec3>, boost::noncopyable>("vec3", boost::python::no_init).
@@ -299,7 +297,7 @@ namespace cat::scripts
 
 		// Export keys for input manager
 		export_keys();
-		
+
 
 		boost::python::enum_<core::input_key_state>("input_key_state").
 			value("Press", core::input_key_state::Press).
@@ -307,7 +305,7 @@ namespace cat::scripts
 			value("Hold", core::input_key_state::Hold).
 			value("Repeat", core::input_key_state::Repeat).
 			value("Unknown", core::input_key_state::Unknown);
-		
+
 		boost::python::enum_<core::input_device>("input_device").
 			value("Keyboard", core::input_device::Keyboard).
 			value("Mouse", core::input_device::Mouse).
@@ -315,64 +313,93 @@ namespace cat::scripts
 			value("Unknown", core::input_device::Unknown);
 
 		create_singleton_class<core::input_manager>("input_manager").
-			def("add_listener",+ 
-			[](core::input_manager& self, core::input_key_code code,
-				core::input_key_state keyState,
-				core::input_device device, boost::python::object object) {
-			self.add_listener(code, keyState, device, object);
-			}).
-			def("clear_listeners", &core::input_manager::clear_listeners). 
-			add_property("mouse_pos", &core::input_manager::get_mouse_pos);
+			def("add_listener", +
+				[](core::input_manager& self, core::input_key_code code,
+					core::input_key_state keyState,
+					core::input_device device, boost::python::object object) {
+						self.add_listener(code, keyState, device, object);
+				}).
+			def("clear_listeners", &core::input_manager::clear_listeners).
+					add_property("mouse_pos", &core::input_manager::get_mouse_pos);
 
-		create_singleton_class<core::utils::game_time>("game_time").
-			add_property("delta_time",&core::utils::game_time::get_delta_time).
-			add_property("fps", &core::utils::game_time::get_fps).
-			add_property("time", &core::utils::game_time::get_time);
-		///////////////////////////////////////////////
-		// Game:
-		///////////////////////////////////////////////
+				create_singleton_class<core::utils::game_time>("game_time").
+					add_property("delta_time", &core::utils::game_time::get_delta_time).
+					add_property("fps", &core::utils::game_time::get_fps).
+					add_property("time", &core::utils::game_time::get_time);
 
-		add_game_object_class();
+			 boost::python::class_ <core::callback_storage, boost::noncopyable>("callback_storage", boost::python::no_init).
+			 	def("update", +
+			 		[](core::callback_storage& self, boost::python::object object) {
+			 			self.update(object);
+			 		}).
+			 	def("add", +
+			 		[](core::callback_storage& self,
+			 			boost::python::object object) {
+			 				self.add(object);
+			 		}).
+			 	def("remove", +
+			 		[](core::callback_storage& self, boost::python::object object) {
+			 			self.remove(object);
+			 		}).
+			 	def("clear", &core::callback_storage::clear).
+			 	def("run_all", &core::callback_storage::run_all);
 
-		{
-			boost::python::scope scope_component = boost::python::class_<game::components::component, boost::noncopyable>("component", boost::python::init<>()).
+			// TODO: This will be something like task list 
+			//		 To make update logic for scripts faster 
+			create_singleton_class<core::engine>("engine").
+				def("quit", &core::engine::destroy).
+				def("get_on_global_update", &core::engine::get_on_global_update, 
+					boost::python::return_value_policy<boost::python::reference_existing_object>());
+
+			///////////////////////////////////////////////
+			// Game:
+			///////////////////////////////////////////////
+			
+			add_game_object_class();
+			
+			{
+				boost::python::scope scope_component = boost::python::class_<game::components::component, boost::noncopyable>("component", boost::python::init<>()).
+					add_property("name", &game::components::component::get_name).
+					def("get_owner", &game::components::component::get_owner,
+						boost::python::return_value_policy<boost::python::reference_existing_object>());
+			}
+			
+			boost::python::class_<game::components::drawable, boost::noncopyable>("drawable", boost::python::init<>()).
 				add_property("name", &game::components::component::get_name).
 				def("get_owner", &game::components::component::get_owner,
 					boost::python::return_value_policy<boost::python::reference_existing_object>());
-		}
+			// TODO: Scale factor
+			//		 Matrix 
+			boost::python::class_<game::components::transform, boost::noncopyable>("transform", boost::python::init<>()).
+				add_property("name", &game::components::component::get_name).
+				add_property("position", &game::components::transform::get_position).
+				add_property("rotation", &game::components::transform::get_rotation).
+				add_property("scale", &game::components::transform::get_scale).
+				add_property("scale_factor", &game::components::transform::get_scale_factor).
+				def("set_position", &game::components::transform::set_position).
+				def("set_rotation", &game::components::transform::set_rotation).
+				def("set_scale", &game::components::transform::set_scale).
+				def("set_parent", &game::components::transform::set_parent).
+				def("get_child", &game::components::transform::get_child,
+					boost::python::return_value_policy<boost::python::reference_existing_object>()).
+				def("get_parent", &game::components::transform::get_parent,
+					boost::python::return_value_policy<boost::python::reference_existing_object>()).
+				def("is_child_of", &game::components::transform::is_child_of).
+				def("get_owner", &game::components::component::get_owner,
+					boost::python::return_value_policy<boost::python::reference_existing_object>());
+			
+			// Scene
+			add_scene_manager();
 
-		boost::python::class_<game::components::drawable, boost::noncopyable>("drawable", boost::python::init<>()).
-			add_property("name", &game::components::component::get_name).
-			def("get_owner", &game::components::component::get_owner,
-				boost::python::return_value_policy<boost::python::reference_existing_object>());
-		// TODO: Scale factor
-		//		 Matrix 
-		boost::python::class_<game::components::transform, boost::noncopyable>("transform", boost::python::init<>()).
-			add_property("name", &game::components::component::get_name).
-			add_property("position", &game::components::transform::get_position).
-			add_property("rotation", &game::components::transform::get_rotation).
-			add_property("scale", &game::components::transform::get_scale).
-			add_property("scale_factor", &game::components::transform::get_scale_factor).
-			def("set_position", &game::components::transform::set_position).
-			def("set_rotation", &game::components::transform::set_rotation).
-			def("set_scale", &game::components::transform::set_scale).
-			def("set_parent", &game::components::transform::set_parent).
-			def("get_child", &game::components::transform::get_child,
-				boost::python::return_value_policy<boost::python::reference_existing_object>()).
-			def("get_parent", &game::components::transform::get_parent,
-				boost::python::return_value_policy<boost::python::reference_existing_object>()).
-			def("is_child_of", &game::components::transform::is_child_of).			
-			def("get_owner", &game::components::component::get_owner,
-				boost::python::return_value_policy<boost::python::reference_existing_object>());
 
-		// Scene
-		add_scene_manager();
-
+			
 
 	}
 
-	typedef struct script { };
+}
 
+namespace cat::scripts
+{
 	script_core::script_core()
 	{
 
@@ -429,7 +456,8 @@ namespace cat::scripts
 		static const auto rm = io::resource_manager::get_instance();
 		const char* data = rm->read<const char*, script>(name, { "py" });
 		
-		if (data && !data[0])
+		if (data == NULL || 
+			(data && !data[0]))
 		{
 			ERR("file is not loaded or it's is empty!");
 			return false;

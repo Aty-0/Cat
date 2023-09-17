@@ -8,6 +8,7 @@ namespace cat::game::components
         m_position(VEC3_ZERO),
         m_rotation(VEC3_ZERO),
         m_scale(VEC3_ONE),
+        m_scale_factor(VEC3_ONE),
         m_world_matrix(glm::mat4(1.0f))
     {
 
@@ -21,7 +22,19 @@ namespace cat::game::components
     glm::mat4 transform::get_matrix_transformation()
     {
         m_world_matrix = glm::mat4(1);
-        return glm::translate(m_world_matrix, m_position) *  glm::rotate(m_world_matrix, glm::radians(m_rotation.x), glm::vec3(0,0,1)) * glm::scale(m_world_matrix, m_scale);
+        auto pos = VEC3_ZERO;
+        auto rot = VEC3_ZERO;
+        auto scale = VEC3_ONE;
+        if (m_parent)
+        {
+            auto transform = m_parent->get_transform();
+            pos = transform->m_position;
+            rot = transform->m_rotation;
+            scale = transform->m_scale;
+        }
+
+        return glm::translate(m_world_matrix, m_position + pos) *  glm::rotate(m_world_matrix, glm::radians(m_rotation.x + rot.x),
+            glm::vec3(0,0,1)) * glm::scale(m_world_matrix, m_scale * m_scale_factor * scale);
     }
 
     void transform::set_position(glm::vec3 pos)
@@ -86,7 +99,6 @@ namespace cat::game::components
         }
 
         go->get_transform()->set_child(get_owner());
-
         m_parent = go;
     }
 
