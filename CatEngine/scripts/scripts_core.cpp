@@ -320,6 +320,7 @@ namespace cat
 						self.add_listener(code, keyState, device, object);
 				}).
 			def("clear_listeners", &core::input_manager::clear_listeners).
+			def("unsubscribe_listener", &core::input_manager::unsubscribe_listener).
 					add_property("mouse_pos", &core::input_manager::get_mouse_pos);
 
 				create_singleton_class<core::utils::game_time>("game_time").
@@ -350,6 +351,9 @@ namespace cat
 				def("quit", &core::engine::destroy).
 				def("get_on_global_update", &core::engine::get_on_global_update, 
 					boost::python::return_value_policy<boost::python::reference_existing_object>());
+			
+			create_singleton_class<scripts::script_core>("script_core").
+				def("run", &scripts::script_core::run);
 
 			///////////////////////////////////////////////
 			// Game:

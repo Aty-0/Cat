@@ -66,9 +66,17 @@ namespace cat::core
 
 	inline void callback_storage::remove(default_callback callback)
 	{
-		// FIX ME: 
-		//auto removed = std::remove(m_storage.begin(), m_storage.end(), callback);
-		//m_storage.erase(removed, m_storage.end());
+		for (std::vector<default_callback>::iterator it = m_storage.begin(); it != m_storage.end();)
+		{
+			// TODO: Is it save ?
+			if (it->target_type().name() == callback.target_type().name())
+			{
+				m_storage.erase(it);
+				break;
+			}
+
+			it++;
+		}
 	}
 
 	inline void callback_storage::clear()

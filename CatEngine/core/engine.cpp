@@ -75,7 +75,7 @@ namespace cat::core
 	bool engine::run_main_script()
 	{
 		auto scripts = scripts::script_core::get_instance();
-		return scripts->run("game");
+		return scripts->run("main");
 	}
 
 	void engine::on_update(float DeltaTime)

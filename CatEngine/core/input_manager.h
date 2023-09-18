@@ -5,8 +5,6 @@
 // TODO:
 // Add support for joystick
 // Add event support for scrolling
-// FIXME:
-// Now we are broke mouse keys...
 
 namespace cat::core
 {	
@@ -55,15 +53,19 @@ namespace cat::core
 		input_key_code 			code;
 		input_function			func;
 	};
-	// TODO: Unsubscribe from listener 
+
 	class CATENGINE_API input_manager : public cat::core::utils::singleton<input_manager>
 	{
 	public:
 		input_manager();
 		~input_manager();
 
-		void								init();
-		void update();		
+		void init();
+		void update();	
+
+		void unsubscribe_listener(input_key_code code = input_key_code::KEYBOARD_UNKNOWN,
+			input_key_state keyState = input_key_state::Unknown);
+
 		// Add key listener 
 		void add_listener(input_key_code code = input_key_code::KEYBOARD_UNKNOWN, 
 						input_key_state keyState = input_key_state::Unknown, 

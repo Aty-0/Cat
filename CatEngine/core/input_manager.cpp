@@ -24,16 +24,31 @@ namespace cat::core
 		glfwSetInputMode(window->get_GLFW_window(), GLFW_STICKY_KEYS, GLFW_TRUE);
 	}
 
+	void input_manager::unsubscribe_listener(input_key_code code, input_key_state keyState)
+	{
+		VERB("input_manager::unsubscribe_listener Code:%d State:%d ", code, keyState);
+		for (std::vector<std::unique_ptr<input_event>>::iterator currentEvent = m_listeners_storage.begin(); currentEvent != m_listeners_storage.end();)
+		{
+			if (code == currentEvent->get()->code && keyState == currentEvent->get()->state)
+			{
+				m_listeners_storage.erase(currentEvent);
+				break;
+			}
+
+			currentEvent++;
+		}
+	}
+
 	void input_manager::add_listener(input_key_code code, input_key_state keyState, input_device device, input_function inputevent)
 	{
-		INFO("Added event to input manager Code:%d State:%d Device:%d ", code, keyState, device);
+		VERB("Added event to input manager Code:%d State:%d Device:%d ", code, keyState, device);
 		m_listeners_storage.push_back(std::move(std::make_unique<input_event>(input_event(code, keyState, device, inputevent))));
 	}
 
 	void input_manager::on_mouse_buttons_click(GLFWwindow* window, std::int32_t button, std::int32_t action, std::int32_t mods)
 	{
-		//static const auto input_manager = input_manager::get_instance();
-		//input_manager->parse_listeners(window, button, 0, action, mods);
+		static const auto input_manager = input_manager::get_instance();
+		input_manager->parse_listeners(window, button, 0, action, mods);
 	}
 
 	void input_manager::on_keyboard_buttons_click(GLFWwindow* window, std::int32_t key, std::int32_t scancode, std::int32_t action, std::int32_t mods)
@@ -73,9 +88,18 @@ namespace cat::core
 		{
 			// Skip unknown buttons 
 			if (key == input_key_code::KEYBOARD_UNKNOWN)
+			{
 				continue;
-
+			}
 			auto key_int = static_cast<std::int32_t>(key);
+
+			// Skip mouse buttons because we don't support it Hold action for it 
+			// Because update_key using simple bool array which directed on keyboard 
+			if (key_int <= GLFW_MOUSE_BUTTON_LAST)
+			{
+				continue;
+			}
+
 			auto cur_state = static_cast<input_key_state>(glfwGetKey(window->get_GLFW_window(), key_int));
 			// update current key
 			update_key(key, cur_state);
