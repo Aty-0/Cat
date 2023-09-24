@@ -15,9 +15,8 @@ namespace cat::graphics
 			return false;
 		}
 
-		CAT_GL_SAFE_CHK(glBindBuffer(GL_ARRAY_BUFFER, m_vbo));
-		// set buffer data 
-		CAT_GL_SAFE_CHK(glBufferData(GL_ARRAY_BUFFER, size() * sizeof(type), &_data[0], GL_STATIC_DRAW));
+		glBindBuffer(GL_ARRAY_BUFFER, m_vbo); 
+		glBufferData(GL_ARRAY_BUFFER, size() * sizeof(type), &_data[0], GL_STATIC_DRAW);
 
 		return true;
 	}

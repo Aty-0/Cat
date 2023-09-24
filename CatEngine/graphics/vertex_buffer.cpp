@@ -15,20 +15,20 @@ namespace cat::graphics
 
 	void vertex_buffer::bind()
 	{
-		CAT_GL_SAFE_CHK(glBindVertexArray(m_vao));
+		glBindVertexArray(m_vao);
 	}
 
 	void vertex_buffer::gen()
 	{
-		 CAT_GL_SAFE_CHK(glGenVertexArrays(1, &m_vao));
-		 CAT_GL_SAFE_CHK(glBindVertexArray(m_vao));
-		 CAT_GL_SAFE_CHK(glGenBuffers(1, &m_vbo));
+		glGenVertexArrays(1, &m_vao);
+		glBindVertexArray(m_vao);
+		glGenBuffers(1, &m_vbo);
 	}
 
 	void vertex_buffer::clear()
 	{
-		CAT_GL_SAFE_CHK(glDeleteBuffers(1, &m_vao));
-		CAT_GL_SAFE_CHK(glDeleteBuffers(1, &m_vbo));
+		glDeleteBuffers(1, &m_vao);
+		glDeleteBuffers(1, &m_vbo);
 
 		m_data = nullptr; // reset data pointer
 	}

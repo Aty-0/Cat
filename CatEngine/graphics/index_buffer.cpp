@@ -15,7 +15,7 @@ namespace cat::graphics
 
 	void index_buffer::gen()
 	{
-		CAT_GL_SAFE_CHK(glGenBuffers(1, &m_ebo));
+		glGenBuffers(1, &m_ebo);
 	}
 
 	void index_buffer::bind()

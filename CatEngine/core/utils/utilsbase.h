@@ -5,14 +5,8 @@
 	if(!(a)) \
 		FATAL("Assertion failed %s\n File:%s\n Line:%d", #a,  __FILE__, __LINE__); \
 
-// TODO: Error codes to str
-#define CAT_GL_SAFE_CHK(f) f; \
-	if(glGetError() != GL_NO_ERROR) \
-		ERR("GL Error: %d | %s  | file:%s | line:%d", glGetError(),  #f,  __FILE__, __LINE__); \
-
-#define CAT_GL_CHK(f) f; \
-	if(glGetError() != GL_NO_ERROR) \
-		FATAL("GL Error: %d | %s  | file:%s | line:%d", glGetError(),  #f,  __FILE__, __LINE__); \
+#define N(X,Y) X##Y
+#define N2(X,Y) N(X,Y)
 
 #include <string>
 

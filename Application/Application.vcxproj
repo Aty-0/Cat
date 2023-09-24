@@ -117,15 +117,15 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../Libs/boost/;../Libs/glad/include/;../Libs/glfw/include/;../CatEngine/;../Libs/glm/;../Libs/soil/include/;C:/Users/User/AppData/Local/Programs/Python/Python39/include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Libs/boost/;../Libs/glew-2.2.0/include/;../Libs/glfw/include/;../CatEngine/;../Libs/glm/;../Libs/soil/include/;$(PYTHON_SDK)/include/</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>python3.lib;python39.lib;soil.lib;CatEngine.lib;glfw3.lib;opengl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glew32s.lib;glew32.lib;python3.lib;python39.lib;soil.lib;CatEngine.lib;glfw3.lib;opengl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EntryPointSymbol>mainCRTStartup </EntryPointSymbol>
-      <AdditionalLibraryDirectories>../Libs/glfw/Libs/Debug/;../x64/Debug/;../Libs/soil/_debug/;C:/Users/User/AppData/Local/Programs/Python/Python39/libs</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../Libs/glew-2.2.0/lib/Release/x64/;../Libs/glfw/Libs/Debug/;../x64/Debug/;../Libs/soil/_debug/;$(PYTHON_SDK)/libs</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -136,7 +136,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../Libs/boost_1_76_0/;../Libs/glad/include/;../Libs/glfw/include/;../CatEngine/;../Libs/glm/;../Libs/soil/include/;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Libs/boost/;../Libs/glew-2.2.0/include/;../Libs/glfw/include/;../CatEngine/;../Libs/glm/;../Libs/soil/include/;$(PYTHON_SDK)/include/</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -145,7 +145,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>CatEngine.lib;soil.lib;glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../Libs/glfw/Libs/Release;../x64/Release/;../Libs/soil/_release/</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../Libs/glew-2.2.0/lib/Release/x64/;../Libs/glfw/Libs/Release;../x64/Release/;../Libs/soil/_release/;$(PYTHON_SDK)/libs</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

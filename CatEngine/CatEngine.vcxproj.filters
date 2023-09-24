@@ -149,9 +149,6 @@
     <ClCompile Include="core\engine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="core\glad.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="core\utils\logger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

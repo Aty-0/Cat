@@ -33,15 +33,90 @@ namespace cat::graphics
 	{
 		INFO("Renderer initialize...");
 
-		if (!init_GLAD())
+		const auto res = glewInit();
+		if (res != GLEW_OK)
+		{
+			ERR("Error: '%s'", glewGetErrorString(res));
 			return false;
+		}
+		std::int32_t ext_num = 0;
+		glGetIntegerv(GL_NUM_EXTENSIONS, &ext_num);
+
+		for (std::int32_t i = 0; i < ext_num; i++)
+		{
+			const char* extension = (const char*)glGetStringi(GL_EXTENSIONS, i);
+			INFO("%i Extension %s", i, extension);
+		}
+
+		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		glEnable(GL_DEBUG_OUTPUT);
+		glDebugMessageCallback(on_get_opengl_error, nullptr);
 		
 		if (!init_imgui())
 			return false;
-
+		
 		m_time = core::utils::game_time::get_instance();
 
 		return true;
+	}
+
+	void renderer::on_get_opengl_error(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, GLchar const* message, void const* user_param)
+	{
+		auto source_str = [source]() {
+			switch (source)
+			{
+			case GL_DEBUG_SOURCE_API: return "API";
+			case GL_DEBUG_SOURCE_WINDOW_SYSTEM: return "WINDOW SYSTEM";
+			case GL_DEBUG_SOURCE_SHADER_COMPILER: return "SHADER COMPILER";
+			case GL_DEBUG_SOURCE_THIRD_PARTY:  return "THIRD PARTY";
+			case GL_DEBUG_SOURCE_APPLICATION: return "APPLICATION";
+			case GL_DEBUG_SOURCE_OTHER: return "OTHER";
+			default: return "UNKNOWN";
+			}
+		}();
+
+		auto type_str = [type]() {
+			switch (type)
+			{
+			case GL_DEBUG_TYPE_ERROR: return "ERROR";
+			case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: return "DEPRECATED_BEHAVIOR";
+			case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR: return "UNDEFINED_BEHAVIOR";
+			case GL_DEBUG_TYPE_PORTABILITY: return "PORTABILITY";
+			case GL_DEBUG_TYPE_PERFORMANCE: return "PERFORMANCE";
+			case GL_DEBUG_TYPE_MARKER:  return "MARKER";
+			case GL_DEBUG_TYPE_OTHER: return "OTHER";
+			default: return "UNKNOWN";
+			}
+		}();
+
+		auto severity_str = [severity]() {
+			switch (severity) {
+			case GL_DEBUG_SEVERITY_NOTIFICATION: return "NOTIFICATION";
+			case GL_DEBUG_SEVERITY_LOW: return "LOW";
+			case GL_DEBUG_SEVERITY_MEDIUM: return "MEDIUM";
+			case GL_DEBUG_SEVERITY_HIGH: return "HIGH";
+			default: return "UNKNOWN";
+			}
+		}();
+
+		switch (type)
+		{
+		case GL_DEBUG_TYPE_ERROR:
+		case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
+		case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
+			ERR("GL: %s %s %s %s", source_str, type_str, severity_str, message);
+			break;
+		case GL_DEBUG_TYPE_PERFORMANCE:
+			WARN("GL: %s %s %s %s", source_str, type_str, severity_str, message);
+			break;
+		default:
+			VERB("GL: %s %s %s %s", source_str, type_str, severity_str, message);
+			break;
+		}
+
 	}
 
 	void renderer::render()
@@ -131,25 +206,9 @@ namespace cat::graphics
 		ImGui::Render();
 	}
 
-	bool renderer::init_GLAD()
-	{
-		INFO("Initialize glad...");
-
-		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-		{
-			FATAL("Failed to init glad!");
-			return false;
-		}
-
-		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-		return true;
-	}
 
 	void renderer::draw_elements(std::int32_t count, std::int32_t type)
 	{
-		CAT_GL_SAFE_CHK(glDrawElements(type, count, GL_UNSIGNED_INT, 0));
+		glDrawElements(type, count, GL_UNSIGNED_INT, 0);
 	}
 }

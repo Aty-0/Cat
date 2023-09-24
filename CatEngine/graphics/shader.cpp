@@ -136,57 +136,57 @@ namespace cat::graphics
 
 	void shader::bind()
 	{
-		CAT_GL_SAFE_CHK(glUseProgram(m_shader_program));
+		glUseProgram(m_shader_program);
 		update_default_uniforms();
 	}
 
 	void shader::set_int32(const char* name, std::int32_t value)
 	{
-		CAT_GL_SAFE_CHK(glUniform1i(glGetUniformLocation(m_shader_program, name), value));
+		glUniform1i(glGetUniformLocation(m_shader_program, name), value);
 	}
 
 	void shader::set_uint32(const char* name, std::uint32_t value)
 	{
-		CAT_GL_SAFE_CHK(glUniform1i(glGetUniformLocation(m_shader_program, name), value));
+		glUniform1i(glGetUniformLocation(m_shader_program, name), value);
 	}
 
 	void shader::set_float(const char* name, float value)
 	{
-		CAT_GL_SAFE_CHK(glUniform1f(glGetUniformLocation(m_shader_program, name), value));
+		glUniform1f(glGetUniformLocation(m_shader_program, name), value);
 	}
 
 	void shader::set_bool(const char* name, bool value)
 	{
-		CAT_GL_SAFE_CHK(glUniform1i(glGetUniformLocation(m_shader_program, name), (std::int32_t)value));
+		glUniform1i(glGetUniformLocation(m_shader_program, name), (std::int32_t)value);
 	}
 
 	void shader::set_vec2(const char* name, glm::vec2& value)
 	{
-		CAT_GL_SAFE_CHK(glUniform2fv(glGetUniformLocation(m_shader_program, name), 1, &value[0]));
+		glUniform2fv(glGetUniformLocation(m_shader_program, name), 1, &value[0]);
 	}
 
 	void shader::set_vec3(const char* name, glm::vec3& value)
 	{
-		CAT_GL_SAFE_CHK(glUniform3fv(glGetUniformLocation(m_shader_program, name), 1, &value[0]));
+		glUniform3fv(glGetUniformLocation(m_shader_program, name), 1, &value[0]);
 	}
 
 	void shader::set_vec4(const char* name, glm::vec4& value)
 	{
-		CAT_GL_SAFE_CHK(glUniform4fv(glGetUniformLocation(m_shader_program, name), 1, &value[0]));
+		glUniform4fv(glGetUniformLocation(m_shader_program, name), 1, &value[0]);
 	}
 
 	void shader::set_mat2(const char* name, glm::mat2& mat)
 	{
-		CAT_GL_SAFE_CHK(glUniformMatrix2fv(glGetUniformLocation(m_shader_program, name), 1, GL_FALSE, &mat[0][0]));
+		glUniformMatrix2fv(glGetUniformLocation(m_shader_program, name), 1, GL_FALSE, &mat[0][0]);
 	}
 
 	void shader::set_mat3(const char* name, glm::mat3& mat)
 	{
-		CAT_GL_SAFE_CHK(glUniformMatrix3fv(glGetUniformLocation(m_shader_program, name), 1, GL_FALSE, &mat[0][0]));
+		glUniformMatrix3fv(glGetUniformLocation(m_shader_program, name), 1, GL_FALSE, &mat[0][0]);
 	}
 
 	void shader::set_mat4(const char* name, glm::mat4& mat)
 	{
-		CAT_GL_SAFE_CHK(glUniformMatrix4fv(glGetUniformLocation(m_shader_program, name), 1, GL_FALSE, &mat[0][0]));
+		glUniformMatrix4fv(glGetUniformLocation(m_shader_program, name), 1, GL_FALSE, &mat[0][0]);
 	}
 }
