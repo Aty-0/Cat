@@ -52,7 +52,11 @@ namespace cat::graphics
 		if (!status)
 		{
 			glGetShaderInfoLog(m_shader_program, sizeof(err_buffer), NULL, err_buffer);
-			ERR("link error\n%s", err_buffer);
+
+			ERR("link error");
+
+			if (err_buffer == NULL || !err_buffer && err_buffer[0] == '\0')
+				ERR("%s", err_buffer);
 			return false;
 		}
 
@@ -94,7 +98,14 @@ namespace cat::graphics
 		if (!status)
 		{
 			glGetShaderInfoLog(shader, sizeof(err_buffer), NULL, err_buffer);
-			ERR("%s shader compilation failed \n%s", type_str, err_buffer);
+			if (err_buffer == NULL || !err_buffer && err_buffer[0] == '\0')
+			{
+				ERR("%s shader compilation failed \nNo details", type_str);
+			}
+			else
+			{
+				ERR("%s shader compilation failed \n%s", type_str, err_buffer);
+			}
 			return false;
 		}
 
@@ -132,6 +143,11 @@ namespace cat::graphics
 			}
 		}
 
+	}
+
+	std::uint32_t shader::get_program() const
+	{
+		return m_shader_program;
 	}
 
 	void shader::bind()

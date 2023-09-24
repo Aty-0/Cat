@@ -9,8 +9,7 @@ namespace cat::graphics
 		shader();
 		~shader();
 
-		bool					load(const char* name);
-
+		bool load(const char* name);
 
 		// TODO: get rid of this funcs, need make something better 
 		void set_int32(const char* name, std::int32_t value);
@@ -26,7 +25,7 @@ namespace cat::graphics
 
 
 		void bind();
-		inline std::uint32_t get_program() const;
+		[[nodiscard]] inline std::uint32_t get_program() const;
 
 	private:
 		bool compile(const char* data, std::int32_t type, std::uint32_t& shader);
