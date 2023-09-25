@@ -3,7 +3,7 @@
 
 namespace cat::graphics
 {
-	class shader
+	class CATENGINE_API shader
 	{
 	public:
 		shader();
