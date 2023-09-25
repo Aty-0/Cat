@@ -35,13 +35,7 @@ namespace cat::core::utils
 		char buffer[BUFFER_SIZE];
 		VA_LIST_OUTPUT(buffer);
 
-		const char* converted = buffer;
-
-		// cleanup 
-		memset(buffer, 0, sizeof(buffer));
-
-
-		return converted;
+		return buffer;
 	}
 
 	std::string logger::get_time(bool printMinAndSec)
@@ -125,7 +119,8 @@ namespace cat::core::utils
 		line.append(get_time(false));
 
 		// Add type and text from buffer
-		line.append(" [" + std::string(get_level_str(level)) + "]  " + std::string(buffer) + "\n");
+		auto message = " [" + std::string(get_level_str(level)) + "]  " + std::string(buffer) + "\n";
+		line.append(message);
 		
 		// Add current line to log file
 		m_log_file = std::ofstream(m_log_file_path, std::ios_base::app);
