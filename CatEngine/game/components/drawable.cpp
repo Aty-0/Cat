@@ -6,7 +6,8 @@
 
 namespace cat::game::components
 {
-	drawable::drawable()
+	drawable::drawable() : 
+		m_color(glm::vec4(1,1,1,1))
 	{
 		std::vector<graphics::vertex> vb_data = { { glm::vec3(1.0f,  1.0f, 0.0f), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), glm::vec2(1.0f, 0.0f) },      // top right
 												{ glm::vec3(1.0f, -1.0f, 0.0f),   glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), glm::vec2(1.0f, 1.0f) },      // bottom right
@@ -52,13 +53,24 @@ namespace cat::game::components
 	void drawable::on_render(graphics::renderer* render) 
 	{
 		m_shader->bind();
-
 		const auto transform = get_owner()->get_transform();
 		transform->get_world_matrix() = transform->get_matrix_transformation();
-		m_shader->set_mat4("transform", get_owner()->get_transform()->get_world_matrix());
+		auto world_mat = transform->get_world_matrix();
+		m_shader->set_mat4("transform.world", world_mat);
+		m_shader->set_vec4("drawable.color", m_color);
 
 		m_vertex_buffer->bind();
 
 		render->draw_elements(6, GL_TRIANGLES);
+	}
+
+	void drawable::set_color(glm::vec4 color)
+	{
+		m_color = color;
+	}
+
+	glm::vec4 drawable::get_color() const
+	{
+		return m_color;
 	}
 }

@@ -370,6 +370,8 @@ namespace cat
 			
 			boost::python::class_<game::components::drawable, boost::noncopyable>("drawable", boost::python::init<>()).
 				add_property("name", &game::components::component::get_name).
+				add_property("color", &game::components::drawable::get_color).
+				def("set_color", &game::components::drawable::set_color),
 				def("get_owner", &game::components::component::get_owner,
 					boost::python::return_value_policy<boost::python::reference_existing_object>());
 			// TODO: Scale factor

@@ -48,7 +48,7 @@ namespace cat::graphics
 		// check for linking errors
 		glGetProgramiv(m_shader_program, GL_LINK_STATUS, &status);
 
-		char err_buffer[512];
+		char err_buffer[512] = "\0";
 		if (!status)
 		{
 			glGetShaderInfoLog(m_shader_program, sizeof(err_buffer), NULL, err_buffer);
@@ -94,7 +94,7 @@ namespace cat::graphics
 		std::int32_t status = 0;
 		glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
 
-		char err_buffer[512];
+		char err_buffer[512] = "\0";
 		if (!status)
 		{
 			glGetShaderInfoLog(shader, sizeof(err_buffer), NULL, err_buffer);
@@ -113,13 +113,13 @@ namespace cat::graphics
 		return true;
 	}
 
-
 	void shader::update_default_uniforms()
 	{
 		static const auto time = core::utils::game_time::get_instance();
 
-		set_float("delta_time", time->get_delta_time());
-		set_float("time",		time->get_time());
+		
+		set_float("base.delta_time", time->get_delta_time());
+		set_float("base.time", time->get_time());
 
 		// TODO: Move to constructor 
 		//		 Make static 
@@ -128,18 +128,18 @@ namespace cat::graphics
 		
 		// FIXME: Make it simpler 
 		static const auto window = core::game_window::get_instance();
+		static auto aspect_ratio = window->get_width() / window->get_height();
+		set_float("base.aspect_ratio", aspect_ratio);
 
-		auto aspect_ratio = window->get_width() / window->get_height();
-		set_float("aspect_ratio", aspect_ratio);
-
+	
 		if (camera_go != nullptr)
 		{
 			static const auto camera_comp = camera_go->get_component<game::components::camera>();
 
 			if (camera_comp != nullptr)
 			{
-				set_mat4("view", camera_comp->get_view());
-				set_mat4("projection", camera_comp->get_projection());
+				set_mat4("transform.view", camera_comp->get_view());
+				set_mat4("transform.projection", camera_comp->get_projection());
 			}
 		}
 
