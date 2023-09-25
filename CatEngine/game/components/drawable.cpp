@@ -54,8 +54,8 @@ namespace cat::game::components
 	{
 		m_shader->bind();
 		const auto transform = get_owner()->get_transform();
-		transform->get_world_matrix() = transform->get_matrix_transformation();
-		auto world_mat = transform->get_world_matrix();
+		auto& world_mat = transform->get_world_matrix();
+		world_mat = transform->get_matrix_transformation();
 		m_shader->set_mat4("transform.world", world_mat);
 		m_shader->set_vec4("drawable.color", m_color);
 
