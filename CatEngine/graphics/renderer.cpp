@@ -39,6 +39,8 @@ namespace cat::graphics
 			ERR("Error: '%s'", glewGetErrorString(res));
 			return false;
 		}
+
+		/*
 		std::int32_t ext_num = 0;
 		glGetIntegerv(GL_NUM_EXTENSIONS, &ext_num);
 
@@ -47,6 +49,7 @@ namespace cat::graphics
 			const char* extension = (const char*)glGetStringi(GL_EXTENSIONS, i);
 			INFO("%i Extension %s", i, extension);
 		}
+		*/
 
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_BLEND);

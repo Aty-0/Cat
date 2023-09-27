@@ -56,7 +56,7 @@ namespace cat::core
 		m_sm = game::scene::scene_manager::get_instance();
 		m_sm->create();
 
-		m_on_global_update = new core::callback_storage;
+		m_on_global_update = new core::callback_storage();
 		if (!run_main_script())
 			return false;
 
