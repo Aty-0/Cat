@@ -46,6 +46,7 @@
     <ClInclude Include="graphics\index_buffer.h" />
     <ClInclude Include="graphics\index_buffer_inline.h" />
     <ClInclude Include="graphics\shader.h" />
+    <ClInclude Include="graphics\texture.h" />
     <ClInclude Include="graphics\vertex.h" />
     <ClInclude Include="graphics\vertex_buffer.h" />
     <ClInclude Include="graphics\vertex_buffer_inline.h" />
@@ -59,6 +60,8 @@
     <ClInclude Include="libs\imgui\imstb_rectpack.h" />
     <ClInclude Include="libs\imgui\imstb_textedit.h" />
     <ClInclude Include="libs\imgui\imstb_truetype.h" />
+    <ClInclude Include="libs\stb\stb_image.h" />
+    <ClInclude Include="libs\stb\stb_truetype.h" />
     <ClInclude Include="libs\tinyxml2.h" />
     <ClInclude Include="graphics\renderer.h" />
     <ClInclude Include="scripts\scripts_core.h" />
@@ -81,6 +84,7 @@
     <ClCompile Include="graphics\buffer.cpp" />
     <ClCompile Include="graphics\index_buffer.cpp" />
     <ClCompile Include="graphics\shader.cpp" />
+    <ClCompile Include="graphics\texture.cpp" />
     <ClCompile Include="graphics\vertex_buffer.cpp" />
     <ClCompile Include="io\resource_manager.cpp" />
     <ClCompile Include="libs\imgui\imgui.cpp" />
