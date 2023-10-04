@@ -13,6 +13,11 @@ namespace cat::core
 
 namespace cat::graphics
 {
+	class frame_buffer;
+	class shader;
+	class vertex_buffer;
+	class index_buffer;
+
 	class CATENGINE_API renderer : public core::utils::singleton<renderer>
 	{
 	public:
@@ -23,7 +28,10 @@ namespace cat::graphics
 		void render();
 		void destroy();
 
+
 		void draw_elements(std::int32_t count, std::int32_t type);
+
+		void init_post_process();
 	private:
 		bool init_imgui();
 		
@@ -34,6 +42,17 @@ namespace cat::graphics
 
 		core::game_window* m_window;
 		core::utils::game_time* m_time;
+
+		// TODO: Make postprocess class 
+		void draw_post_process_quad();
+
+		// Using for post procces and other 
+		std::shared_ptr<frame_buffer> m_curr_frame_buff;
+
+		// TODO: Shader array
+		std::shared_ptr<shader> m_post_proc_shader;
+		std::shared_ptr<vertex_buffer> m_post_proc_vb;
+		std::shared_ptr<index_buffer>  m_post_proc_ib;
 
 	};
 }

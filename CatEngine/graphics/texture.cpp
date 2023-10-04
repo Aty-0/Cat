@@ -1,13 +1,15 @@
 #include "texture.h"
 
 #include "io/resource_manager.h"
+#include "core/game_window.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "libs/stb/stb_image.h"
 
 namespace cat::graphics
 {
-	texture::texture()
+	texture::texture() : 
+		m_instance(0)
 	{
 
 	}
@@ -17,6 +19,29 @@ namespace cat::graphics
 		
 	}
 
+	void texture::create_framebuffer_texture()
+	{
+		//if (m_instance != 0)
+		//{
+		//	INFO("Instance is not empty, some texture are exist");
+		//	return;
+		//}
+
+		const auto window = core::game_window::get_instance();
+		m_width	= window->get_width();
+		m_height = window->get_height();
+		m_tex_type = GL_TEXTURE_2D;
+
+		glGenTextures(1, &m_instance);
+		glBindTexture(GL_TEXTURE_2D, m_instance);
+
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_width,
+			m_height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_instance, 0);
+		VERB("texture::create_framebuffer_texture %i", m_instance);
+	}
 
 	bool texture::load(const char* name)
 	{		
@@ -73,12 +98,19 @@ namespace cat::graphics
 		glBindTexture(m_tex_type, m_instance);
 
 		set_texture_wrap(texture_wrap::Repeat);
-		set_texture_filter(texture_filter::Linear_MipMap_Linear, texture_filter::Linear);
+		set_texture_filter(texture_filter::Linear,
+			texture_filter::Linear);
 
 		glTexImage2D(m_tex_type, 0, GL_RGB, m_width, m_height, 0, format, GL_UNSIGNED_BYTE, data);
 
 		glGenerateMipmap(GL_TEXTURE_2D);
 		stbi_image_free(data);
+	}
+
+	void texture::unbind(std::uint32_t active_texture)
+	{
+		glActiveTexture(active_texture);
+		glBindTexture(m_tex_type, 0);
 	}
 
 	void texture::bind(std::uint32_t active_texture)

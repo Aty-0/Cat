@@ -60,6 +60,8 @@ namespace cat::core
 		if (!run_main_script())
 			return false;
 
+		m_renderer->init_post_process();
+		
 		// if window is active we are call onLoop function
 		while (!m_window->is_close())
 		{
