@@ -3,14 +3,15 @@
 #include "graphics/vertex.h"
 #include "core/utils/logger.h"
 #include "game/game_object.h"
+#include "core/game_window.h"
 
 namespace cat::game::components
 {
 	drawable::drawable() : 
 		m_color(glm::vec4(1,1,1,1))
 	{
-		std::vector<graphics::vertex> vb_data = { { glm::vec3(1.0f,  1.0f, 0.0f), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), glm::vec2(0.0f, -1.0f) },      // top right
-												{ glm::vec3(1.0f, -1.0f, 0.0f),   glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 0.0f) },      // bottom right
+		std::vector<graphics::vertex> vb_data = { { glm::vec3(0.5f,  1.0f, 0.0f), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), glm::vec2(0.0f, -1.0f) },      // top right
+												{ glm::vec3(0.5f, -1.0f, 0.0f),   glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 0.0f) },      // bottom right
 												{ glm::vec3(-1.0f, -1.0f, 0.0f),  glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), glm::vec2(-1.0f, 0.0f) },      // bottom left
 												{ glm::vec3(-1.0f,  1.0f, 0.0f),  glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), glm::vec2(-1.0f, -1.0f) }       // top left 
 		};
@@ -37,8 +38,11 @@ namespace cat::game::components
 		graphics::buffer::unbind_all();
 
 		m_shader = std::make_shared<graphics::shader>(*new graphics::shader());
-
 		CAT_ASSERT(m_shader->load("sprite"));
+
+		m_texture = std::make_shared<graphics::texture>(*new graphics::texture());
+
+		set_texture("default_texture");
 	}
 
 	drawable::~drawable()
@@ -50,8 +54,29 @@ namespace cat::game::components
 		m_index_buffer.reset();
 	}
 
+	void drawable::rescale()
+	{
+		const auto owner = get_owner();
+		if (owner != nullptr)
+		{
+			const auto game_window = core::game_window::get_instance();
+			const float ar_gw = game_window->get_width() / game_window->get_height();
+			const float ar = m_texture->get_width() / m_texture->get_height();
+			const float ar2 = m_texture->get_height() / m_texture->get_width();
+			owner->get_transform()->set_scale_factor({ ar_gw + ar, ar_gw + ar2, 1 });
+		}
+	}
+
+	void drawable::set_texture(const char* texture_name)
+	{
+		CAT_ASSERT(m_texture->load(texture_name));
+	}
+
 	void drawable::on_render(graphics::renderer* render) 
 	{
+		// TODO: Do this when we are change res for window and change texture 
+		rescale();
+
 		m_shader->bind();
 		const auto transform = get_owner()->get_transform();
 		auto& world_mat = transform->get_world_matrix();
@@ -59,9 +84,11 @@ namespace cat::game::components
 		m_shader->set_mat4("transform.world", world_mat);
 		m_shader->set_vec4("drawable.color", m_color);
 
+		m_texture->bind();
 		m_vertex_buffer->bind();
 
 		render->draw_elements(6, GL_TRIANGLES);
+		m_texture->unbind();
 	}
 
 	void drawable::set_color(glm::vec4 color)
