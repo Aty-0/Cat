@@ -20,6 +20,7 @@ namespace cat::game::components
         void                set_position(glm::vec3 pos);
         void                set_rotation(glm::vec3 rot);
         void                set_scale(glm::vec3 scale);
+        void                set_scale_factor(glm::vec3 scale);
         void                set_parent(game_object* go);
 
         [[nodiscard]] inline glm::vec3    get_position()  const;

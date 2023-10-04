@@ -33,8 +33,11 @@ namespace cat::game::components
             scale = transform->m_scale;
         }
 
-        return glm::translate(m_world_matrix, m_position + pos) *  glm::rotate(m_world_matrix, glm::radians(m_rotation.x + rot.x),
-            glm::vec3(0,0,1)) * glm::scale(m_world_matrix, m_scale * m_scale_factor * scale);
+        const auto rotation_matrix = glm::rotate(m_world_matrix, glm::radians(m_rotation.z + rot.z), glm::vec3(0, 0, 1))
+            * glm::rotate(m_world_matrix, glm::radians(m_rotation.y + rot.y), glm::vec3(0, 1, 0))
+            * glm::rotate(m_world_matrix, glm::radians(m_rotation.x + rot.x), glm::vec3(1, 0, 0));
+
+        return glm::translate(m_world_matrix, m_position + pos) * rotation_matrix * glm::scale(m_world_matrix, m_scale * m_scale_factor * scale);
     }
 
     void transform::set_position(glm::vec3 pos)
@@ -53,6 +56,11 @@ namespace cat::game::components
     {
         m_scale = scale;
         onScaleChanged();
+    }
+
+    void transform::set_scale_factor(glm::vec3 scale)
+    {
+        m_scale_factor = scale;
     }
 
     void transform::reset()
