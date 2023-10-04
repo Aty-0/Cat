@@ -5,28 +5,27 @@
 
 namespace cat::core::utils
 {
-	enum CATENGINE_API log_level
-	{
-		NONE = 0,
-		VERB,
-		INFO,
-		WARN,
-		ERR,
-		FATAL,
-	};
-
-
 	class CATENGINE_API	logger : public core::utils::singleton<logger>
 	{
 	public:
+		enum log_level
+		{
+			NONE = 0,
+			VERB,
+			INFO,
+			WARN,
+			ERR,
+			FATAL,
+		};
+
 		logger();
 		~logger();
 
-		 void				print(log_level level, const char* text, ...);
+		 void				print(logger::log_level level, const char* text, ...);
 		 void				create_log_file();
 	private:
 
-		 inline const char* get_level_str(log_level level) const;
+		 inline const char* get_level_str(logger::log_level level) const;
 		 // simple parsing of args to string 
 		 inline const char*	parse_args_to_string(const char* text, ...);
 
@@ -47,35 +46,35 @@ namespace cat::core::utils
 #define INFO(msg, ...) \
 do \
 { \
-	 cat::core::utils::log->print(cat::core::utils::log_level::INFO, msg, ##__VA_ARGS__); \
+	 cat::core::utils::log->print(cat::core::utils::logger::log_level::INFO, msg, ##__VA_ARGS__); \
 } \
 while(0)
 
 #define VERB(msg, ...) \
 do \
 { \
-	 cat::core::utils::log->print(cat::core::utils::log_level::VERB, msg, ##__VA_ARGS__); \
+	 cat::core::utils::log->print(cat::core::utils::logger::log_level::VERB, msg, ##__VA_ARGS__); \
 } \
 while(0)
 
 #define WARN(msg, ...) \
 do \
 { \
-	 cat::core::utils::log->print(cat::core::utils::log_level::WARN, msg, ##__VA_ARGS__); \
+	 cat::core::utils::log->print(cat::core::utils::logger::log_level::WARN, msg, ##__VA_ARGS__); \
 } \
 while(0)
 
 #define ERR(msg, ...) \
 do \
 { \
-	 cat::core::utils::log->print(cat::core::utils::log_level::ERR, msg, ##__VA_ARGS__); \
+	 cat::core::utils::log->print(cat::core::utils::logger::log_level::ERR, msg, ##__VA_ARGS__); \
 } \
 while(0)
 
 #define FATAL(msg, ...) \
 do \
 { \
-	 cat::core::utils::log->print(cat::core::utils::log_level::FATAL, msg, ##__VA_ARGS__); \
+	 cat::core::utils::log->print(cat::core::utils::logger::log_level::FATAL, msg, ##__VA_ARGS__); \
 } \
 while(0)
 

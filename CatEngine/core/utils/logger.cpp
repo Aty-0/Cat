@@ -19,7 +19,7 @@ namespace cat::core::utils
 {
 	logger::logger() : m_linecount(0), m_log_file(), m_level()
 	{
-		m_level = NONE;
+		m_level = logger::log_level::NONE;
 
 		create_log_file();
 	}
@@ -73,7 +73,6 @@ namespace cat::core::utils
 
 		if (!m_log_file)
 		{
-			throw std::runtime_error("log file is not created or not openned");
 			return;
 		}
 
@@ -102,14 +101,20 @@ namespace cat::core::utils
 		return "";
 	}
 
-	void logger::print(log_level level, const char* text, ...)
+	void logger::print(logger::log_level level, const char* text, ...)
 	{
-		//if (m_level >= log_level::INFO)
-		//	return;
+		if (m_level > level)
+			return;
+		// Open log file 
+		m_log_file = std::ofstream(m_log_file_path, std::ios_base::app);
+
+		if (!m_log_file)
+		{
+			return;
+		}
 
 		char buffer[2048];
 		VA_LIST_OUTPUT(buffer);
-
 
 		auto line = std::string();
 		// Print line count
@@ -123,13 +128,6 @@ namespace cat::core::utils
 		line.append(message);
 		
 		// Add current line to log file
-		m_log_file = std::ofstream(m_log_file_path, std::ios_base::app);
-		if (!m_log_file)
-		{
-			throw std::runtime_error("can't append new line");
-			return;
-		}
-
 		m_log_file << line;
 		m_log_file.close();
 
