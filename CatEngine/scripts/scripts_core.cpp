@@ -31,6 +31,7 @@
 #include "game/scene/scene_manager.h"
 
 
+#include "graphics/texture.h"
 
 
 namespace cat
@@ -371,7 +372,8 @@ namespace cat
 			boost::python::class_<game::components::drawable, boost::noncopyable>("drawable", boost::python::init<>()).
 				add_property("name", &game::components::component::get_name).
 				add_property("color", &game::components::drawable::get_color).
-				def("set_color", &game::components::drawable::set_color),
+				def("set_color", &game::components::drawable::set_color).
+				def("set_texture", &game::components::drawable::set_texture).
 				def("get_owner", &game::components::component::get_owner,
 					boost::python::return_value_policy<boost::python::reference_existing_object>());
 			// TODO: Scale factor
@@ -397,7 +399,10 @@ namespace cat
 			// Scene
 			add_scene_manager();
 
-
+			{
+				boost::python::class_<graphics::texture, boost::noncopyable>("texture", boost::python::init<>()).
+					def("load", &graphics::texture::load);
+			}
 			
 
 	}
