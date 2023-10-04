@@ -97,7 +97,7 @@ namespace cat::game
 
 		m_components.push_back(std::make_pair(std::make_pair(component->get_uuid(), std::type_index(typeid(*component))), component));
 
-		INFO("game_object::create_component %s -> %s", get_name().c_str(), component->get_name().c_str());
+		VERB("game_object::create_component %s -> %s", get_name().c_str(), component->get_name().c_str());
 		return component;
 	}
 
