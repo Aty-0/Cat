@@ -16,7 +16,15 @@ namespace cat::graphics
 
 	texture::~texture()
 	{
-		
+		clear();
+	}
+	
+	void texture::clear()
+	{
+		if (m_instance != 0)
+		{
+			glDeleteTextures(1, &m_instance);			
+		}
 	}
 
 	void texture::create_framebuffer_texture()
@@ -40,24 +48,29 @@ namespace cat::graphics
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_instance, 0);
-		VERB("texture::create_framebuffer_texture %i", m_instance);
+		VERB("texture::create_framebuffer_texture %i %i %i", m_instance, m_width, m_height);
 	}
 
 	bool texture::load(const char* name)
 	{		
-		static const std::vector<const char*> ext = { "jpg", "png", "tga", "bmp", "hdr", "pic", "pnm" };
-		
 		// All stbi supported file extensions except gif
+		static const std::vector<const char*> ext = { "jpg", "png", "tga", "bmp", "hdr", "pic", "pnm" };
+		std::int32_t width = 0;
+		std::int32_t height = 0;
+		
 		stbi_uc* data = io::resource_manager::get_instance()->read<stbi_uc*, texture>(name, ext); 
-		const auto size = io::resource_manager::get_instance()->size<texture>(name, ext);
-
+		const auto size = io::resource_manager::get_instance()->size<texture>(name, ext) * 4;
+		
 		if (data == nullptr)
 		{
 			return false;
 		}
-		std::int32_t width = 0;
-		std::int32_t height = 0;
-		void* stbi_data = static_cast<void*>(stbi_load_from_memory(data, size, &width, &height, &m_nrChannels, 0));
+
+		void* stbi_data = static_cast<void*>(stbi_load_from_memory(data, size, &width, &height, &m_nrChannels, 4));
+		
+		// Other way for load texture 
+		//const auto file_path = io::resource_manager::get_instance()->file_path<texture>(name, ext);
+		//void* stbi_data = static_cast<void*>(stbi_load(file_path.c_str(), &width, &height, &m_nrChannels, 4));
 		
 		if (stbi_data == nullptr)
 		{
@@ -101,7 +114,8 @@ namespace cat::graphics
 		set_texture_filter(texture_filter::Linear,
 			texture_filter::Linear);
 
-		glTexImage2D(m_tex_type, 0, GL_RGB, m_width, m_height, 0, format, GL_UNSIGNED_BYTE, data);
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+		glTexImage2D(m_tex_type, 0, GL_RGBA, m_width, m_height, 0, format, GL_UNSIGNED_BYTE, data);
 
 		glGenerateMipmap(GL_TEXTURE_2D);
 		stbi_image_free(data);

@@ -35,6 +35,8 @@ namespace cat::graphics
 		void bind(std::uint32_t active_texture = GL_TEXTURE0);
 		void unbind(std::uint32_t active_texture = GL_TEXTURE0);
 
+		void clear();
+
 		[[nodiscard]] inline std::int32_t   get_width() const;
 		[[nodiscard]] inline std::int32_t   get_height() const;
 		[[nodiscard]] inline std::int32_t   get_nrChannels() const;
@@ -42,7 +44,7 @@ namespace cat::graphics
 		[[nodiscard]] inline std::uint32_t  get_tex_type() const;
 		[[nodiscard]] inline texture_filter get_filter_min() const;
 		[[nodiscard]] inline texture_filter get_filter_mag() const;
-		[[nodiscard]] inline texture_wrap   get_wrap () const;
+		[[nodiscard]] inline texture_wrap   get_wrap() const;
 	private:
 		std::int32_t  m_width;
 		std::int32_t  m_height;
