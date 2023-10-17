@@ -109,14 +109,13 @@ namespace cat::core
 
 	void engine::on_loop()
 	{
-		glfwPollEvents();
+		m_window->pool();
 		// Update things
 		m_time->tick();
 		on_update(m_time->get_delta_time());
 		// Renderer update
 		m_renderer->render();
-
-		glfwSwapBuffers(m_window->get_GLFW_window());
+		m_window->swap();
 	}
 
 
