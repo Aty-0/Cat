@@ -18,6 +18,6 @@ namespace cat::graphics
 	private:
 		std::uint32_t m_fbo;
 		std::uint32_t m_rbo;
-		texture* m_frame_buff_tex;
+		std::shared_ptr<texture> m_frame_texture;
 	};
 }

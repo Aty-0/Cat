@@ -44,6 +44,7 @@ namespace cat::graphics
 		core::utils::game_time* m_time;
 
 		// TODO: Make postprocess class 
+		void recreate_post_process();
 		void draw_post_process_quad();
 
 		// Using for post procces and other 
@@ -53,6 +54,8 @@ namespace cat::graphics
 		std::shared_ptr<shader> m_post_proc_shader;
 		std::shared_ptr<vertex_buffer> m_post_proc_vb;
 		std::shared_ptr<index_buffer>  m_post_proc_ib;
+
+		bool m_disable_post_proc;
 
 	};
 }

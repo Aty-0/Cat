@@ -1,9 +1,11 @@
 #include "renderer.h"
+
+#include "core/callback_storage.h"
 #include "core/utils/logger.h"
 #include "core/game_window.h"
 #include "core/utils/game_time.h"
-#include "game/scene/scene_manager.h"
 
+#include "game/scene/scene_manager.h"
 #include "game/components/camera.h"
 
 #include "Libs/imgui/imgui.h"
@@ -59,6 +61,7 @@ namespace cat::graphics
 		*/
 
 		glEnable(GL_DEPTH_TEST);
+
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -131,8 +134,17 @@ namespace cat::graphics
 
 	void renderer::render()
 	{
+		if (m_window->get_width() == 0 
+			|| m_window->get_height() == 0)
+			return;
+
 		imgui_new_frame();
-		m_curr_frame_buff->bind();
+
+		if (m_disable_post_proc)
+		{
+			m_curr_frame_buff->bind();
+		}
+
 		glEnable(GL_DEPTH_TEST);
 
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -141,15 +153,22 @@ namespace cat::graphics
 		static const auto sm = game::scene::scene_manager::get_instance();
 		sm->render(this);
 
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-		
+		// TODO: UI rendering will be located there 
+	
 		glDisable(GL_DEPTH_TEST);
-		// Clear all relevant buffers
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
-		draw_post_process_quad();
+
+		if (m_disable_post_proc)
+		{
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);			
+			
+			// Clear all relevant buffers
+			glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+			glClear(GL_COLOR_BUFFER_BIT);
+
+			draw_post_process_quad();
+		}
+
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 	}
 
 	bool renderer::init_imgui()
@@ -186,6 +205,10 @@ namespace cat::graphics
 		ImGui::Text("FPS %d",	m_time->get_fps());
 		ImGui::Text("Time %f",	m_time->get_time());
 		ImGui::Text("Delta time %f", m_time->get_delta_time());
+		if (ImGui::Checkbox("Disable Post Process", &m_disable_post_proc))
+		{
+			recreate_post_process();
+		}
 
 		ImGui::End();
 
@@ -242,8 +265,23 @@ namespace cat::graphics
 		m_post_proc_shader = std::make_shared<graphics::shader>(*new graphics::shader());
 		CAT_ASSERT(m_post_proc_shader->load("postprocess"));
 
+		m_window->onWindowResized.add(std::bind(&graphics::renderer::recreate_post_process, this));
 	}
 
+	void renderer::recreate_post_process()
+	{
+		//VERB("renderer::recreate_post_process");		
+		if (m_window->get_width() == 0
+			|| m_window->get_height() == 0 
+			|| !m_disable_post_proc
+			|| !m_window->is_resized())
+			return;
+		
+		// Remove old and create new one 
+		m_curr_frame_buff->clear();
+		m_curr_frame_buff->gen();
+	}
+	
 	void renderer::draw_post_process_quad()
 	{
 		m_post_proc_shader->bind();
