@@ -265,7 +265,7 @@ namespace cat::graphics
 		m_post_proc_shader = std::make_shared<graphics::shader>(*new graphics::shader());
 		CAT_ASSERT(m_post_proc_shader->load("postprocess"));
 
-		m_window->onWindowResized.add(std::bind(&graphics::renderer::recreate_post_process, this));
+		core::game_window::onWindowResized.add(std::bind(&graphics::renderer::recreate_post_process, this));
 	}
 
 	void renderer::recreate_post_process()

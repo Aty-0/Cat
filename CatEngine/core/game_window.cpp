@@ -4,6 +4,9 @@
 
 namespace cat::core
 {
+	callback_storage game_window::onWindowResize;
+	callback_storage game_window::onWindowResized;
+
 	game_window::game_window() :
 		m_window(nullptr)
 	{

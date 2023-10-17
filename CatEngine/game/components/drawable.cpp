@@ -47,7 +47,8 @@ namespace cat::game::components
 
 	drawable::~drawable()
 	{
-		m_shader.reset();		
+		m_shader.reset();	
+		m_texture.reset();
 		m_vertex_buffer->clear();
 		m_vertex_buffer.reset();
 		m_index_buffer->clear();

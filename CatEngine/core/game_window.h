@@ -37,7 +37,7 @@ namespace cat::core
 		static void				on_framebuffer_size_change(GLFWwindow* window, std::int32_t width, std::int32_t height);
 		static void				on_get_error(std::int32_t error_code, const char* description);
 	public:
-		callback_storage onWindowResize;
-		callback_storage onWindowResized;
+		static callback_storage onWindowResize;
+		static callback_storage onWindowResized;
 	};
 }
