@@ -39,4 +39,14 @@ namespace cat::graphics
 		glEnableVertexAttribArray(num);
 		glVertexAttribPointer(num, size, type, GL_FALSE, typesize, offset);
 	}
+
+	void vertex_buffer::unbind_buffer()
+	{
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	}
+
+	void vertex_buffer::unbind_buffer_array()
+	{
+		glBindVertexArray(0);
+	}
 }

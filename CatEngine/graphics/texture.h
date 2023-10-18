@@ -30,8 +30,12 @@ namespace cat::graphics
 		void create(std::uint32_t tex_type, std::uint32_t format, std::uint32_t width, std::uint32_t height, void* data);
 		void set_texture_filter(texture_filter filter_min, texture_filter filter_mag);
 		void set_texture_wrap(texture_wrap wrap);
+		void create_framebuffer_texture();
 
 		void bind(std::uint32_t active_texture = GL_TEXTURE0);
+		void unbind(std::uint32_t active_texture = GL_TEXTURE0);
+
+		void clear();
 
 		[[nodiscard]] inline std::int32_t   get_width() const;
 		[[nodiscard]] inline std::int32_t   get_height() const;
@@ -40,7 +44,7 @@ namespace cat::graphics
 		[[nodiscard]] inline std::uint32_t  get_tex_type() const;
 		[[nodiscard]] inline texture_filter get_filter_min() const;
 		[[nodiscard]] inline texture_filter get_filter_mag() const;
-		[[nodiscard]] inline texture_wrap   get_wrap () const;
+		[[nodiscard]] inline texture_wrap   get_wrap() const;
 	private:
 		std::int32_t  m_width;
 		std::int32_t  m_height;

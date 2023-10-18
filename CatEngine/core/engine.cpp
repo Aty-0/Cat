@@ -60,6 +60,8 @@ namespace cat::core
 		if (!run_main_script())
 			return false;
 
+		m_renderer->init_post_process();
+		
 		// if window is active we are call onLoop function
 		while (!m_window->is_close())
 		{
@@ -107,14 +109,13 @@ namespace cat::core
 
 	void engine::on_loop()
 	{
-		glfwPollEvents();
+		m_window->pool();
 		// Update things
 		m_time->tick();
 		on_update(m_time->get_delta_time());
 		// Renderer update
 		m_renderer->render();
-
-		glfwSwapBuffers(m_window->get_GLFW_window());
+		m_window->swap();
 	}
 
 

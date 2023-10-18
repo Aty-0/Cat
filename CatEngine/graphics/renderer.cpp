@@ -1,14 +1,23 @@
 #include "renderer.h"
+
+#include "core/callback_storage.h"
 #include "core/utils/logger.h"
 #include "core/game_window.h"
 #include "core/utils/game_time.h"
-#include "game/scene/scene_manager.h"
 
+#include "game/scene/scene_manager.h"
 #include "game/components/camera.h"
 
 #include "Libs/imgui/imgui.h"
 #include "Libs/imgui/imgui_impl_opengl3.h"
 #include "Libs/imgui/imgui_impl_glfw.h"
+
+#include "graphics/frame_buffer.h"
+#include "graphics/vertex_buffer.h"
+#include "graphics/index_buffer.h"
+#include "graphics/vertex.h"
+#include "graphics/shader.h"
+#include "graphics/texture.h"
 
 namespace cat::graphics
 {
@@ -52,6 +61,7 @@ namespace cat::graphics
 		*/
 
 		glEnable(GL_DEPTH_TEST);
+
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -124,13 +134,39 @@ namespace cat::graphics
 
 	void renderer::render()
 	{
+		if (m_window->get_width() == 0 
+			|| m_window->get_height() == 0)
+			return;
+
 		imgui_new_frame();
+
+		if (m_disable_post_proc)
+		{
+			m_curr_frame_buff->bind();
+		}
+
+		glEnable(GL_DEPTH_TEST);
 
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		static const auto sm = game::scene::scene_manager::get_instance();
 		sm->render(this);
+
+		// TODO: UI rendering will be located there 
+	
+		glDisable(GL_DEPTH_TEST);
+
+		if (m_disable_post_proc)
+		{
+			m_curr_frame_buff->unbind_buffer();
+			
+			// Clear all relevant buffers
+			glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+			glClear(GL_COLOR_BUFFER_BIT);
+
+			draw_post_process_quad();
+		}
 
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 	}
@@ -164,36 +200,15 @@ namespace cat::graphics
 
 	void renderer::imgui_render()
 	{
-		/*static const auto sm = game::scene::scene_manager::get_instance();
-		auto test = sm->get_game_object_name<>("SomeTests");
-		auto test_tr = test->get_transform();
-		ImGui::Begin("Transform");
-		ImGui::Text("Position %f %f %f", test_tr->get_position().x, test_tr->get_position().y, test_tr->get_position().z);
-		ImGui::Text("Rotation %f %f %f", test_tr->get_rotation().x, test_tr->get_rotation().y, test_tr->get_rotation().z);
-		ImGui::Text("Scale %f %f %f", test_tr->get_scale().x, test_tr->get_scale().y, test_tr->get_scale().z);
-		ImGui::Text("Matrix:");
-
-		auto matrix = test_tr->get_world_matrix();
-		ImGui::Text("%f %f %f", matrix[0][0], matrix[0][1], matrix[0][2]);
-		ImGui::Text("%f %f %f", matrix[1][0], matrix[1][1], matrix[1][2]);
-		ImGui::Text("%f %f %f", matrix[2][0], matrix[2][1], matrix[2][2]);
-
-
-		ImGui::Text("camera:");
-		auto camera = sm->get_game_object_name<>(game::components::camera::EngineCameraName);
-		auto cam_tr = camera->get_transform();
-		ImGui::Text("Position %f %f %f", cam_tr->get_position().x, cam_tr->get_position().y, cam_tr->get_position().z);
-		ImGui::Text("Rotation %f %f %f", cam_tr->get_rotation().x, cam_tr->get_rotation().y, cam_tr->get_rotation().z);
-		ImGui::Text("Scale %f %f %f", cam_tr->get_scale().x, cam_tr->get_scale().y, cam_tr->get_scale().z);
-
-		ImGui::End();
-		*/
-
 		ImGui::Begin("Debug window");
 		
 		ImGui::Text("FPS %d",	m_time->get_fps());
 		ImGui::Text("Time %f",	m_time->get_time());
 		ImGui::Text("Delta time %f", m_time->get_delta_time());
+		if (ImGui::Checkbox("Disable Post Process", &m_disable_post_proc))
+		{
+			recreate_post_process();
+		}
 
 		ImGui::End();
 
@@ -213,5 +228,68 @@ namespace cat::graphics
 	void renderer::draw_elements(std::int32_t count, std::int32_t type)
 	{
 		glDrawElements(type, count, GL_UNSIGNED_INT, 0);
+	}
+
+	void renderer::init_post_process()
+	{
+		m_curr_frame_buff = std::make_shared<frame_buffer>(*new frame_buffer());
+		m_curr_frame_buff->gen();
+
+		std::vector<graphics::vertex> vb_data = { { glm::vec3(1.0f,  1.0f, 0.0f), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 1.0f) }, 
+												{ glm::vec3(1.0f, -1.0f, 0.0f),   glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 0.0f) }, 
+												{ glm::vec3(-1.0f, -1.0f, 0.0f),  glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), glm::vec2(-1.0f, 0.0f) },
+												{ glm::vec3(-1.0f,  1.0f, 0.0f),  glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), glm::vec2(-1.0f, 1.0f) } 
+		};
+
+		m_post_proc_vb = std::make_shared<vertex_buffer>(*new vertex_buffer());
+
+		m_post_proc_vb->gen();
+		m_post_proc_vb->set_buffer_data<graphics::vertex>(vb_data, GL_STATIC_DRAW);
+
+		std::vector<std::uint32_t> ib_data =
+		{
+			0, 1, 3, 
+			1, 2, 3  
+		};
+
+		m_post_proc_ib = std::make_shared<index_buffer>(*new index_buffer());
+		m_post_proc_ib->gen();
+		m_post_proc_ib->set_buffer_data<std::uint32_t>(ib_data, GL_STATIC_DRAW);
+
+		m_post_proc_vb->set_attrib(0, static_cast<std::uint32_t>(ib_data.size() / 2), GL_FLOAT, sizeof(graphics::vertex), reinterpret_cast<void*>(offsetof(graphics::vertex, pos)));
+		m_post_proc_vb->set_attrib(1, static_cast<std::uint32_t>(ib_data.size() / 2), GL_FLOAT, sizeof(graphics::vertex), reinterpret_cast<void*>(offsetof(graphics::vertex, color)));
+		m_post_proc_vb->set_attrib(2, static_cast<std::uint32_t>(ib_data.size() / 2), GL_FLOAT, sizeof(graphics::vertex), reinterpret_cast<void*>(offsetof(graphics::vertex, uv)));
+
+		m_post_proc_vb->unbind_all();
+
+		m_post_proc_shader = std::make_shared<graphics::shader>(*new graphics::shader());
+		CAT_ASSERT(m_post_proc_shader->load("postprocess"));
+
+		core::game_window::onWindowResized.add(std::bind(&graphics::renderer::recreate_post_process, this));
+	}
+
+	void renderer::recreate_post_process()
+	{
+		//VERB("renderer::recreate_post_process");		
+		if (m_window->get_width() == 0
+			|| m_window->get_height() == 0 
+			|| !m_disable_post_proc
+			|| !m_window->is_resized())
+			return;
+		
+		// Remove old and create new one 
+		m_curr_frame_buff->clear();
+		m_curr_frame_buff->gen();
+	}
+	
+	void renderer::draw_post_process_quad()
+	{
+		m_post_proc_shader->bind();
+		m_post_proc_vb->bind();
+
+		m_curr_frame_buff->get_texture()->bind();
+		draw_elements(6, GL_TRIANGLES);
+
+		m_curr_frame_buff->get_texture()->unbind();
 	}
 }

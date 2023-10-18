@@ -1,38 +1,76 @@
 #include "texture.h"
 
 #include "io/resource_manager.h"
+#include "core/game_window.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "libs/stb/stb_image.h"
 
 namespace cat::graphics
 {
-	texture::texture()
+	texture::texture() : 
+		m_instance(0)
 	{
 
 	}
 
 	texture::~texture()
 	{
-		
+		clear();
+	}
+	
+	void texture::clear()
+	{
+		if (m_instance != 0)
+		{
+			glDeleteTextures(1, &m_instance);			
+		}
 	}
 
+	void texture::create_framebuffer_texture()
+	{
+		//if (m_instance != 0)
+		//{
+		//	INFO("Instance is not empty, some texture are exist");
+		//	return;
+		//}
+
+		const auto window = core::game_window::get_instance();
+		m_width	= window->get_width();
+		m_height = window->get_height();
+		m_tex_type = GL_TEXTURE_2D;
+
+		glGenTextures(1, &m_instance);
+		glBindTexture(GL_TEXTURE_2D, m_instance);
+
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_width,
+			m_height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_instance, 0);
+		VERB("texture::create_framebuffer_texture %i %i %i", m_instance, m_width, m_height);
+	}
 
 	bool texture::load(const char* name)
 	{		
-		static const std::vector<const char*> ext = { "jpg", "png", "tga", "bmp", "hdr", "pic", "pnm" };
-		
 		// All stbi supported file extensions except gif
+		static const std::vector<const char*> ext = { "jpg", "png", "tga", "bmp", "hdr", "pic", "pnm" };
+		std::int32_t width = 0;
+		std::int32_t height = 0;
+		
 		stbi_uc* data = io::resource_manager::get_instance()->read<stbi_uc*, texture>(name, ext); 
-		const auto size = io::resource_manager::get_instance()->size<texture>(name, ext);
-
+		const auto size = io::resource_manager::get_instance()->size<texture>(name, ext) * 4;
+		
 		if (data == nullptr)
 		{
 			return false;
 		}
-		std::int32_t width = 0;
-		std::int32_t height = 0;
-		void* stbi_data = static_cast<void*>(stbi_load_from_memory(data, size, &width, &height, &m_nrChannels, 0));
+
+		void* stbi_data = static_cast<void*>(stbi_load_from_memory(data, size, &width, &height, &m_nrChannels, 4));
+		
+		// Other way for load texture 
+		//const auto file_path = io::resource_manager::get_instance()->file_path<texture>(name, ext);
+		//void* stbi_data = static_cast<void*>(stbi_load(file_path.c_str(), &width, &height, &m_nrChannels, 4));
 		
 		if (stbi_data == nullptr)
 		{
@@ -73,12 +111,20 @@ namespace cat::graphics
 		glBindTexture(m_tex_type, m_instance);
 
 		set_texture_wrap(texture_wrap::Repeat);
-		set_texture_filter(texture_filter::Linear_MipMap_Linear, texture_filter::Linear);
+		set_texture_filter(texture_filter::Linear,
+			texture_filter::Linear);
 
-		glTexImage2D(m_tex_type, 0, GL_RGB, m_width, m_height, 0, format, GL_UNSIGNED_BYTE, data);
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+		glTexImage2D(m_tex_type, 0, GL_RGBA, m_width, m_height, 0, format, GL_UNSIGNED_BYTE, data);
 
 		glGenerateMipmap(GL_TEXTURE_2D);
 		stbi_image_free(data);
+	}
+
+	void texture::unbind(std::uint32_t active_texture)
+	{
+		glActiveTexture(active_texture);
+		glBindTexture(m_tex_type, 0);
 	}
 
 	void texture::bind(std::uint32_t active_texture)

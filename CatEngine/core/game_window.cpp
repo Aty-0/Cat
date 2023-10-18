@@ -1,8 +1,12 @@
 #include "game_window.h"
 #include "core/utils/logger.h"
+#include "core/callback_storage.h"
 
 namespace cat::core
 {
+	callback_storage game_window::onWindowResize;
+	callback_storage game_window::onWindowResized;
+
 	game_window::game_window() :
 		m_window(nullptr)
 	{
@@ -26,7 +30,11 @@ namespace cat::core
 			return false;
 		}
 		glfwMakeContextCurrent(m_window);
+		// TODO or FIXME: That's two callback behave the same, so what's i need to use
+		//				  Need to check GLFW documentation
+		glfwSetWindowSizeCallback(m_window, on_window_size_change);
 		glfwSetFramebufferSizeCallback(m_window, on_framebuffer_size_change);
+
 		glfwSetErrorCallback(on_get_error);
 		glfwSwapInterval(0);
 
@@ -38,8 +46,37 @@ namespace cat::core
 		ERR("GLFW Error %d %s", error_code, description);
 	}
 
-	void game_window::on_framebuffer_size_change(GLFWwindow* window, std::int32_t width, std::int32_t height)
+	// FIXME ? Looks wierd a bit 
+	static bool isFullyResized = false;
+
+	void game_window::on_window_size_change(GLFWwindow* window, std::int32_t width, std::int32_t height)
 	{
+		static const auto gw = get_instance();
+		gw->m_resized = false;
+		isFullyResized = false;
+		
+		gw->onWindowResize();
+	}
+
+	void game_window::swap()
+	{
+		if (m_resized && !isFullyResized)
+		{
+			isFullyResized = true;
+			onWindowResized();
+		}
+
+		glfwSwapBuffers(m_window);
+	}
+
+	void game_window::pool()
+	{
+		m_resized = true;
+		glfwPollEvents();
+	}
+
+	void game_window::on_framebuffer_size_change(GLFWwindow* window, std::int32_t width, std::int32_t height)
+	{	
 		glViewport(0, 0, width, height);
 	}
 
@@ -94,6 +131,11 @@ namespace cat::core
 		std::int32_t l = 0;
 		glfwGetWindowPos(m_window, &l, 0);
 		return l;
+	}
+
+	bool game_window::is_resized()		const
+	{
+		return m_resized;
 	}
 
 	bool game_window::is_close()		const
