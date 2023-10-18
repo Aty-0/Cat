@@ -15,6 +15,8 @@ namespace cat::graphics
 		void clear() override;
 
 		[[nodiscard]] inline texture* get_texture() const;
+
+		void unbind_buffer() override;
 	private:
 		std::uint32_t m_fbo;
 		std::uint32_t m_rbo;

@@ -29,4 +29,14 @@ namespace cat::graphics
 
 		m_data = nullptr; // reset data pointer
 	}
+
+	void index_buffer::unbind_buffer()
+	{
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	}
+
+	void index_buffer::unbind_buffer_array()
+	{
+		glBindVertexArray(0);
+	}
 }

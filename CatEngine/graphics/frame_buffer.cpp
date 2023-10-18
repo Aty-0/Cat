@@ -33,6 +33,11 @@ namespace cat::graphics
 
 		CAT_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
 		
+		unbind_buffer();
+	}
+
+	void frame_buffer::unbind_buffer() 
+	{
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 

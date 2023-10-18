@@ -159,7 +159,7 @@ namespace cat::graphics
 
 		if (m_disable_post_proc)
 		{
-			glBindFramebuffer(GL_FRAMEBUFFER, 0);			
+			m_curr_frame_buff->unbind_buffer();
 			
 			// Clear all relevant buffers
 			glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -260,7 +260,7 @@ namespace cat::graphics
 		m_post_proc_vb->set_attrib(1, static_cast<std::uint32_t>(ib_data.size() / 2), GL_FLOAT, sizeof(graphics::vertex), reinterpret_cast<void*>(offsetof(graphics::vertex, color)));
 		m_post_proc_vb->set_attrib(2, static_cast<std::uint32_t>(ib_data.size() / 2), GL_FLOAT, sizeof(graphics::vertex), reinterpret_cast<void*>(offsetof(graphics::vertex, uv)));
 
-		graphics::buffer::unbind_all();
+		m_post_proc_vb->unbind_all();
 
 		m_post_proc_shader = std::make_shared<graphics::shader>(*new graphics::shader());
 		CAT_ASSERT(m_post_proc_shader->load("postprocess"));

@@ -13,10 +13,9 @@ namespace cat::graphics
 		virtual void bind() = 0;
 		virtual void clear() = 0;
 
-		static void unbind_buffer();
-		static void unbind_vertex_array();
-
-		static void unbind_all();
+		virtual void unbind_buffer();
+		virtual void unbind_buffer_array();
+		virtual void unbind_all();
 
 
 		template<typename type>
