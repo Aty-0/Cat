@@ -8,7 +8,6 @@
 #include "game/scene/scene_manager.h"
 #include "game/components/camera.h"
 
-#include "Libs/imgui/imgui.h"
 #include "Libs/imgui/imgui_impl_opengl3.h"
 #include "Libs/imgui/imgui_impl_glfw.h"
 
@@ -21,6 +20,8 @@
 
 namespace cat::graphics
 {
+	core::callback_storage renderer::onImGuiRender;
+
 	renderer::renderer()
 	{
 
@@ -38,6 +39,18 @@ namespace cat::graphics
 		ImGui::DestroyContext();
 	}
 
+	void renderer::debug_print_existing_ext()
+	{
+		std::int32_t ext_num = 0;
+		glGetIntegerv(GL_NUM_EXTENSIONS, &ext_num);
+		
+		for (std::int32_t i = 0; i < ext_num; i++)
+		{
+			const char* extension = (const char*)glGetStringi(GL_EXTENSIONS, i);
+			INFO("%i Extension %s", i, extension);
+		}
+	}
+
 	bool renderer::init()
 	{
 		INFO("Renderer initialize...");
@@ -49,16 +62,7 @@ namespace cat::graphics
 			return false;
 		}
 
-		/*
-		std::int32_t ext_num = 0;
-		glGetIntegerv(GL_NUM_EXTENSIONS, &ext_num);
-
-		for (std::int32_t i = 0; i < ext_num; i++)
-		{
-			const char* extension = (const char*)glGetStringi(GL_EXTENSIONS, i);
-			INFO("%i Extension %s", i, extension);
-		}
-		*/
+		//debug_print_existing_ext();
 
 		glEnable(GL_DEPTH_TEST);
 
@@ -73,6 +77,7 @@ namespace cat::graphics
 		
 		m_time = core::utils::game_time::get_instance();
 
+		onImGuiRender.add(std::bind(&renderer::render_debug_imgui_window, this));
 		return true;
 	}
 
@@ -197,13 +202,13 @@ namespace cat::graphics
 
 		return true;
 	}
-
-	void renderer::imgui_render()
+	
+	void renderer::render_debug_imgui_window()
 	{
 		ImGui::Begin("Debug window");
-		
-		ImGui::Text("FPS %d",	m_time->get_fps());
-		ImGui::Text("Time %f",	m_time->get_time());
+
+		ImGui::Text("FPS %d", m_time->get_fps());
+		ImGui::Text("Time %f", m_time->get_time());
 		ImGui::Text("Delta time %f", m_time->get_delta_time());
 		if (ImGui::Checkbox("Disable Post Process", &m_disable_post_proc))
 		{
@@ -211,7 +216,11 @@ namespace cat::graphics
 		}
 
 		ImGui::End();
+	}
 
+	void renderer::imgui_render()
+	{
+		onImGuiRender.run_all();		
 	}
 
 	void renderer::imgui_new_frame()

@@ -1,10 +1,12 @@
 #pragma once
 #include "core/common.h"
 
+#include "Libs/imgui/imgui.h"
+
 namespace cat::core
 {
 	class game_window;
-
+	class callback_storage;
 	namespace utils
 	{
 		class game_time;
@@ -33,6 +35,7 @@ namespace cat::graphics
 
 		void init_post_process();
 	private:
+		void debug_print_existing_ext();
 		bool init_imgui();
 		
 		void imgui_render();
@@ -56,6 +59,11 @@ namespace cat::graphics
 		std::shared_ptr<index_buffer>  m_post_proc_ib;
 
 		bool m_disable_post_proc;
+
+		void render_debug_imgui_window();
+	public:
+		static core::callback_storage onImGuiRender;
+
 
 	};
 }

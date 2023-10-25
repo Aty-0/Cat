@@ -23,6 +23,21 @@ namespace cat::game::scene
 
 		create_game_object<game::game_object>(game::components::camera::EngineCameraName, CAT_ENGINE_GAMEOBJECT_TYPE, -1)->create_component<game::components::camera>();
 		// TODO: Callbacks
+
+		graphics::renderer::onImGuiRender.add(std::bind(&scene_manager::debug_render_imgui_window, this));
+	}
+
+	void scene_manager::debug_render_imgui_window()
+	{
+		ImGui::Begin("scene");
+
+		for (const auto& object : m_scene->get_storage())
+		{
+			ImGui::Text("Name %s", object.second->get_name().c_str());
+		}
+
+
+		ImGui::End();
 	}
 
 	bool scene_manager::load(std::string name)

@@ -33,6 +33,8 @@ namespace cat::game::scene
 		// Destroy current scene 
 		void clear();
 		
+		void debug_render_imgui_window();
+
 		[[nodiscard]] inline scene* get_scene() const;
 
 		// Create game object in scene
