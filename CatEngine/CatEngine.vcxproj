@@ -43,6 +43,7 @@
     <ClInclude Include="game\scene\scene_manager.h" />
     <ClInclude Include="game\scene\scene_manager_inline.h" />
     <ClInclude Include="graphics\buffer.h" />
+    <ClInclude Include="graphics\frame_buffer.h" />
     <ClInclude Include="graphics\index_buffer.h" />
     <ClInclude Include="graphics\index_buffer_inline.h" />
     <ClInclude Include="graphics\shader.h" />
@@ -82,6 +83,7 @@
     <ClCompile Include="game\scene\scene.cpp" />
     <ClCompile Include="game\scene\scene_manager.cpp" />
     <ClCompile Include="graphics\buffer.cpp" />
+    <ClCompile Include="graphics\frame_buffer.cpp" />
     <ClCompile Include="graphics\index_buffer.cpp" />
     <ClCompile Include="graphics\shader.cpp" />
     <ClCompile Include="graphics\texture.cpp" />
