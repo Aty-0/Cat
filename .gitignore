@@ -366,3 +366,15 @@ FodyWeavers.xsd
 Libs/
 Garbage/
 
+*.obj
+*.pdb
+*.tlog
+*.log
+*.lastbuildstate
+
+x64/[Dd]ebug/
+x64/[Rr]elease/
+
+Application/[Dd]ebug/
+Application/[Rr]elease/
+gamedata/
