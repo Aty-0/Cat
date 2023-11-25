@@ -29,7 +29,7 @@
     <ClInclude Include="core\game_window.h" />
     <ClInclude Include="core\utils\singleton.h" />
     <ClInclude Include="core\utils\utilsbase.h" />
-    <ClInclude Include="core\uuid.h" />
+    <ClInclude Include="core\uuid_object.h" />
     <ClInclude Include="core\utils\game_time.h" />
     <ClInclude Include="game\components\camera.h" />
     <ClInclude Include="game\components\component.h" />
@@ -65,14 +65,14 @@
     <ClInclude Include="libs\stb\stb_truetype.h" />
     <ClInclude Include="libs\tinyxml2.h" />
     <ClInclude Include="graphics\renderer.h" />
-    <ClInclude Include="scripts\scripts_core.h" />
+    <ClInclude Include="libs\uuid.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="core\engine.cpp" />
     <ClCompile Include="core\input_manager.cpp" />
     <ClCompile Include="core\utils\logger.cpp" />
     <ClCompile Include="core\game_window.cpp" />
-    <ClCompile Include="core\uuid.cpp" />
+    <ClCompile Include="core\uuid_object.cpp" />
     <ClCompile Include="core\utils\game_time.cpp" />
     <ClCompile Include="game\components\camera.cpp" />
     <ClCompile Include="game\components\component.cpp" />
@@ -97,7 +97,6 @@
     <ClCompile Include="libs\imgui\imgui_tables.cpp" />
     <ClCompile Include="libs\imgui\imgui_widgets.cpp" />
     <ClCompile Include="graphics\renderer.cpp" />
-    <ClCompile Include="scripts\scripts_core.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -110,26 +109,26 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -209,8 +208,8 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>../Libs/boost/;../Libs/glm/;../Libs/glew-2.2.0/include/;../Libs/glfw/include/;../Libs/soil/include/;#(SolutionDir);../CatEngine/;$(PYTHON_SDK)/include/</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>../Libs/glm/;../Libs/glew-2.2.0/include/;../Libs/glfw/include/;../Libs/soil/include/;#(SolutionDir);../CatEngine/;$(PYTHON_SDK)/include/</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

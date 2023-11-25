@@ -19,7 +19,7 @@ namespace cat::core::utils
 {
 	logger::logger() : m_linecount(0), m_log_file(), m_level()
 	{
-		m_level = logger::log_level::NONE;
+		m_level = logger::log_level::INFO;
 
 		create_log_file();
 	}

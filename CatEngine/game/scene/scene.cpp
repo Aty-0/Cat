@@ -31,7 +31,7 @@ namespace cat::game::scene
 			count != 0 ? newName = name + std::to_string(count) : newName = name;
 			it = std::find_if(
 				m_storage.begin(), m_storage.end(),
-				[&newName](std::pair<std::pair<std::string, boost::uuids::uuid>,
+				[&newName](std::pair<std::pair<std::string, uuids::uuid>,
 					std::shared_ptr<game::game_object>> const& elem) {
 						return elem.first.first == newName;
 				});
@@ -52,7 +52,7 @@ namespace cat::game::scene
 		CAT_NO_IMPL();
 	}
 
-	void scene::rename(boost::uuids::uuid object_id, std::string new_object_name)
+	void scene::rename(uuids::uuid object_id, std::string new_object_name)
 	{
 		CAT_NO_IMPL();
 	}
@@ -62,7 +62,7 @@ namespace cat::game::scene
 		scene_go_storage::iterator it = std::find_if(
 			m_storage.begin(),
 			m_storage.end(),
-			[&object_name](std::pair<std::pair<std::string, boost::uuids::uuid>,
+			[&object_name](std::pair<std::pair<std::string, uuids::uuid>,
 				std::shared_ptr<game::game_object>> const& elem) {
 					return elem.first.first == object_name;
 			});
@@ -79,17 +79,17 @@ namespace cat::game::scene
 			m_name.c_str(),
 			core::utils::get_class_name_string(it->second.get()).c_str(),
 			it->second.get()->get_name().c_str(),
-			it->second.get()->get_uuid_in_str().c_str());
+			it->second.get()->get_id_str().c_str());
 
 		m_storage.erase(it);
 	}
 
-	void scene::del(boost::uuids::uuid object_id)
+	void scene::del(uuids::uuid object_id)
 	{
 		scene_go_storage::iterator it = std::find_if(
 			m_storage.begin(),
 			m_storage.end(),
-			[&object_id](std::pair<std::pair<std::string, boost::uuids::uuid>,
+			[&object_id](std::pair<std::pair<std::string, uuids::uuid>,
 				std::shared_ptr<game::game_object>> const& elem) {
 					return elem.first.second == object_id;
 			});
@@ -98,7 +98,7 @@ namespace cat::game::scene
 		{
 			ERR("[Scene] [%s] Can't delete object UUID: %s",
 				m_name.c_str(),
-				core::uuid::convert_uuid_to_str(object_id).c_str());
+				core::uuid_object::id_to_str(object_id).c_str());
 			return;
 		}
 
@@ -106,7 +106,7 @@ namespace cat::game::scene
 			m_name.c_str(),
 			core::utils::get_class_name_string(it->second.get()).c_str(),
 			it->second.get()->get_name().c_str(),
-			it->second.get()->get_uuid_in_str().c_str());
+			it->second.get()->get_id_str().c_str());
 
 		m_storage.erase(it);
 	}
@@ -116,7 +116,7 @@ namespace cat::game::scene
 		CAT_NO_IMPL();
 	}
 
-	void scene::replace(boost::uuids::uuid object_id, game::game_object* object)
+	void scene::replace(uuids::uuid object_id, game::game_object* object)
 	{
 		CAT_NO_IMPL();
 	}
@@ -133,7 +133,7 @@ namespace cat::game::scene
 					m_name.c_str(),
 					core::utils::get_class_name_string(it->second.get()).c_str(),
 					it->second.get()->get_name().c_str(),
-					it->second.get()->get_uuid_in_str().c_str());
+					it->second.get()->get_id_str().c_str());
 
 				it = m_storage.erase(it);
 			}

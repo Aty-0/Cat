@@ -42,7 +42,7 @@ namespace cat::game::scene
 		T* create_game_object(
 			std::string name = std::string(),
 			std::string type = std::string(),
-			std::int32_t prefix = S2DE_DEFAULT_GAMEOBJECT_PREFIX,
+			std::int32_t prefix = 0,
 			glm::vec3 position = VEC3_ZERO,
 			glm::vec3 rotation = VEC3_ZERO,
 			glm::vec3 scale = VEC3_ONE);
@@ -53,7 +53,7 @@ namespace cat::game::scene
 
 		// Get game object from scene by uuid
 		template<typename T = game::game_object>
-		T* get_game_object_uuid(boost::uuids::uuid uuid);
+		T* get_game_object_uuid(uuids::uuid uuid);
 
 		// Create game object function without initialization 
 		template<typename T = game::game_object>

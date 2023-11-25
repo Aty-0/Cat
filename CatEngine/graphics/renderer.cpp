@@ -46,7 +46,7 @@ namespace cat::graphics
 		
 		for (std::int32_t i = 0; i < ext_num; i++)
 		{
-			const char* extension = (const char*)glGetStringi(GL_EXTENSIONS, i);
+			const char* extension = reinterpret_cast<const char*>(glGetStringi(GL_EXTENSIONS, i));
 			INFO("%i Extension %s", i, extension);
 		}
 	}
@@ -83,7 +83,7 @@ namespace cat::graphics
 
 	void renderer::on_get_opengl_error(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, GLchar const* message, void const* user_param)
 	{
-		auto source_str = [source]() {
+		const auto source_str = [source]() {
 			switch (source)
 			{
 			case GL_DEBUG_SOURCE_API: return "API";
@@ -96,7 +96,7 @@ namespace cat::graphics
 			}
 		}();
 
-		auto type_str = [type]() {
+		const auto type_str = [type]() {
 			switch (type)
 			{
 			case GL_DEBUG_TYPE_ERROR: return "ERROR";
@@ -110,7 +110,7 @@ namespace cat::graphics
 			}
 		}();
 
-		auto severity_str = [severity]() {
+		const auto severity_str = [severity]() {
 			switch (severity) {
 			case GL_DEBUG_SEVERITY_NOTIFICATION: return "NOTIFICATION";
 			case GL_DEBUG_SEVERITY_LOW: return "LOW";

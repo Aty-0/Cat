@@ -6,7 +6,10 @@ namespace cat::game::components
 	class CATENGINE_API test_comp_rotator : public component
 	{
 	public:
+		test_comp_rotator();
+		~test_comp_rotator();
 
+		void test();
 		void on_update(float delta_time) override;
 	};
 }

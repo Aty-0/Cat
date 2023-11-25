@@ -1,11 +1,11 @@
 #pragma once
 #include "core/common.h"
-#include "core/uuid.h"
+#include "core/uuid_object.h"
 #include "game/game_object.h"
 
 namespace cat::game::scene
 {
-	using scene_go_storage = std::vector<std::pair<std::pair<std::string, boost::uuids::uuid>,
+	using scene_go_storage = std::vector<std::pair<std::pair<std::string, uuids::uuid>,
 		std::shared_ptr<game::game_object>>>;
 
 	class CATENGINE_API scene
@@ -17,17 +17,17 @@ namespace cat::game::scene
 		// Rename object (by name)
 		void rename(std::string object_name, std::string new_object_name);
 		// Rename object (by uuid)
-		void rename(boost::uuids::uuid object_id, std::string new_object_name);
+		void rename(uuids::uuid object_id, std::string new_object_name);
 
 		// Delete game object (by name)
 		void del(std::string object_name);
 		// Delete game object (by uuid)
-		void del(boost::uuids::uuid object_id);
+		void del(uuids::uuid object_id);
 
 		// Replace game object (by name)
 		void replace(std::string object_name, game::game_object* object);
 		// Replace game object (by uuid)
-		void replace(boost::uuids::uuid object_id, game::game_object* object);
+		void replace(uuids::uuid object_id, game::game_object* object);
 
 		// Clear scene 
 		// NOTE: Objects with engine prefix (it is -1) can't be removed
@@ -52,7 +52,7 @@ namespace cat::game::scene
 
 		// Clone game object (by uuid)
 		template<typename T = game::game_object>
-		T* clone(boost::uuids::uuid object_id, std::string new_name = std::string());
+		T* clone(uuids::uuid object_id, std::string new_name = std::string());
 
 
 	private:

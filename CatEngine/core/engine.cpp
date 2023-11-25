@@ -8,8 +8,6 @@
 #include "graphics/renderer.h"
 #include "io/resource_manager.h"
 
-#include "scripts/scripts_core.h"
-
 #include "game/scene/scene_manager.h"
 
 namespace cat::core
@@ -57,8 +55,6 @@ namespace cat::core
 		m_sm->create();
 
 		m_on_global_update = new core::callback_storage();
-		if (!run_main_script())
-			return false;
 
 		m_renderer->init_post_process();
 		
@@ -72,12 +68,6 @@ namespace cat::core
 		destroy();
 
 		return true;
-	}
-
-	bool engine::run_main_script()
-	{
-		auto scripts = scripts::script_core::get_instance();
-		return scripts->run("main");
 	}
 
 	void engine::on_update(float DeltaTime)

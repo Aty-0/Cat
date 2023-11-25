@@ -1,6 +1,6 @@
 #pragma once
 #include "core/common.h"
-#include "core/uuid.h"
+#include "core/uuid_object.h"
 #include "core/callback_storage.h"
 
 namespace cat::game
@@ -17,7 +17,7 @@ namespace cat::game::components
 {
 	class transform;
 
-	class CATENGINE_API component : public core::uuid
+	class CATENGINE_API component : public core::uuid_object
 	{
 		friend game_object;
 	public:

@@ -37,7 +37,7 @@ namespace cat::game::scene
 	}
 
 	template<typename T>
-	inline T* scene_manager::get_game_object_uuid(boost::uuids::uuid uuid)
+	inline T* scene_manager::get_game_object_uuid(uuids::uuid uuid)
 	{
 		static_assert(!std::is_base_of<T, game::game_object>::value || std::is_same<T, game::game_object>::value,
 			"This is not GameObject or GameObject based class");
@@ -64,7 +64,7 @@ namespace cat::game::scene
 		}
 		catch (std::out_of_range)
 		{
-			VERB("scene_manager::get_game_object_name Error: Trying to get object with uuid %s but it is not exist", core::uuid::convert_uuid_to_str(uuid).c_str());
+			VERB("scene_manager::get_game_object_name Error: Trying to get object with uuid %s but it is not exist", core::uuid_object::id_to_str(uuid).c_str());
 		}
 
 		return nullptr;

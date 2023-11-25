@@ -66,7 +66,7 @@
     <ClInclude Include="libs\tinyxml2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="core\uuid.h">
+    <ClInclude Include="core\uuid_object.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="graphics\renderer.h">
@@ -141,9 +141,6 @@
     <ClInclude Include="game\components\test_comp_rotator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\scripts_core.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="graphics\texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -154,6 +151,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="graphics\frame_buffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\uuid.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -191,7 +191,7 @@
     <ClCompile Include="libs\imgui\imgui_impl_glfw.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="core\uuid.cpp">
+    <ClCompile Include="core\uuid_object.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="graphics\renderer.cpp">
@@ -237,9 +237,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="game\components\test_comp_rotator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="scripts\scripts_core.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="graphics\texture.cpp">
