@@ -87,7 +87,7 @@ namespace cat::io
 
 			std::string file_name = paths[i];
 			auto pos = file_name.rfind("\\");
-			file_name.erase(0, pos + 2);
+			file_name.erase(0, pos + 1);
 
 			auto ext = core::utils::get_file_extension(file_name);
 			for (auto cur_ext = exts.begin(); cur_ext != exts.end(); cur_ext++)
@@ -97,7 +97,7 @@ namespace cat::io
 					VERB("Adding to data...");
 
 					const auto PATH_TO_DATA = DATA_NAME + "/" + std::string(cur_ext->first);
-					const auto fpath = PATH_TO_DATA + "/" + file_name + "." + cur_ext->second;
+					const auto fpath = PATH_TO_DATA + "/" + file_name;
 					try
 					{
 						std::filesystem::copy_file(paths[i], fpath);
