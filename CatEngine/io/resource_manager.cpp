@@ -6,24 +6,21 @@ namespace cat::io
 {
 	resource_manager::resource_manager()
 	{
-
+		if (!std::filesystem::is_directory(DATA_NAME)
+			|| !std::filesystem::exists(DATA_NAME))
+		{
+			FATAL("Gamedata folder is not exist.");
+		}
 	}
 
 	resource_manager::~resource_manager()
 	{
 
-	}
+	}	
 
 	std::ifstream resource_manager::get_file(const char* type, const char* name, std::vector<const char*> ext)
 	{
 		const auto PATH_TO_DATA = DATA_NAME + "/" + std::string(type);
-
-		if (!std::filesystem::is_directory(DATA_NAME)
-			|| !std::filesystem::exists(DATA_NAME))
-		{
-			FATAL("resource_manager::get_file Gamedata folder is not exist. We can't continue");
-			return std::ifstream();
-		}
 
 		if (!std::filesystem::is_directory(PATH_TO_DATA)
 			|| !std::filesystem::exists(PATH_TO_DATA))
@@ -67,6 +64,53 @@ namespace cat::io
 		VERB("resource_manager::get_file File is not found");
 		// File is not exist
 		return std::ifstream();
+	}
+
+	void resource_manager::move_files_to_data(std::int32_t count, const char** paths)
+	{
+		const std::initializer_list<std::pair<const char*, const char*>> exts =
+		{
+			{ "Texture", "png" },
+			{ "Texture", "jpg" },
+			{ "Texture", "pnm" },
+			{ "Texture", "tga" },
+			{ "Texture", "bmp" },
+			{ "Texture", "hdr" },
+			{ "Texture", "pic" },
+			{ "Script", "lua" },
+			{ "Shader", "glsl" },
+		};
+
+		for (std::int32_t i = 0; i < count; i++)
+		{
+			VERB("resource_manager::move_files_to_data | paths:%s", paths[i]);
+
+			std::string file_name = paths[i];
+			auto pos = file_name.rfind("\\");
+			file_name.erase(0, pos + 2);
+
+			auto ext = core::utils::get_file_extension(file_name);
+			for (auto cur_ext = exts.begin(); cur_ext != exts.end(); cur_ext++)
+			{
+				if (cur_ext->second == ext)
+				{
+					VERB("Adding to data...");
+
+					const auto PATH_TO_DATA = DATA_NAME + "/" + std::string(cur_ext->first);
+					const auto fpath = PATH_TO_DATA + "/" + file_name + "." + cur_ext->second;
+					try
+					{
+						std::filesystem::copy_file(paths[i], fpath);
+					}
+					catch (std::filesystem::filesystem_error& e)
+					{
+						ERR("Could not copy %s %s", paths[i], e.what());
+					}
+
+					break;
+				}
+			}
+		}
 	}
 
 }

@@ -27,16 +27,19 @@ namespace cat::core
 		[[nodiscard]] inline std::int32_t get_top()		const;
 		[[nodiscard]] inline std::int32_t get_left()		const;
 		[[nodiscard]] inline bool is_close()		const;
+		[[nodiscard]] inline bool get_vsync()		const;
 		[[nodiscard]] inline bool is_resized()		const;
 		[[nodiscard]] inline GLFWwindow* get_GLFW_window() const;
 
 	private:
 		GLFWwindow* m_window;
 		bool	m_resized;
+		bool	m_vsync;
 		// Callbacks
 		static void				on_window_size_change(GLFWwindow* window, std::int32_t width, std::int32_t height);
 		static void				on_framebuffer_size_change(GLFWwindow* window, std::int32_t width, std::int32_t height);
 		static void				on_get_error(std::int32_t error_code, const char* description);
+		static void				on_drop_callback(GLFWwindow* window, std::int32_t count, const char** paths);
 	public:
 		static callback_storage onWindowResize;
 		static callback_storage onWindowResized;
