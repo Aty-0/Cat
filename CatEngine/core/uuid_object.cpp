@@ -25,14 +25,19 @@ namespace cat::core
 		return id;
 	}
 
-	void uuid_object::set_id(const std::string& id_str)
+	[[nodiscard]] inline bool uuid_object::empty() const
+	{
+		return m_id.is_nil();
+	}
+
+	void uuid_object::set(const std::string& id_str)
 	{
 		CAT_ASSERT(!id_str.empty());
 
-		m_id = str_to_id(id_str);
+		m_id = to_id(id_str);
 	}
 
-	void uuid_object::set_id(const uuids::uuid& id)
+	void uuid_object::set(const uuids::uuid& id)
 	{
 		CAT_ASSERT(!id.is_nil());
 		m_id = id;
@@ -49,7 +54,7 @@ namespace cat::core
 		return m_id;
 	}
 	
-	uuids::uuid uuid_object::str_to_id(const std::string id_str)
+	uuids::uuid uuid_object::to_id(const std::string id_str)
 	{
 		auto id = uuids::uuid::from_string(id_str);
 		CAT_ASSERT(id.has_value());
@@ -58,7 +63,7 @@ namespace cat::core
 		return id.value();
 	}
 
-	std::string uuid_object::id_to_str(uuids::uuid id)
+	std::string uuid_object::to_str(uuids::uuid id)
 	{
 		return uuids::to_string(id);
 	}

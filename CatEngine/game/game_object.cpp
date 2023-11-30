@@ -28,12 +28,12 @@ namespace cat::game
 
 		if (uuid == CAT_UUID_REGENERATE)
 		{
-			set_id(make_new());
+			m_uuid.set(m_uuid.make_new());
 		}
 		else if (!uuid.empty())
 		{
 			// If uuid is invalid we are get assert
-			set_id(uuid); 
+			m_uuid.set(uuid); 
 		}
 
 		onCreate();
@@ -152,5 +152,10 @@ namespace cat::game
 	bool game_object::is_enabled() const
 	{
 		return m_enabled;
+	}
+
+	core::uuid_object game_object::get_uuid() const
+	{
+		return m_uuid;
 	}
 }

@@ -23,7 +23,7 @@ namespace cat::game
 
 		VERB("game_object::add_component %s -> %s", get_name().c_str(), component->get_name().c_str());
 
-		m_components.push_back(std::make_pair(std::make_pair(component->get_id(), std::type_index(typeid(T))), component));
+		m_components.push_back(std::make_pair(std::make_pair(component->m_uuid->get_id(), std::type_index(typeid(T))), component));
 		return component;
 	}
 
@@ -72,7 +72,7 @@ namespace cat::game
 		component = new T();
 		component->set_owner(this);
 		component->set_name(core::utils::get_class_name_string(component));
-		component->set_id(component->make_new());
+		component->m_uuid->set_id(component->make_new());
 
 		// When name and owner is setted
 		component->onCreate();
@@ -90,12 +90,12 @@ namespace cat::game
 
 		component->set_owner(this);
 		component->set_name(core::utils::get_class_name_string(component));
-		component->set_id(component->make_new());
+		component->m_uuid.set(component->m_uuid.make_new());
 
 		// When name and owner is setted
 		component->onCreate();
 
-		m_components.push_back(std::make_pair(std::make_pair(component->get_id(), std::type_index(typeid(*component))), component));
+		m_components.push_back(std::make_pair(std::make_pair(component->m_uuid.get_id(), std::type_index(typeid(*component))), component));
 
 		VERB("game_object::create_component %s -> %s", get_name().c_str(), component->get_name().c_str());
 		return component;
