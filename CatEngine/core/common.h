@@ -1,4 +1,5 @@
 #pragma once
+#pragma warning(disable: 4005)
 #include <iostream>
 #include <map>
 #include <array>
@@ -9,6 +10,8 @@
 #include <fstream>
 
 #include <GL/glew.h>
+
+
 #include <GLFW/glfw3.h>
 
 #include <glm/glm.hpp>

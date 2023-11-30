@@ -117,15 +117,15 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>;../Libs/glew-2.2.0/include/;../Libs/glfw/include/;../CatEngine/;../Libs/glm/;../Libs/soil/include/;$(PYTHON_SDK)/include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Libs/glew-2.2.0/include/;../Libs/glfw/include/;../CatEngine/;../Libs/glm/;../Libs/soil/include/;../Libs/lua-5.4.6/src;../Libs/sol2</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glew32s.lib;glew32.lib;python3.lib;python39.lib;soil.lib;CatEngine.lib;glfw3.lib;opengl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>lua-5.4.4.lib;glew32s.lib;glew32.lib;soil.lib;CatEngine.lib;glfw3.lib;opengl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EntryPointSymbol>mainCRTStartup </EntryPointSymbol>
-      <AdditionalLibraryDirectories>../Libs/glew-2.2.0/lib/Release/x64/;../Libs/glfw/Libs/Debug/;../x64/Debug/;../Libs/soil/_debug/;$(PYTHON_SDK)/libs</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../Libs/glew-2.2.0/lib/Release/x64/;../Libs/glfw/Libs/Debug/;../x64/Debug/;../Libs/soil/_debug/;../Libs/sol2/lib/Debug</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

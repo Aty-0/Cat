@@ -9,6 +9,7 @@
 #include "io/resource_manager.h"
 
 #include "game/scene/scene_manager.h"
+#include "scripts/script_core.h"
 
 namespace cat::core
 {
@@ -58,6 +59,12 @@ namespace cat::core
 
 		m_renderer->init_post_process();
 		
+		const static auto sc = scripts::script_core::get_instance();
+		CAT_ASSERT(sc->run("main"));			
+		sc->run_func("main", "cat_main");
+
+		m_renderer->onImGuiRender.add(std::bind(&core::utils::logger::render_console, core::utils::logger::get_instance()));
+
 		// if window is active we are call onLoop function
 		while (!m_window->is_close())
 		{
