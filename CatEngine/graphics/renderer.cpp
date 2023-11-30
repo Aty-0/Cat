@@ -120,6 +120,8 @@ namespace cat::graphics
 			}
 		}();
 
+		static const bool verbose = false;
+		
 		switch (type)
 		{
 		case GL_DEBUG_TYPE_ERROR:
@@ -131,7 +133,8 @@ namespace cat::graphics
 			WARN("GL: %s %s %s %s", source_str, type_str, severity_str, message);
 			break;
 		default:
-			VERB("GL: %s %s %s %s", source_str, type_str, severity_str, message);
+			if(verbose)
+				VERB("GL: %s %s %s %s", source_str, type_str, severity_str, message);
 			break;
 		}
 
