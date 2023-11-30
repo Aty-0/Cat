@@ -14,12 +14,7 @@ namespace cat::game::components
 		m_projection(glm::mat4(1.0f)),
 		m_view(glm::mat4(1.0f))
 	{
-		//static const auto input = core::input_manager::get_instance();
-		//
-		//input->add_listener(core::input_key_code::KEYBOARD_W, core::input_key_state::Hold, core::input_device::Keyboard, std::bind(&game::components::camera::move_up, this));
-		//input->add_listener(core::input_key_code::KEYBOARD_S, core::input_key_state::Hold, core::input_device::Keyboard, std::bind(&game::components::camera::move_down, this));
-		//input->add_listener(core::input_key_code::KEYBOARD_A, core::input_key_state::Hold, core::input_device::Keyboard, std::bind(&game::components::camera::move_left, this));
-		//input->add_listener(core::input_key_code::KEYBOARD_D, core::input_key_state::Hold, core::input_device::Keyboard, std::bind(&game::components::camera::move_right, this));
+
 	}
 
 	camera::~camera()

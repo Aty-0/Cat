@@ -11,7 +11,8 @@ namespace cat::core
 		~game_window();
 
 		bool create(std::uint32_t w = 1280, std::uint32_t h = 768, const char* title = "Engine");
-			 
+		
+		void set_vsync(bool vsync);
 		void set_top(std::int32_t top);
 		void set_left(std::int32_t left);
 		void set_width(std::uint32_t w);

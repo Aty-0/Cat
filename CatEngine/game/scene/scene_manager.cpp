@@ -12,6 +12,7 @@ namespace cat::game::scene
 
 	scene_manager::~scene_manager()
 	{
+		m_scene->destroy();
 		core::utils::safe_delete(m_scene);
 	}
 

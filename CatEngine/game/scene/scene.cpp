@@ -26,7 +26,7 @@ namespace cat::game::scene
 					m_name.c_str(),
 					core::utils::get_class_name_string(it->second.get()).c_str(),
 					it->second.get()->get_name().c_str(),
-					it->second.get()->get_id_str().c_str());
+					it->second.get()->get_uuid().get_id_str().c_str());
 
 				it = m_storage.erase(it);
 			}
