@@ -29,12 +29,6 @@ namespace cat::graphics
 
 	void texture::create_framebuffer_texture()
 	{
-		//if (m_instance != 0)
-		//{
-		//	INFO("Instance is not empty, some texture are exist");
-		//	return;
-		//}
-
 		const auto window = core::game_window::get_instance();
 		m_width	= window->get_width();
 		m_height = window->get_height();
@@ -45,8 +39,8 @@ namespace cat::graphics
 
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_width,
 			m_height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		set_texture_filter(texture::filter::Linear, texture::filter::Linear);
+
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_instance, 0);
 		VERB("texture::create_framebuffer_texture %i %i %i", m_instance, m_width, m_height);
 	}
@@ -82,7 +76,7 @@ namespace cat::graphics
 		return true;
 	}
 
-	void texture::set_texture_filter(texture_filter filter_min, texture_filter filter_mag)
+	void texture::set_texture_filter(texture::filter filter_min, texture::filter filter_mag)
 	{
 		m_filter_min = filter_min;
 		m_filter_mag = filter_mag;
@@ -91,7 +85,7 @@ namespace cat::graphics
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, m_filter_mag);
 	}
 	
-	void texture::set_texture_wrap(texture_wrap wrap)
+	void texture::set_texture_wrap(texture::wrap wrap)
 	{
 		m_wrap = wrap;
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, m_wrap);
@@ -110,9 +104,9 @@ namespace cat::graphics
 
 		glBindTexture(m_tex_type, m_instance);
 
-		set_texture_wrap(texture_wrap::Repeat);
-		set_texture_filter(texture_filter::Linear,
-			texture_filter::Linear);
+		set_texture_wrap(texture::wrap::Repeat);
+		set_texture_filter(texture::filter::Linear,
+			texture::filter::Linear);
 
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 		glTexImage2D(m_tex_type, 0, GL_RGBA, m_width, m_height, 0, format, GL_UNSIGNED_BYTE, data);
@@ -158,17 +152,17 @@ namespace cat::graphics
 		return m_tex_type;
 	}
 
-	texture::texture_filter texture::get_filter_min() const
+	texture::filter texture::get_filter_min() const
 	{
 		return m_filter_min;
 	}
 
-	texture::texture_filter texture::get_filter_mag() const
+	texture::filter texture::get_filter_mag() const
 	{
 		return m_filter_mag;
 	}
 
-	texture::texture_wrap   texture::get_wrap() const
+	texture::wrap   texture::get_wrap() const
 	{
 		return m_wrap;
 	}
