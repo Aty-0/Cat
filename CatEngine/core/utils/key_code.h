@@ -149,7 +149,7 @@ namespace cat::core::utils
 		MOUSE_BUTTON_MIDDLE = GLFW_MOUSE_BUTTON_MIDDLE
 	};
 
-	static const std::map<std::string, key_code> MAP_OF_KEYS = {
+	inline const std::vector<std::pair<const char*, key_code>> FULL_LIST_OF_KEYS = {
 		{ "KEYBOARD_UNKNOWN", key_code::KEYBOARD_UNKNOWN		},
 		{ "KEYBOARD_SPACE", key_code::KEYBOARD_SPACE			},
 		{ "KEYBOARD_APOSTROPHE", key_code::KEYBOARD_APOSTROPHE		},
@@ -274,7 +274,7 @@ namespace cat::core::utils
 		{ "KEYBOARD_LAST", key_code::KEYBOARD_LAST			},
 	};
 
-	static const std::vector<key_code> LIST_OF_KEYS = { 
+	inline const std::vector<key_code> LIST_OF_KEYS = {
 		key_code::KEYBOARD_UNKNOWN,
 		/* Printable keys *//* Printable keys */
 		key_code::KEYBOARD_SPACE,  
