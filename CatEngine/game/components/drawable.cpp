@@ -61,9 +61,9 @@ namespace cat::game::components
 		if (owner != nullptr)
 		{
 			const auto game_window = core::game_window::get_instance();
-			const float ar_gw = game_window->get_width() / game_window->get_height();
-			const float ar = m_texture->get_width() / m_texture->get_height();
-			const float ar2 = m_texture->get_height() / m_texture->get_width();
+			const float ar_gw = static_cast<float>(game_window->get_width() / game_window->get_height());
+			const float ar = static_cast<float>(m_texture->get_width() / m_texture->get_height());
+			const float ar2 = static_cast<float>(m_texture->get_height() / m_texture->get_width());
 			owner->get_transform()->set_scale_factor({ ar_gw + ar, ar_gw + ar2, 1 });
 		}
 	}

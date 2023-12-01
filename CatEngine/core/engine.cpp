@@ -45,6 +45,8 @@ namespace cat::core
 		// add exit hotkey
 		m_input->add_listener(input_key_code::KEYBOARD_ESCAPE, input_key_state::Press, input_device::Keyboard, 
 			std::bind(&core::engine::destroy, this));
+		m_input->add_listener(input_key_code::KEYBOARD_F8, input_key_state::Press, input_device::Keyboard,
+			std::bind(&graphics::renderer::toggle_imgui_rendering, m_renderer));
 
 		m_time = core::utils::game_time::get_instance();
 		INFO("Run loop...");

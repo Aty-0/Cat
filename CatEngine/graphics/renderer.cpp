@@ -22,7 +22,15 @@ namespace cat::graphics
 {
 	core::callback_storage renderer::onImGuiRender;
 
-	renderer::renderer()
+	renderer::renderer() : 
+		m_renderImgui(true), 
+		m_curr_frame_buff(nullptr),
+		m_disable_post_proc(false),
+		m_post_proc_ib(nullptr),
+		m_post_proc_shader(nullptr),
+		m_post_proc_vb(nullptr),
+		m_time(nullptr),
+		m_window(nullptr)
 	{
 
 	}
@@ -30,6 +38,11 @@ namespace cat::graphics
 	renderer::~renderer()
 	{
 
+	}
+
+	void renderer::toggle_imgui_rendering()
+	{
+		m_renderImgui =! m_renderImgui;
 	}
 
 	void renderer::destroy()
@@ -231,8 +244,12 @@ namespace cat::graphics
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
-		
-		imgui_render();
+
+		if (m_renderImgui)
+		{
+			imgui_render();
+		}
+
 		ImGui::Render();
 	}
 

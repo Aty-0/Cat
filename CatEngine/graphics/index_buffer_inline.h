@@ -14,8 +14,8 @@ namespace cat::graphics
 			ERR("Index buffer -> data is nullptr");
 			return false;
 		}
-	
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
+
+		bind();
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, _data.size() * sizeof(type), &_data[0], GL_STATIC_DRAW);
 
 		return true;

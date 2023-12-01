@@ -15,7 +15,10 @@ namespace cat::graphics
 
 	void vertex_buffer::bind()
 	{
-		glBindVertexArray(m_vao);
+		if (m_vao)
+		{
+			glBindVertexArray(m_vao);
+		}
 	}
 
 	void vertex_buffer::gen()
@@ -27,8 +30,16 @@ namespace cat::graphics
 
 	void vertex_buffer::clear()
 	{
-		glDeleteBuffers(1, &m_vao);
-		glDeleteBuffers(1, &m_vbo);
+		if (m_vao)
+		{
+			glDeleteBuffers(1, &m_vao);
+
+		}
+		
+		if (m_vbo)
+		{
+			glDeleteBuffers(1, &m_vbo);
+		}
 
 		m_data = nullptr; // reset data pointer
 	}

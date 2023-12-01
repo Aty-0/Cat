@@ -19,7 +19,7 @@ namespace cat::graphics
 	void frame_buffer::gen()
 	{
 		glGenFramebuffers(1, &m_fbo);
-		glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+		bind();
 
 		m_frame_texture->create_framebuffer_texture();
 
