@@ -156,6 +156,9 @@
     <ClInclude Include="scripts\script_core.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="core\editor\filesystem_tree_ui.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="core\engine.cpp">
@@ -246,6 +249,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="scripts\script_core.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\editor\filesystem_tree_ui.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

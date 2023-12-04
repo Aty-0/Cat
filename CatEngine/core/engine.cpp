@@ -10,6 +10,7 @@
 
 #include "game/scene/scene_manager.h"
 #include "scripts/script_core.h"
+#include "core/editor/filesystem_tree_ui.h"
 
 namespace cat::core
 {
@@ -66,6 +67,7 @@ namespace cat::core
 		sc->run_func("main", "cat_main");
 
 		m_renderer->onImGuiRender.add(std::bind(&core::utils::logger::render_console, core::utils::logger::get_instance()));
+		m_renderer->onImGuiRender.add(std::bind(&core::editor::filesystem_tree_ui::render, core::editor::filesystem_tree_ui::get_instance()));
 
 		// if window is active we are call onLoop function
 		while (!m_window->is_close())

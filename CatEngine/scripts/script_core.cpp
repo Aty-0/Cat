@@ -14,9 +14,13 @@
 
 #include "game/game_object.h"
 
-
 #include "game/components/component.h"
 #include "game/components/drawable.h"
+#include "game/components/test_comp_rotator.h"
+#include "game/components/camera.h"
+
+#include "graphics/texture.h"
+#include "graphics/shader.h"
 
 namespace cat::scripts
 {
@@ -226,9 +230,19 @@ namespace cat::scripts
 			// TODO: get_components
 			
 			// TODO: components
+			 
+			//		 Can we use table for this ?
 			"create_component_basic", &game::game_object::create_component<game::components::component>,
-			"create_component_drawable", &game::game_object::create_component<game::components::drawable>
+			"create_component_camera", &game::game_object::create_component<game::components::camera>,
+			"create_component_test_comp_rotator", &game::game_object::create_component<game::components::test_comp_rotator>,
+			"create_component_drawable", &game::game_object::create_component<game::components::drawable>,
 			
+			"get_component_basic", & game::game_object::get_component<game::components::component>,
+			"get_component_camera", & game::game_object::get_component<game::components::camera>,
+			"get_component_test_comp_rotator", & game::game_object::get_component<game::components::test_comp_rotator>,
+			"get_component_drawable", & game::game_object::get_component<game::components::drawable>
+
+
 		);			
 		
 		api.new_usertype<game::components::component>("component",
@@ -240,13 +254,22 @@ namespace cat::scripts
 			"onDestroy", &game::components::component::onDestroy			
 		);
 		
+		// TODO:
+		api.new_usertype<game::components::camera>("camera");
+		api.new_usertype<game::components::test_comp_rotator>("test_comp_rotator");
+
+		// TODO:
 		api.new_usertype<game::components::drawable>("drawable",
-			"set_texture", &game::components::drawable::set_texture);
+			"set_color", &game::components::drawable::set_color,
+			"set_texture", &game::components::drawable::set_texture
+		);
 
 		api.new_usertype<game::components::transform>("transform",
 			"set_position", &game::components::transform::set_position,
 			"set_rotation", &game::components::transform::set_rotation,
 			"set_scale", &game::components::transform::set_scale,
+			"is_child_of", &game::components::transform::is_child_of,
+			"set_parent", &game::components::transform::set_parent,
 			"set_scale_factor", &game::components::transform::set_scale_factor,
 			"get_child", &game::components::transform::get_child,
 			"get_matrix_transformation", &game::components::transform::get_matrix_transformation,
@@ -277,9 +300,13 @@ namespace cat::scripts
 			"get_game_object_uuid", &game::scene::scene_manager::get_game_object_uuid<game::game_object>
 			);
 
+		// Graphics: 
+		api.new_usertype<graphics::texture>("texture");
+		api.new_usertype<graphics::shader>("shader");
+
+
 		// 3rd party api
-		
-		// TODO:
+		// TODO
 		api.new_usertype<glm::mat2>("mat2");
 		api.new_usertype<glm::mat3>("mat3");
 		api.new_usertype<glm::mat4>("mat4");

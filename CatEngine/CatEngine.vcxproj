@@ -31,6 +31,7 @@
     <ClInclude Include="core\utils\utilsbase.h" />
     <ClInclude Include="core\uuid_object.h" />
     <ClInclude Include="core\utils\game_time.h" />
+    <ClInclude Include="core\editor\filesystem_tree_ui.h" />
     <ClInclude Include="game\components\camera.h" />
     <ClInclude Include="game\components\component.h" />
     <ClInclude Include="game\components\drawable.h" />
@@ -74,6 +75,7 @@
     <ClCompile Include="core\game_window.cpp" />
     <ClCompile Include="core\uuid_object.cpp" />
     <ClCompile Include="core\utils\game_time.cpp" />
+    <ClCompile Include="core\editor\filesystem_tree_ui.cpp" />
     <ClCompile Include="game\components\camera.cpp" />
     <ClCompile Include="game\components\component.cpp" />
     <ClCompile Include="game\components\drawable.cpp" />

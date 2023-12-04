@@ -30,8 +30,8 @@ namespace cat::io
 		// if it not exist you will get "%type_name_folder%/default"		
 		std::ifstream get_file(const char* type, const char* name, std::vector<const char*> ext);
 
-
-		const std::string DATA_NAME = "gamedata";
+	public:
+		static const std::string DATA_NAME;
 	};
 }
 

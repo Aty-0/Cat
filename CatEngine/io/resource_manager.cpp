@@ -4,6 +4,8 @@
 
 namespace cat::io
 {
+	const std::string resource_manager::DATA_NAME = "gamedata";
+
 	resource_manager::resource_manager()
 	{
 		if (!std::filesystem::is_directory(DATA_NAME)
