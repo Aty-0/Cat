@@ -8,9 +8,9 @@
 #include "graphics/renderer.h"
 #include "io/resource_manager.h"
 
-#include "scripts/scripts_core.h"
-
 #include "game/scene/scene_manager.h"
+#include "scripts/script_core.h"
+#include "core/editor/filesystem_tree_ui.h"
 
 namespace cat::core
 {
@@ -46,6 +46,8 @@ namespace cat::core
 		// add exit hotkey
 		m_input->add_listener(input_key_code::KEYBOARD_ESCAPE, input_key_state::Press, input_device::Keyboard, 
 			std::bind(&core::engine::destroy, this));
+		m_input->add_listener(input_key_code::KEYBOARD_F8, input_key_state::Press, input_device::Keyboard,
+			std::bind(&graphics::renderer::toggle_imgui_rendering, m_renderer));
 
 		m_time = core::utils::game_time::get_instance();
 		INFO("Run loop...");
@@ -57,11 +59,16 @@ namespace cat::core
 		m_sm->create();
 
 		m_on_global_update = new core::callback_storage();
-		if (!run_main_script())
-			return false;
 
 		m_renderer->init_post_process();
 		
+		const static auto sc = scripts::script_core::get_instance();
+		CAT_ASSERT(sc->run("main"));			
+		sc->run_func("main", "cat_main");
+
+		m_renderer->onImGuiRender.add(std::bind(&core::utils::logger::render_console, core::utils::logger::get_instance()));
+		m_renderer->onImGuiRender.add(std::bind(&core::editor::filesystem_tree_ui::render, core::editor::filesystem_tree_ui::get_instance()));
+
 		// if window is active we are call onLoop function
 		while (!m_window->is_close())
 		{
@@ -72,12 +79,6 @@ namespace cat::core
 		destroy();
 
 		return true;
-	}
-
-	bool engine::run_main_script()
-	{
-		auto scripts = scripts::script_core::get_instance();
-		return scripts->run("main");
 	}
 
 	void engine::on_update(float DeltaTime)

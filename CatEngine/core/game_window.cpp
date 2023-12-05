@@ -2,6 +2,8 @@
 #include "core/utils/logger.h"
 #include "core/callback_storage.h"
 
+#include "io/resource_manager.h"
+
 namespace cat::core
 {
 	callback_storage game_window::onWindowResize;
@@ -30,15 +32,28 @@ namespace cat::core
 			return false;
 		}
 		glfwMakeContextCurrent(m_window);
+		glfwSetErrorCallback(on_get_error);
+		glfwSetDropCallback(m_window, on_drop_callback);
 		// TODO or FIXME: That's two callback behave the same, so what's i need to use
 		//				  Need to check GLFW documentation
 		glfwSetWindowSizeCallback(m_window, on_window_size_change);
 		glfwSetFramebufferSizeCallback(m_window, on_framebuffer_size_change);
-
-		glfwSetErrorCallback(on_get_error);
-		glfwSwapInterval(0);
+		
+		set_vsync(0);
 
 		return true;
+	}
+
+	void game_window::on_drop_callback(GLFWwindow* window, std::int32_t count, const char** paths)
+	{
+		static const auto rm = io::resource_manager::get_instance();
+		rm->move_files_to_data(count, paths);		
+	}
+
+	void game_window::set_vsync(bool vsync)
+	{
+		m_vsync = vsync;
+		glfwSwapInterval(static_cast<std::int32_t>(m_vsync));
 	}
 
 	void game_window::on_get_error(std::int32_t error_code, const char* description)
@@ -136,6 +151,11 @@ namespace cat::core
 	bool game_window::is_resized()		const
 	{
 		return m_resized;
+	}
+
+	bool game_window::get_vsync()		const
+	{
+		return m_vsync;
 	}
 
 	bool game_window::is_close()		const

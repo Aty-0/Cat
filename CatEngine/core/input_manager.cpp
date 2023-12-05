@@ -91,7 +91,7 @@ namespace cat::core
 			{
 				continue;
 			}
-			auto key_int = static_cast<std::int32_t>(key);
+			const auto key_int = static_cast<std::int32_t>(key);
 
 			// Skip mouse buttons because we don't support it Hold action for it 
 			// Because update_key using simple bool array which directed on keyboard 
@@ -100,14 +100,14 @@ namespace cat::core
 				continue;
 			}
 
-			auto cur_state = static_cast<input_key_state>(glfwGetKey(window->get_GLFW_window(), key_int));
+			const auto cur_state = static_cast<input_key_state>(glfwGetKey(window->get_GLFW_window(), key_int));
 			// update current key
 			update_key(key, cur_state);
 
 
 			for (const auto& currentEvent : m_listeners_storage)
 			{
-				bool invoke = false;
+				auto invoke = false;
 				if (key == currentEvent->code)
 				{
 					if (currentEvent->state == input_key_state::Hold)
@@ -182,8 +182,8 @@ namespace cat::core
 	glm::vec2 input_manager::get_mouse_pos() const
 	{ 
 		static const auto window = core::game_window::get_instance();
-		double x = 0.0f;
-		double y = 0.0f;
+		double x = 0.0;
+		double y = 0.0;
 		glfwGetCursorPos(window->get_GLFW_window(), &x, &y);
 		return glm::vec2(static_cast<float>(x), static_cast<float>(y));
 	}

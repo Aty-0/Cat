@@ -50,8 +50,6 @@ namespace cat::core
 		void on_loop();
 		void on_update(float delta_time);
 
-		inline bool run_main_script();
-
 		core::input_manager*  m_input;
 		core::game_window*	  m_window;
 		graphics::renderer*   m_renderer;

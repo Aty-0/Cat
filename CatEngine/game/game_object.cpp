@@ -11,7 +11,6 @@ namespace cat::game
 		m_enabled(true)
 	{
 		// This is the basic setup for game object 
-		generate_uuid();
 		m_transform = create_component<components::transform>();
 	}
 
@@ -29,11 +28,12 @@ namespace cat::game
 
 		if (uuid == CAT_UUID_REGENERATE)
 		{
-			generate_uuid();
+			m_uuid.set(m_uuid.make_new());
 		}
 		else if (!uuid.empty())
 		{
-			set_uuid(uuid); // FIXME: why not bool
+			// If uuid is invalid we are get assert
+			m_uuid.set(uuid); 
 		}
 
 		onCreate();
@@ -152,5 +152,10 @@ namespace cat::game
 	bool game_object::is_enabled() const
 	{
 		return m_enabled;
+	}
+
+	core::uuid_object game_object::get_uuid() const
+	{
+		return m_uuid;
 	}
 }

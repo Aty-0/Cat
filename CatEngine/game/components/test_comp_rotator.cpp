@@ -3,6 +3,21 @@
 
 namespace cat::game::components
 {
+	test_comp_rotator::test_comp_rotator()
+	{
+		//onCreate.add(std::bind(&test_comp_rotator::test, this));
+		onCreate += std::bind(&test_comp_rotator::test, this);
+	}
+	test_comp_rotator::~test_comp_rotator()
+	{
+
+	}
+
+	void test_comp_rotator::test()
+	{
+		onCreate.remove(std::bind(&test_comp_rotator::test, this));
+	}
+
 	void test_comp_rotator::on_update(float delta_time)
 	{
 		const auto owner = get_owner();

@@ -20,14 +20,16 @@ namespace cat::graphics
 
 	void index_buffer::bind()
 	{
-
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
 	}
 
 	void index_buffer::clear()
 	{
-		glDeleteBuffers(1, &m_ebo);
-
-		m_data = nullptr; // reset data pointer
+		if (m_ebo)
+		{
+			glDeleteBuffers(1, &m_ebo);
+			m_data = nullptr; // reset data pointer
+		}
 	}
 
 	void index_buffer::unbind_buffer()

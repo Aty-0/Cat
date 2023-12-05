@@ -39,4 +39,9 @@ namespace cat::game::components
 	{
 		return m_owner;
 	}
+
+	core::uuid_object component::get_uuid() const
+	{
+		return m_uuid;
+	}
 }

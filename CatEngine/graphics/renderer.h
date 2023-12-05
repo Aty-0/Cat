@@ -34,6 +34,7 @@ namespace cat::graphics
 		void draw_elements(std::int32_t count, std::int32_t type);
 
 		void init_post_process();
+		void toggle_imgui_rendering();
 	private:
 		void debug_print_existing_ext();
 		bool init_imgui();
@@ -60,6 +61,7 @@ namespace cat::graphics
 
 		bool m_disable_post_proc;
 
+		bool m_renderImgui;
 		void render_debug_imgui_window();
 	public:
 		static core::callback_storage onImGuiRender;

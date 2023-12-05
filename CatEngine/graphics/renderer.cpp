@@ -22,7 +22,15 @@ namespace cat::graphics
 {
 	core::callback_storage renderer::onImGuiRender;
 
-	renderer::renderer()
+	renderer::renderer() : 
+		m_renderImgui(true), 
+		m_curr_frame_buff(nullptr),
+		m_disable_post_proc(false),
+		m_post_proc_ib(nullptr),
+		m_post_proc_shader(nullptr),
+		m_post_proc_vb(nullptr),
+		m_time(nullptr),
+		m_window(nullptr)
 	{
 
 	}
@@ -30,6 +38,11 @@ namespace cat::graphics
 	renderer::~renderer()
 	{
 
+	}
+
+	void renderer::toggle_imgui_rendering()
+	{
+		m_renderImgui =! m_renderImgui;
 	}
 
 	void renderer::destroy()
@@ -46,7 +59,7 @@ namespace cat::graphics
 		
 		for (std::int32_t i = 0; i < ext_num; i++)
 		{
-			const char* extension = (const char*)glGetStringi(GL_EXTENSIONS, i);
+			const char* extension = reinterpret_cast<const char*>(glGetStringi(GL_EXTENSIONS, i));
 			INFO("%i Extension %s", i, extension);
 		}
 	}
@@ -83,7 +96,7 @@ namespace cat::graphics
 
 	void renderer::on_get_opengl_error(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, GLchar const* message, void const* user_param)
 	{
-		auto source_str = [source]() {
+		const auto source_str = [source]() {
 			switch (source)
 			{
 			case GL_DEBUG_SOURCE_API: return "API";
@@ -96,7 +109,7 @@ namespace cat::graphics
 			}
 		}();
 
-		auto type_str = [type]() {
+		const auto type_str = [type]() {
 			switch (type)
 			{
 			case GL_DEBUG_TYPE_ERROR: return "ERROR";
@@ -110,7 +123,7 @@ namespace cat::graphics
 			}
 		}();
 
-		auto severity_str = [severity]() {
+		const auto severity_str = [severity]() {
 			switch (severity) {
 			case GL_DEBUG_SEVERITY_NOTIFICATION: return "NOTIFICATION";
 			case GL_DEBUG_SEVERITY_LOW: return "LOW";
@@ -120,6 +133,8 @@ namespace cat::graphics
 			}
 		}();
 
+		static const bool verbose = false;
+		
 		switch (type)
 		{
 		case GL_DEBUG_TYPE_ERROR:
@@ -131,7 +146,8 @@ namespace cat::graphics
 			WARN("GL: %s %s %s %s", source_str, type_str, severity_str, message);
 			break;
 		default:
-			VERB("GL: %s %s %s %s", source_str, type_str, severity_str, message);
+			if(verbose)
+				VERB("GL: %s %s %s %s", source_str, type_str, severity_str, message);
 			break;
 		}
 
@@ -228,8 +244,12 @@ namespace cat::graphics
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
-		
-		imgui_render();
+
+		if (m_renderImgui)
+		{
+			imgui_render();
+		}
+
 		ImGui::Render();
 	}
 

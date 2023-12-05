@@ -12,6 +12,7 @@ namespace cat::game::scene
 
 	scene_manager::~scene_manager()
 	{
+		m_scene->destroy();
 		core::utils::safe_delete(m_scene);
 	}
 
@@ -34,6 +35,7 @@ namespace cat::game::scene
 		for (const auto& object : m_scene->get_storage())
 		{
 			ImGui::Text("Name %s", object.second->get_name().c_str());
+			ImGui::Text("uuid %s", object.second->get_uuid().get_id_str().c_str());
 		}
 
 
@@ -62,7 +64,7 @@ namespace cat::game::scene
 				if (gameObject == nullptr)
 					continue;
 
-				gameObject->render(renderer);				
+				gameObject->render(renderer);
 			}
 		}
 	}
@@ -87,6 +89,104 @@ namespace cat::game::scene
 	void scene_manager::clear()
 	{
 		m_scene->destroy();
-		INFO("[SceneManager] Current scene deleted");
+		INFO("[Scene Manager] Current scene deleted");
+	}
+
+	scene_go_storage::iterator scene_manager::find_game_object_str(const std::string& name)
+	{
+		scene_go_storage::iterator it = std::find_if(
+			m_scene->m_storage.begin(),
+			m_scene->m_storage.end(),
+			[&name](std::pair<std::pair<std::string, uuids::uuid>,
+				std::shared_ptr<game::game_object>> const& elem) {
+					return elem.first.first == name;
+			});
+
+		return it;
+	}
+
+	scene_go_storage::iterator scene_manager::find_game_object_uuid(const uuids::uuid& uuid)
+	{
+		scene_go_storage::iterator it = std::find_if(
+			m_scene->m_storage.begin(),
+			m_scene->m_storage.end(),
+			[&uuid](std::pair<std::pair<std::string, uuids::uuid>,
+				std::shared_ptr<game::game_object>> const& elem) {
+					return elem.first.second == uuid;
+			});
+
+		return it;
+	}
+
+	// FIX ME:  Reducing perfomance
+	//			Need to make better algorithm, currently it is very bad way to do this.
+
+	std::string scene_manager::make_name_unique(const std::string& name)
+	{
+		auto newName = std::string();
+
+		// How much objects we found with the same name
+		auto count = 0;
+
+		scene_go_storage::iterator it = { };
+
+		while (true)
+		{
+			count != 0 ? newName = name + std::to_string(count) : newName = name;
+			it = find_game_object_str(newName);
+
+			if (it == m_scene->m_storage.end())
+			{
+				break;
+			}
+
+			count++;
+		}
+
+		return newName;
+	}
+
+	void scene_manager::rename(game::game_object* go, std::string new_name)
+	{
+		CAT_NO_IMPL();
+	}
+
+	void scene_manager::del(game::game_object* go)
+	{
+		if (go == nullptr)
+		{
+			ERR("[Scene Manager] Can't delete object because go is nullptr");
+			return;
+		}
+
+		auto object_uuid = go->get_uuid();
+		if (go->get_prefix() == -1 ||
+			go->get_type() == CAT_ENGINE_GAMEOBJECT_TYPE)						
+		{
+			ERR("[Scene Manager] Can't delete object Name: UUID: %s",
+				m_scene->m_name.c_str(),
+				go->get_name(),
+				object_uuid.get_id_str());
+		}
+
+		auto it = find_game_object_uuid(object_uuid.get_id());
+		if (it != m_scene->m_storage.end())
+		{
+			INFO("[Scene Manager] Delete object Name: UUID: %s",
+				m_scene->m_name.c_str(),
+				go->get_name(),
+				object_uuid.get_id_str());
+		
+			m_scene->m_storage.erase(it);
+		}
+		else
+		{
+			ERR("[Scene Manager] Object is not found in scene storage");
+		}
+	}
+
+	void scene_manager::replace(game::game_object* go_first, game::game_object* go_second)
+	{
+		CAT_NO_IMPL();
 	}
 }

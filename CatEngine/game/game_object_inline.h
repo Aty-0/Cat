@@ -23,7 +23,7 @@ namespace cat::game
 
 		VERB("game_object::add_component %s -> %s", get_name().c_str(), component->get_name().c_str());
 
-		m_components.push_back(std::make_pair(std::make_pair(component->get_uuid(), std::type_index(typeid(T))), component));
+		m_components.push_back(std::make_pair(std::make_pair(component->m_uuid->get_id(), std::type_index(typeid(T))), component));
 		return component;
 	}
 
@@ -37,7 +37,7 @@ namespace cat::game
 
 		std::type_index type = typeid(T);
 
-		components_list::iterator it = std::find_if(m_components.begin(), m_components.end(), [&type](std::pair<std::pair<boost::uuids::uuid,
+		components_list::iterator it = std::find_if(m_components.begin(), m_components.end(), [&type](std::pair<std::pair<uuids::uuid,
 			std::type_index>, components::component*> const& elem)
 			{
 				// If we try to get object based on component type
@@ -72,7 +72,7 @@ namespace cat::game
 		component = new T();
 		component->set_owner(this);
 		component->set_name(core::utils::get_class_name_string(component));
-		component->generate_uuid();
+		component->m_uuid->set_id(component->make_new());
 
 		// When name and owner is setted
 		component->onCreate();
@@ -90,26 +90,26 @@ namespace cat::game
 
 		component->set_owner(this);
 		component->set_name(core::utils::get_class_name_string(component));
-		component->generate_uuid();
+		component->m_uuid.set(component->m_uuid.make_new());
 
 		// When name and owner is setted
 		component->onCreate();
 
-		m_components.push_back(std::make_pair(std::make_pair(component->get_uuid(), std::type_index(typeid(*component))), component));
+		m_components.push_back(std::make_pair(std::make_pair(component->m_uuid.get_id(), std::type_index(typeid(*component))), component));
 
 		VERB("game_object::create_component %s -> %s", get_name().c_str(), component->get_name().c_str());
 		return component;
 	}
 
 	template<typename T>
-	inline [[nodiscard]] T* game_object::get_component()
+	inline T* game_object::get_component()
 	{
 		static_assert(!std::is_base_of<T, components::component>::value || std::is_same<T, components::component>::value,
 			"This is not Component or Component based class");
 
 		std::type_index type = typeid(T);
 
-		components_list::iterator it = std::find_if(m_components.begin(), m_components.end(), [&type](std::pair<std::pair<boost::uuids::uuid,
+		components_list::iterator it = std::find_if(m_components.begin(), m_components.end(), [&type](std::pair<std::pair<uuids::uuid,
 			std::type_index>, components::component*> const& elem)
 			{
 				// If we try to get object based on component type
@@ -130,7 +130,7 @@ namespace cat::game
 	}
 
 	template<typename T>
-	inline [[nodiscard]] T* game_object::get_component_in_children()
+	inline T* game_object::get_component_in_children()
 	{
 		static_assert(!std::is_base_of<T, components::component>::value || std::is_same<T, components::component>::value,
 			"This is not Component or Component based class");
@@ -144,7 +144,7 @@ namespace cat::game
 	}
 
 	template<typename T>
-	inline [[nodiscard]] T* game_object::get_component_in_parent()
+	inline T* game_object::get_component_in_parent()
 	{
 		static_assert(!std::is_base_of<T, components::component>::value || std::is_same<T, components::component>::value,
 			"This is not Component or Component based class");

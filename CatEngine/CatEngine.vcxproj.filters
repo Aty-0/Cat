@@ -66,7 +66,7 @@
     <ClInclude Include="libs\tinyxml2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="core\uuid.h">
+    <ClInclude Include="core\uuid_object.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="graphics\renderer.h">
@@ -135,13 +135,7 @@
     <ClInclude Include="game\scene\scene_manager_inline.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="game\scene\scene_inline.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="game\components\test_comp_rotator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="scripts\scripts_core.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="graphics\texture.h">
@@ -154,6 +148,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="graphics\frame_buffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\uuid.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\script_core.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\editor\filesystem_tree_ui.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -191,7 +194,7 @@
     <ClCompile Include="libs\imgui\imgui_impl_glfw.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="core\uuid.cpp">
+    <ClCompile Include="core\uuid_object.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="graphics\renderer.cpp">
@@ -239,13 +242,16 @@
     <ClCompile Include="game\components\test_comp_rotator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\scripts_core.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="graphics\texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="graphics\frame_buffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\script_core.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\editor\filesystem_tree_ui.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

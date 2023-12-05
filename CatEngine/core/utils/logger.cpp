@@ -7,6 +7,7 @@
 #pragma warning(disable:4996)
 
 // TODO: macro ifdef windows
+
 #include <windows.h>
 
 #define VA_LIST_OUTPUT(buffer) 	va_list args; \
@@ -14,13 +15,17 @@
 		std::vsnprintf(buffer, sizeof(buffer), text, args); \
 		va_end(args);	\
 
+#include "graphics/renderer.h"
 
 namespace cat::core::utils
 {
+	// fix me:
+	static ImGuiTextBuffer console_text_buffer;
+
 	logger::logger() : m_linecount(0), m_log_file(), m_level()
 	{
-		m_level = logger::log_level::NONE;
-
+		m_level = logger::log_level::VERB;
+		
 		create_log_file();
 	}
 
@@ -137,6 +142,9 @@ namespace cat::core::utils
 		// If we are have debuging output
 		OutputDebugString(line.c_str());
 
+		m_scroll_to_bottom = true;
+		console_text_buffer.append(line.c_str());
+
 		line.clear();
 		memset(buffer, 0, sizeof(buffer));
 
@@ -145,5 +153,18 @@ namespace cat::core::utils
 		{
 			throw std::runtime_error(std::string(buffer));
 		}
+	}
+
+	void logger::render_console()
+	{
+		ImGui::Begin("Console");
+		
+		ImGui::TextUnformatted(console_text_buffer.begin());
+		
+		if (m_scroll_to_bottom)
+			ImGui::SetScrollY(ImGui::GetScrollMaxY() + 10.0f);
+
+		m_scroll_to_bottom = false;
+		ImGui::End();
 	}
 }

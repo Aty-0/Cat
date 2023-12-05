@@ -1,6 +1,6 @@
 #pragma once
 #include "core/common.h"
-#include "core/uuid.h"
+#include "core/uuid_object.h"
 #include "game/components/transform.h"
 
 
@@ -17,8 +17,8 @@ namespace cat::graphics
 
 namespace cat::game
 {
-	using components_list = std::vector<std::pair<std::pair<boost::uuids::uuid, std::type_index>, components::component*>>;
-	class CATENGINE_API game_object : public core::uuid
+	using components_list = std::vector<std::pair<std::pair<uuids::uuid, std::type_index>, components::component*>>;
+	class CATENGINE_API game_object
 	{
 	public:
 		game_object();
@@ -41,6 +41,7 @@ namespace cat::game
 
 		[[nodiscard]] inline components::transform* get_transform() const;
 		[[nodiscard]] inline components_list get_components() const;
+		[[nodiscard]] inline core::uuid_object get_uuid() const;
 
 	private:
 		std::string m_name;
@@ -49,7 +50,8 @@ namespace cat::game
 		bool m_enabled;
 		bool m_visible;
 		components::transform* m_transform;
-		
+		core::uuid_object m_uuid;
+
 	public:
 		template<typename T>
 		T* add_component(T* component, std::uint32_t priority = 0);

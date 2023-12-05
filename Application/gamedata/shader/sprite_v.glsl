@@ -27,9 +27,11 @@ struct drawable_t
 uniform drawable_t drawable;
 
 out vec4 drawable_color;
+out vec2 drawable_uv;
 
 void main()
 {
     gl_Position = transform.projection * transform.view * transform.world * vec4(aPos, 1.0);
     drawable_color = drawable.color;
+    drawable_uv = texCoord;
 }

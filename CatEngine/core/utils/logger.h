@@ -23,8 +23,9 @@ namespace cat::core::utils
 
 		 void				print(logger::log_level level, const char* text, ...);
 		 void				create_log_file();
-	private:
 
+		 void				render_console();
+	private:
 		 inline const char* get_level_str(logger::log_level level) const;
 		 // simple parsing of args to string 
 		 inline const char*	parse_args_to_string(const char* text, ...);
@@ -36,6 +37,8 @@ namespace cat::core::utils
 		 std::ofstream	m_log_file;
 		 log_level		m_level;
 		 std::string	m_log_file_path;
+
+		 bool				m_scroll_to_bottom;
 	};
 	
 

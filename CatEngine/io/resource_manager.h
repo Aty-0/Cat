@@ -22,6 +22,7 @@ namespace cat::io
 		template<typename data_type>
 		inline std::int64_t size(const char* name, std::vector<const char*> ext);
 
+		void move_files_to_data(std::int32_t count, const char** paths);
 	private:
 		// TODO: get default file when we are can't find needed
 	
@@ -29,8 +30,8 @@ namespace cat::io
 		// if it not exist you will get "%type_name_folder%/default"		
 		std::ifstream get_file(const char* type, const char* name, std::vector<const char*> ext);
 
-
-		const std::string DATA_NAME = "gamedata";
+	public:
+		static const std::string DATA_NAME;
 	};
 }
 

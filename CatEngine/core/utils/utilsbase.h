@@ -1,9 +1,15 @@
 #pragma once
 
 // TODO: Get rid of this macros, make universal function 
-#define CAT_ASSERT(a) \
-	if(!(a)) \
-		FATAL("Assertion failed %s\n File:%s\n Line:%d", #a,  __FILE__, __LINE__); \
+
+// Allows assert fails 
+//#define CUTE_CAT_ASSERT
+#ifdef CUTE_CAT_ASSERT
+	#define CAT_ASSERT(a) if(!(a)) ERR("Assertion failed %s\n File:%s\n Line:%d", #a,  __FILE__, __LINE__); 
+#else 
+	#define CAT_ASSERT(a) if(!(a)) FATAL("Assertion failed %s\n File:%s\n Line:%d", #a, __FILE__, __LINE__); 
+#endif 
+
 
 #define N(X,Y) X##Y
 #define N2(X,Y) N(X,Y)

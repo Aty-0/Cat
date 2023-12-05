@@ -19,7 +19,7 @@ namespace cat::graphics
 	void frame_buffer::gen()
 	{
 		glGenFramebuffers(1, &m_fbo);
-		glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+		bind();
 
 		m_frame_texture->create_framebuffer_texture();
 
@@ -51,9 +51,12 @@ namespace cat::graphics
 
 	void frame_buffer::clear()
 	{
-		glDeleteFramebuffers(1, &m_fbo);
-		glDeleteRenderbuffers(1, &m_rbo);	
-		m_frame_texture->clear();
+		if (m_fbo)
+		{
+			glDeleteFramebuffers(1, &m_fbo);
+			glDeleteRenderbuffers(1, &m_rbo);	
+			m_frame_texture->clear();
+		}
 	}
 
 	texture* frame_buffer::get_texture() const
