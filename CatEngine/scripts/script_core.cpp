@@ -18,6 +18,7 @@
 #include "game/components/drawable.h"
 #include "game/components/test_comp_rotator.h"
 #include "game/components/camera.h"
+#include "game/components/physic_body.h"
 
 #include "graphics/texture.h"
 #include "graphics/shader.h"
@@ -236,11 +237,13 @@ namespace cat::scripts
 			"create_component_camera", &game::game_object::create_component<game::components::camera>,
 			"create_component_test_comp_rotator", &game::game_object::create_component<game::components::test_comp_rotator>,
 			"create_component_drawable", &game::game_object::create_component<game::components::drawable>,
+			"create_component_physic_body", &game::game_object::create_component<game::components::physic_body>,
 			
-			"get_component_basic", & game::game_object::get_component<game::components::component>,
-			"get_component_camera", & game::game_object::get_component<game::components::camera>,
-			"get_component_test_comp_rotator", & game::game_object::get_component<game::components::test_comp_rotator>,
-			"get_component_drawable", & game::game_object::get_component<game::components::drawable>
+			"get_component_basic", &game::game_object::get_component<game::components::component>,
+			"get_component_camera", &game::game_object::get_component<game::components::camera>,
+			"get_component_test_comp_rotator", &game::game_object::get_component<game::components::test_comp_rotator>,
+			"get_component_drawable", &game::game_object::get_component<game::components::drawable>,
+			"get_component_physic_body", &game::game_object::get_component<game::components::physic_body>
 
 
 		);			
@@ -257,6 +260,8 @@ namespace cat::scripts
 		// TODO:
 		api.new_usertype<game::components::camera>("camera");
 		api.new_usertype<game::components::test_comp_rotator>("test_comp_rotator");
+
+		api.new_usertype<game::components::physic_body>("physic_body");
 
 		// TODO:
 		api.new_usertype<game::components::drawable>("drawable",

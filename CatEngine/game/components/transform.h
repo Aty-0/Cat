@@ -7,11 +7,20 @@ namespace cat::game
     class game_object;
 }
 
+namespace cat::physics
+{
+    class physics_core;
+}
+
 namespace cat::game::components
 {
+    class physic_body;
     class CATENGINE_API transform : public component
     {
     public:
+        friend physic_body;
+        friend physics::physics_core;
+
         transform();
         ~transform();
 
@@ -43,6 +52,7 @@ namespace cat::game::components
         core::callback_storage onPositionChanged;
         core::callback_storage onRotationChanged;
         core::callback_storage onScaleChanged;
+
     private:        
         glm::vec3 m_position;
         glm::vec3 m_rotation;

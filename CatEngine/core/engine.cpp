@@ -5,6 +5,7 @@
 #include "core/utils/logger.h"
 #include "core/utils/game_time.h"
 #include "core/callback_storage.h"
+#include "physics/physics_core.h"
 #include "graphics/renderer.h"
 #include "io/resource_manager.h"
 
@@ -31,45 +32,61 @@ namespace cat::core
 		if (!init_GLFW())
 			return false;
 
+		VERB("Initialize game window...");
 		m_window = core::game_window::get_instance();
 		if (!m_window->create())
 			return false;
 
+		VERB("Initialize renderer...");
 		m_renderer = graphics::renderer::get_instance();		
 		if (!m_renderer->init())
 			return false;
 
 
+		VERB("Initialize input manager...");
 		m_input = core::input_manager::get_instance();
 		m_input->init();
 
-		// add exit hotkey
-		m_input->add_listener(input_key_code::KEYBOARD_ESCAPE, input_key_state::Press, input_device::Keyboard, 
-			std::bind(&core::engine::destroy, this));
-		m_input->add_listener(input_key_code::KEYBOARD_F8, input_key_state::Press, input_device::Keyboard,
-			std::bind(&graphics::renderer::toggle_imgui_rendering, m_renderer));
-
 		m_time = core::utils::game_time::get_instance();
-		INFO("Run loop...");
 
-
+		VERB("Initialize resource manager...");
 		m_rm = io::resource_manager::get_instance();
+		
+		// TODO: Remove it 
+		VERB("Allocate global update callback");
+		m_on_global_update = new core::callback_storage();
 
+		VERB("Initialize physics core...");
+		const static auto pc = physics::physics_core::get_instance();
+		pc->init();
+
+		VERB("Initialize post process in render...");
+		m_renderer->init_post_process();
+		
+		VERB("Run scene manager...");
 		m_sm = game::scene::scene_manager::get_instance();
 		m_sm->create();
 
-		m_on_global_update = new core::callback_storage();
-
-		m_renderer->init_post_process();
 		
+		VERB("Run main script and initialize script core...");
 		const static auto sc = scripts::script_core::get_instance();
 		CAT_ASSERT(sc->run("main"));			
 		sc->run_func("main", "cat_main");
 
+		VERB("Add onImGuiRender callbacks editor windows...");
 		m_renderer->onImGuiRender.add(std::bind(&core::utils::logger::render_console, core::utils::logger::get_instance()));
 		m_renderer->onImGuiRender.add(std::bind(&core::editor::filesystem_tree_ui::render, core::editor::filesystem_tree_ui::get_instance()));
+		
+		VERB("Add engine input callbacks...");
+		// add exit hotkey
+		m_input->add_listener(input_key_code::KEYBOARD_ESCAPE, input_key_state::Press, input_device::Keyboard,
+			std::bind(&core::engine::destroy, this));
+		m_input->add_listener(input_key_code::KEYBOARD_F8, input_key_state::Press, input_device::Keyboard,
+			std::bind(&graphics::renderer::toggle_imgui_rendering, m_renderer));
+
 
 		// if window is active we are call onLoop function
+		INFO("Run loop...");
 		while (!m_window->is_close())
 		{
 			on_loop();

@@ -1,6 +1,7 @@
 #include "scene_manager.h"
 #include "game/components/camera.h"
 #include "graphics/renderer.h"
+#include "physics/physics_core.h"
 
 namespace cat::game::scene
 {
@@ -76,6 +77,9 @@ namespace cat::game::scene
 			for (const auto& object : m_scene->get_storage())
 			{
 				object.second.get()->update(DeltaTime);
+				// physics update 
+				static const auto pc = physics::physics_core::get_instance();
+				pc->update(DeltaTime, object.second.get());
 			}
 		}
 	}
