@@ -25,10 +25,9 @@ namespace cat::physics
 		[[nodiscard]] inline JPH::PhysicsSystem* getPhysicsSystem();
 
 	private:
-		// todo: increases when it will be needed
-		const std::uint32_t m_maxBodies = 1024;
-		const std::uint32_t m_maxContactConstraints = 1024;
-		const std::uint32_t m_maxBodyPairs = 1024;
+		const std::uint32_t m_maxBodies = 10240;
+		const std::uint32_t m_maxContactConstraints = 20480;
+		const std::uint32_t m_maxBodyPairs = 65536;
 		const std::uint32_t m_numBodyMutexes = 0;
 		
 		JPH::PhysicsSystem* m_physics_system;

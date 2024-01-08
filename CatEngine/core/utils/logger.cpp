@@ -57,10 +57,10 @@ namespace cat::core::utils
 		}
 
 		auto name = std::string();
-
+		auto time = get_time(true);
 		// set name for log file
 		name.append("CatLog-");
-		name.append(get_time(true));
+		name.append(time);
 		name.append(".log");
 
 		m_log_file_path = "Logs/" + name;
@@ -116,7 +116,7 @@ namespace cat::core::utils
 		line.append("[" + std::to_string(m_linecount) + "] ");
 
 		// Add to line corrent time
-		line.append(get_time(false));
+		line.append(get_time(true));
 
 		// Add type and text from buffer
 		auto message = " [" + std::string(get_level_str(level)) + "]  " + std::string(buffer) + "\n";

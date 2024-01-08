@@ -160,13 +160,15 @@ namespace cat::game::components
 
     const char* transform::to_string() const
     {
-        return core::utils::to_str("pos: %f %f %f rot: %f %f %f scale: %f %f %f vel: %f %f %f sc_factor: %f %f %f",
+        auto text = core::utils::to_str("pos: %f %f %f rot: %f %f %f scale: %f %f %f vel: %f %f %f sc_factor: %f %f %f",
             m_position.x, m_position.y, m_position.z,
             m_rotation.x, m_rotation.y, m_rotation.z,
             m_scale.x, m_scale.y, m_scale.z,
             m_velocity.x, m_velocity.y, m_velocity.z,
             m_scale_factor.x, m_scale_factor.y, m_scale_factor.z
         );
+
+        return text;
     }
 
 }

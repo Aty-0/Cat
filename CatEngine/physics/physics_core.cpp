@@ -39,8 +39,8 @@ namespace cat::physics
 
 		const auto id = phbody->getBodyId();
 
-		//m_physics_system->OptimizeBroadPhase();
 		std::int32_t step = 0;
+		m_physics_system->OptimizeBroadPhase();
 		if (m_body_interface->IsActive(id))
 		{			
 			step++;
@@ -48,22 +48,22 @@ namespace cat::physics
 			// Output current position and velocity of the sphere
 			JPH::RVec3 position = m_body_interface->GetCenterOfMassPosition(id);
 			JPH::Vec3 velocity = m_body_interface->GetLinearVelocity(id);
+			JPH::Vec3 rotation_in_euler = m_body_interface->GetRotation(id).GetEulerAngles();
+			
 			go->get_transform()->m_position = { position.GetX(), position.GetY(), position.GetZ() };
 			go->get_transform()->m_velocity = { velocity.GetX(), velocity.GetY(), velocity.GetZ() };
+			go->get_transform()->m_rotation = { rotation_in_euler.GetX(), rotation_in_euler.GetY(), rotation_in_euler.GetZ() };
 			
 			//VERB("step %i posx: %f posy: %f posz: %f velx: %f vely: %f velz: %f", step,
 			//	position.GetX(), position.GetY(), position.GetZ(),
 			//	velocity.GetX(), velocity.GetY(), velocity.GetZ());
 
-	
-			// If you take larger steps than 1 / 60th of a second you need to do multiple collision steps in order to keep the simulation stable. 
-			// Do 1 collision step per 1 / 60th of a second (round up).
-			const auto collSteps = 3;
+			const auto collSteps = 1.0f;
 			const auto phDeltaTime = deltaTime; 
 
 			
 			// FIXME: 
-			static JPH::TempAllocatorImpl alloc(10 * 1024 * 1024);
+			static JPH::TempAllocatorImpl alloc(32 * 1024 * 1024);
 			static JPH::JobSystemThreadPool threadPool(JPH::cMaxPhysicsJobs,
 				JPH::cMaxPhysicsBarriers, std::thread::hardware_concurrency() - 1);
 

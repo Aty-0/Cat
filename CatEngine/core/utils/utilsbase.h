@@ -29,11 +29,11 @@ namespace cat::core::utils
 		}
 	}
 
-	// simple parsing of args to string 
 	inline const char* to_str(const char* text, ...)
 	{
-		const auto BUFFER_SIZE = 1048;
+		const auto BUFFER_SIZE = 2048 * 4;
 		char buffer[BUFFER_SIZE];
+
 		va_list args;
 		va_start(args, text);
 		std::vsnprintf(buffer, sizeof(buffer), text, args);

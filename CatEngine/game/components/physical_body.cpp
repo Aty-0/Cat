@@ -34,7 +34,7 @@ namespace cat::game::components
 	{
 		static const auto pc = physics::physics_core::get_instance();
 		const auto transform = get_owner()->get_transform();
-		pc->getBodyInterface()->SetLinearVelocity(m_id, { transform->m_position.x, transform->m_position.y, transform->m_position.z });
+		pc->getBodyInterface()->SetLinearVelocity(m_id, { transform->m_velocity.x, transform->m_velocity.y, transform->m_velocity.z });
 	}
 
 	void physical_body::updateBodyInterfacePosition()
@@ -81,7 +81,7 @@ namespace cat::game::components
 		
 		// We can switch object types
 		box_creation_settings.mAllowDynamicOrKinematic = true;
-
+		
 		m_body = pc->getBodyInterface()->CreateBody(box_creation_settings);
 		CAT_ASSERT(m_body != nullptr);
 
@@ -95,7 +95,7 @@ namespace cat::game::components
 		transform->onVelocityChanged.add(std::bind(&physical_body::updateBodyInterfaceVelocity, this));
 	}
 
-	[[nodiscard]] inline JPH::BodyID physical_body::getBodyId() const
+	JPH::BodyID physical_body::getBodyId() const
 	{
 		return m_id;
 	}
