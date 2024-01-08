@@ -18,7 +18,7 @@
 #include "game/components/drawable.h"
 #include "game/components/test_comp_rotator.h"
 #include "game/components/camera.h"
-#include "game/components/physic_body.h"
+#include "game/components/physical_body.h"
 
 #include "graphics/texture.h"
 #include "graphics/shader.h"
@@ -228,22 +228,19 @@ namespace cat::scripts
 			"get_uuid", &game::game_object::get_uuid,
 			"is_enabled", &game::game_object::is_enabled,
 			"is_visible", &game::game_object::is_visible,
-			// TODO: get_components
-			
-			// TODO: components
-			 
-			//		 Can we use table for this ?
+
+			// TODO: Can we use table for this ?
 			"create_component_basic", &game::game_object::create_component<game::components::component>,
 			"create_component_camera", &game::game_object::create_component<game::components::camera>,
 			"create_component_test_comp_rotator", &game::game_object::create_component<game::components::test_comp_rotator>,
 			"create_component_drawable", &game::game_object::create_component<game::components::drawable>,
-			"create_component_physic_body", &game::game_object::create_component<game::components::physic_body>,
+			"create_component_physical_body", &game::game_object::create_component<game::components::physical_body>,
 			
 			"get_component_basic", &game::game_object::get_component<game::components::component>,
 			"get_component_camera", &game::game_object::get_component<game::components::camera>,
 			"get_component_test_comp_rotator", &game::game_object::get_component<game::components::test_comp_rotator>,
 			"get_component_drawable", &game::game_object::get_component<game::components::drawable>,
-			"get_component_physic_body", &game::game_object::get_component<game::components::physic_body>
+			"get_component_physical_body", &game::game_object::get_component<game::components::physical_body>
 
 
 		);			
@@ -261,7 +258,13 @@ namespace cat::scripts
 		api.new_usertype<game::components::camera>("camera");
 		api.new_usertype<game::components::test_comp_rotator>("test_comp_rotator");
 
-		api.new_usertype<game::components::physic_body>("physic_body");
+		api.new_enum("motion_type",
+			"Static", game::components::physical_body::motion_type::Static,
+			"Dynamic", game::components::physical_body::motion_type::Dynamic,
+			"Kinematic", game::components::physical_body::motion_type::Kinematic);
+
+		api.new_usertype<game::components::physical_body>("physic_body",
+			"setMotionType", &game::components::physical_body::setMotionType);
 
 		// TODO:
 		api.new_usertype<game::components::drawable>("drawable",
@@ -273,6 +276,7 @@ namespace cat::scripts
 			"set_position", &game::components::transform::set_position,
 			"set_rotation", &game::components::transform::set_rotation,
 			"set_scale", &game::components::transform::set_scale,
+			"set_velocity", &game::components::transform::set_velocity,
 			"is_child_of", &game::components::transform::is_child_of,
 			"set_parent", &game::components::transform::set_parent,
 			"set_scale_factor", &game::components::transform::set_scale_factor,
@@ -283,6 +287,7 @@ namespace cat::scripts
 			"get_parent", &game::components::transform::get_parent,
 			"get_position", &game::components::transform::get_position,
 			"get_rotation", &game::components::transform::get_rotation,
+			"get_velocity", &game::components::transform::get_velocity,
 			"get_scale", &game::components::transform::get_scale,
 			"get_scale_factor", &game::components::transform::get_scale_factor
 		);

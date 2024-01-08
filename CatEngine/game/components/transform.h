@@ -14,11 +14,11 @@ namespace cat::physics
 
 namespace cat::game::components
 {
-    class physic_body;
+    class physical_body;
     class CATENGINE_API transform : public component
     {
     public:
-        friend physic_body;
+        friend physical_body;
         friend physics::physics_core;
 
         transform();
@@ -27,6 +27,7 @@ namespace cat::game::components
         void                reset();
 
         void                set_position(glm::vec3 pos);
+        void                set_velocity(glm::vec3 vel);
         void                set_rotation(glm::vec3 rot);
         void                set_scale(glm::vec3 scale);
         void                set_scale_factor(glm::vec3 scale);
@@ -34,9 +35,12 @@ namespace cat::game::components
 
         [[nodiscard]] inline glm::vec3    get_position()  const;
         [[nodiscard]] inline glm::vec3    get_rotation()  const;
+        [[nodiscard]] inline glm::vec3    get_velocity()  const;
         [[nodiscard]] inline glm::vec3    get_scale()     const;
         [[nodiscard]] inline glm::vec3    get_scale_factor() const;
         [[nodiscard]] inline glm::mat4&   get_world_matrix();
+       
+        [[nodiscard]] inline const char*  to_string() const;
 
         [[nodiscard]] inline game_object* get_child() const;
         [[nodiscard]] inline game_object* get_parent() const;
@@ -45,6 +49,8 @@ namespace cat::game::components
         [[nodiscard]] inline bool is_child_of(game_object* go) const;
 
         [[nodiscard]] inline glm::mat4 get_matrix_transformation();
+
+
     protected:
         void set_child(game_object* go);
 
@@ -52,10 +58,12 @@ namespace cat::game::components
         core::callback_storage onPositionChanged;
         core::callback_storage onRotationChanged;
         core::callback_storage onScaleChanged;
+        core::callback_storage onVelocityChanged;
 
     private:        
         glm::vec3 m_position;
         glm::vec3 m_rotation;
+        glm::vec3 m_velocity;
         glm::vec3 m_scale;
         glm::vec3 m_scale_factor;
         glm::mat4 m_world_matrix;

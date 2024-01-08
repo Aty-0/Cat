@@ -37,6 +37,7 @@ namespace cat::game::scene
 		{
 			ImGui::Text("Name %s", object.second->get_name().c_str());
 			ImGui::Text("uuid %s", object.second->get_uuid().get_id_str().c_str());
+			ImGui::Text("%s", object.second->get_transform()->to_string());
 		}
 
 

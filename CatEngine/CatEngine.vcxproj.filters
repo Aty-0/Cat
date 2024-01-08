@@ -162,7 +162,7 @@
     <ClInclude Include="physics\physics_core.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="game\components\physic_body.h">
+    <ClInclude Include="game\components\physical_body.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="physics\bp_layer_interfacу.h">
@@ -275,7 +275,7 @@
     <ClCompile Include="physics\physics_core.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="game\components\physic_body.cpp">
+    <ClCompile Include="game\components\physical_body.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="physics\bp_layer_interfacу.cpp">

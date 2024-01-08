@@ -2,7 +2,7 @@
 #include "core/utils/logger.h"
 
 #include "game/game_object.h"
-#include "game/components/physic_body.h"
+#include "game/components/physical_body.h"
 
 #include "physics/utils.h"
 #include "physics/bp_layer_interfacу.h"
@@ -33,7 +33,7 @@ namespace cat::physics
 
 	void physics_core::update(float deltaTime, game::game_object* go)
 	{
-		const auto phbody = go->get_component<game::components::physic_body>();
+		const auto phbody = go->get_component<game::components::physical_body>();
 		if (phbody == nullptr)
 			return;
 
@@ -44,10 +44,12 @@ namespace cat::physics
 		if (m_body_interface->IsActive(id))
 		{			
 			step++;
+			
 			// Output current position and velocity of the sphere
 			JPH::RVec3 position = m_body_interface->GetCenterOfMassPosition(id);
 			JPH::Vec3 velocity = m_body_interface->GetLinearVelocity(id);
 			go->get_transform()->m_position = { position.GetX(), position.GetY(), position.GetZ() };
+			go->get_transform()->m_velocity = { velocity.GetX(), velocity.GetY(), velocity.GetZ() };
 			
 			//VERB("step %i posx: %f posy: %f posz: %f velx: %f vely: %f velz: %f", step,
 			//	position.GetX(), position.GetY(), position.GetZ(),
@@ -56,16 +58,17 @@ namespace cat::physics
 	
 			// If you take larger steps than 1 / 60th of a second you need to do multiple collision steps in order to keep the simulation stable. 
 			// Do 1 collision step per 1 / 60th of a second (round up).
-			const int cCollisionSteps = 1;
-			const float cDeltaTime = 1.0f / (deltaTime * 1000000.0f);
+			const auto collSteps = 3;
+			const auto phDeltaTime = deltaTime; 
 
 			
 			// FIXME: 
 			static JPH::TempAllocatorImpl alloc(10 * 1024 * 1024);
 			static JPH::JobSystemThreadPool threadPool(JPH::cMaxPhysicsJobs,
 				JPH::cMaxPhysicsBarriers, std::thread::hardware_concurrency() - 1);
+
 			// Step the world
-			m_physics_system->Update(cDeltaTime, cCollisionSteps, &alloc, &threadPool);
+			m_physics_system->Update(phDeltaTime, collSteps, &alloc, &threadPool);
 		}
 
 	}

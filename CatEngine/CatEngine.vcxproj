@@ -37,7 +37,7 @@
     <ClInclude Include="core\utils\game_time.h" />
     <ClInclude Include="core\editor\filesystem_tree_ui.h" />
     <ClInclude Include="game\components\camera.h" />
-    <ClInclude Include="game\components\physic_body.h" />
+    <ClInclude Include="game\components\physical_body.h" />
     <ClInclude Include="game\components\component.h" />
     <ClInclude Include="game\components\drawable.h" />
     <ClInclude Include="game\components\test_comp_rotator.h" />
@@ -86,7 +86,7 @@
     <ClCompile Include="core\utils\game_time.cpp" />
     <ClCompile Include="core\editor\filesystem_tree_ui.cpp" />
     <ClCompile Include="game\components\camera.cpp" />
-    <ClCompile Include="game\components\physic_body.cpp" />
+    <ClCompile Include="game\components\physical_body.cpp" />
     <ClCompile Include="game\components\component.cpp" />
     <ClCompile Include="game\components\drawable.cpp" />
     <ClCompile Include="game\components\test_comp_rotator.cpp" />
