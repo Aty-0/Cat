@@ -19,11 +19,15 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="physics\object_layer_pair_filter.h" />
+    <ClInclude Include="physics\object_vs_bp_layer_filter.h" />
+    <ClInclude Include="physics\bp_layer_interfacу.h" />
     <ClInclude Include="core\common.h" />
     <ClInclude Include="core\engine.h" />
     <ClInclude Include="core\engine_api.h" />
     <ClInclude Include="core\input_manager.h" />
     <ClInclude Include="core\callback_storage.h" />
+    <ClInclude Include="physics\physics_core.h" />
     <ClInclude Include="core\utils\key_code.h" />
     <ClInclude Include="core\utils\logger.h" />
     <ClInclude Include="core\game_window.h" />
@@ -33,6 +37,7 @@
     <ClInclude Include="core\utils\game_time.h" />
     <ClInclude Include="core\editor\filesystem_tree_ui.h" />
     <ClInclude Include="game\components\camera.h" />
+    <ClInclude Include="game\components\physical_body.h" />
     <ClInclude Include="game\components\component.h" />
     <ClInclude Include="game\components\drawable.h" />
     <ClInclude Include="game\components\test_comp_rotator.h" />
@@ -66,9 +71,13 @@
     <ClInclude Include="libs\tinyxml2.h" />
     <ClInclude Include="graphics\renderer.h" />
     <ClInclude Include="libs\uuid.h" />
+    <ClInclude Include="physics\utils.h" />
     <ClInclude Include="scripts\script_core.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="physics\object_layer_pair_filter.cpp" />
+    <ClCompile Include="physics\object_vs_bp_layer_filter.cpp" />
+    <ClCompile Include="physics\bp_layer_interfacу.cpp" />
     <ClCompile Include="core\engine.cpp" />
     <ClCompile Include="core\input_manager.cpp" />
     <ClCompile Include="core\utils\logger.cpp" />
@@ -77,6 +86,7 @@
     <ClCompile Include="core\utils\game_time.cpp" />
     <ClCompile Include="core\editor\filesystem_tree_ui.cpp" />
     <ClCompile Include="game\components\camera.cpp" />
+    <ClCompile Include="game\components\physical_body.cpp" />
     <ClCompile Include="game\components\component.cpp" />
     <ClCompile Include="game\components\drawable.cpp" />
     <ClCompile Include="game\components\test_comp_rotator.cpp" />
@@ -99,6 +109,8 @@
     <ClCompile Include="libs\imgui\imgui_tables.cpp" />
     <ClCompile Include="libs\imgui\imgui_widgets.cpp" />
     <ClCompile Include="graphics\renderer.cpp" />
+    <ClCompile Include="physics\layers.h" />
+    <ClCompile Include="physics\physics_core.cpp" />
     <ClCompile Include="scripts\script_core.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
       </ExcludedFromBuild>
@@ -211,19 +223,19 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;CATENGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);_DEBUG;CATENGINE_EXPORTS;_WINDOWS;WIN32;_USRDLL;JPH_PROFILE_ENABLED;JPH_DEBUG_RENDERER;JPH_FLOATING_POINT_EXCEPTIONS_ENABLED;JPH_USE_AVX2;JPH_USE_AVX;JPH_USE_SSE4_1;JPH_USE_SSE4_2;JPH_USE_LZCNT;JPH_USE_TZCNT;JPH_USE_F16C;JPH_USE_FMADD</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>../Libs/glm/;../Libs/glew-2.2.0/include/;../Libs/glfw/include/;../Libs/soil/include/;#(SolutionDir);../CatEngine/;../Libs/lua-5.4.6/src;../Libs/sol2</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Libs/glm/;../Libs/glew-2.2.0/include/;../Libs/glfw/include/;../Libs/soil/include/;#(SolutionDir);../CatEngine/;../Libs/lua-5.4.6/src;../Libs/sol2;../Libs/jolt/include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalLibraryDirectories>../Libs/glew-2.2.0/lib/Release/x64/;../Libs/boost/stage/lib/;../Libs/glfw/Libs/Debug;../Libs/soil/_debug/;../Libs/lua-5.4.6/lib;../Libs/sol2/lib/Debug</AdditionalLibraryDirectories>
-      <AdditionalDependencies>lua-5.4.4.lib;glew32s.lib;glew32.lib;soil.lib;glfw3.lib;opengl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../Libs/glew-2.2.0/lib/Release/x64/;../Libs/boost/stage/lib/;../Libs/glfw/Libs/Debug;../Libs/soil/_debug/;../Libs/lua-5.4.6/lib;../Libs/sol2/lib/Debug;../Libs/jolt/lib/Debug</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Jolt.lib;lua-5.4.4.lib;glew32s.lib;glew32.lib;soil.lib;glfw3.lib;opengl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
   </ItemDefinitionGroup>

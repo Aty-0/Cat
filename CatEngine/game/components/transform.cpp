@@ -7,6 +7,7 @@ namespace cat::game::components
     transform::transform() :
         m_position(VEC3_ZERO),
         m_rotation(VEC3_ZERO),
+        m_velocity(VEC3_ZERO),
         m_scale(VEC3_ONE),
         m_scale_factor(VEC3_ONE),
         m_world_matrix(glm::mat4(1.0f))
@@ -73,6 +74,7 @@ namespace cat::game::components
         onPositionChanged();
         onRotationChanged();
         onScaleChanged();
+        onVelocityChanged();
     }
 
 
@@ -130,6 +132,11 @@ namespace cat::game::components
         return m_scale;
     }
 
+    glm::vec3 transform::get_velocity()     const
+    {
+        return m_velocity;
+    }
+
     glm::mat4& transform::get_world_matrix()
     {
         return m_world_matrix;
@@ -144,4 +151,24 @@ namespace cat::game::components
     {
         return m_parent;
     }
+
+    void transform::set_velocity(glm::vec3 vel)
+    {
+        m_velocity = vel;
+        onVelocityChanged();
+    }
+
+    const char* transform::to_string() const
+    {
+        auto text = core::utils::to_str("pos: %f %f %f\nrot: %f %f %f\nscale: %f %f %f\nvel: %f %f %f\nsc_factor: %f %f %f",
+            m_position.x, m_position.y, m_position.z,
+            m_rotation.x, m_rotation.y, m_rotation.z,
+            m_scale.x, m_scale.y, m_scale.z,
+            m_velocity.x, m_velocity.y, m_velocity.z,
+            m_scale_factor.x, m_scale_factor.y, m_scale_factor.z
+        );
+
+        return text;
+    }
+
 }

@@ -2,7 +2,6 @@
 #include "core/engine.h"
 
 #include <filesystem>
-#include <cstdarg> 
 
 #pragma warning(disable:4996)
 
@@ -34,23 +33,14 @@ namespace cat::core::utils
 		m_log_file.close();
 	}
 
-	const char* logger::parse_args_to_string(const char* text, ...)
-	{
-		const auto BUFFER_SIZE = 2048;
-		char buffer[BUFFER_SIZE];
-		VA_LIST_OUTPUT(buffer);
-
-		return buffer;
-	}
-
 	std::string logger::get_time(bool printMinAndSec)
 	{
 		const auto _time = time(0);
 		const auto localTime = localtime(&_time);
 
 		const char* textparsed = printMinAndSec == true ?
-			parse_args_to_string("%i.%i.%i %i.%i.%i", (1900 + localTime->tm_year), (1 + localTime->tm_mon), localTime->tm_mday, localTime->tm_hour, localTime->tm_min, localTime->tm_sec) :
-			parse_args_to_string("%i.%i.%i", (1900 + localTime->tm_year), (1 + localTime->tm_mon), localTime->tm_mday);
+			to_str("%i.%i.%i %i.%i.%i", (1900 + localTime->tm_year), (1 + localTime->tm_mon), localTime->tm_mday, localTime->tm_hour, localTime->tm_min, localTime->tm_sec) :
+			to_str("%i.%i.%i", (1900 + localTime->tm_year), (1 + localTime->tm_mon), localTime->tm_mday);
 
 		return textparsed;
 	}
@@ -67,10 +57,10 @@ namespace cat::core::utils
 		}
 
 		auto name = std::string();
-
+		auto time = get_time(true);
 		// set name for log file
 		name.append("CatLog-");
-		name.append(get_time(true));
+		name.append(time);
 		name.append(".log");
 
 		m_log_file_path = "Logs/" + name;
@@ -126,7 +116,7 @@ namespace cat::core::utils
 		line.append("[" + std::to_string(m_linecount) + "] ");
 
 		// Add to line corrent time
-		line.append(get_time(false));
+		line.append(get_time(true));
 
 		// Add type and text from buffer
 		auto message = " [" + std::string(get_level_str(level)) + "]  " + std::string(buffer) + "\n";

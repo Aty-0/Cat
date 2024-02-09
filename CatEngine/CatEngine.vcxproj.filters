@@ -159,6 +159,24 @@
     <ClInclude Include="core\editor\filesystem_tree_ui.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="physics\physics_core.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="game\components\physical_body.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="physics\bp_layer_interfacу.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="physics\utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="physics\object_vs_bp_layer_filter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="physics\object_layer_pair_filter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="core\engine.cpp">
@@ -252,6 +270,24 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="core\editor\filesystem_tree_ui.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="physics\physics_core.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="game\components\physical_body.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="physics\bp_layer_interfacу.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="physics\layers.h">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="physics\object_vs_bp_layer_filter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="physics\object_layer_pair_filter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

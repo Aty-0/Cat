@@ -1,6 +1,7 @@
 #include "scene_manager.h"
 #include "game/components/camera.h"
 #include "graphics/renderer.h"
+#include "physics/physics_core.h"
 
 namespace cat::game::scene
 {
@@ -36,6 +37,7 @@ namespace cat::game::scene
 		{
 			ImGui::Text("Name %s", object.second->get_name().c_str());
 			ImGui::Text("uuid %s", object.second->get_uuid().get_id_str().c_str());
+			ImGui::Text("%s", object.second->get_transform()->to_string());
 		}
 
 
@@ -76,6 +78,9 @@ namespace cat::game::scene
 			for (const auto& object : m_scene->get_storage())
 			{
 				object.second.get()->update(DeltaTime);
+				// physics update 
+				static const auto pc = physics::physics_core::get_instance();
+				pc->update(DeltaTime, object.second.get());
 			}
 		}
 	}

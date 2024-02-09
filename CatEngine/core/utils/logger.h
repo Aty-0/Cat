@@ -24,11 +24,9 @@ namespace cat::core::utils
 		 void				print(logger::log_level level, const char* text, ...);
 		 void				create_log_file();
 
-		 void				render_console();
+		 void				render_console();		
 	private:
 		 inline const char* get_level_str(logger::log_level level) const;
-		 // simple parsing of args to string 
-		 inline const char*	parse_args_to_string(const char* text, ...);
 
 		 // get current time in string 
 		 inline std::string	get_time(bool printMinAndSec);
