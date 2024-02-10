@@ -16,7 +16,7 @@ namespace cat::graphics
 		}
 
 		bind();
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, _data.size() * sizeof(type), &_data[0], GL_STATIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, size() * sizeof(type), &_data[0], GL_STATIC_DRAW);
 
 		return true;
 	}

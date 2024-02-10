@@ -11,7 +11,7 @@ namespace cat::graphics
 
 		if (m_data == nullptr)
 		{
-			ERR("Index buffer -> data is nullptr");
+			ERR("Vertex buffer -> data is nullptr");
 			return false;
 		}
 
