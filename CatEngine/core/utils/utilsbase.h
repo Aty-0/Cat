@@ -15,6 +15,7 @@
 #define N2(X,Y) N(X,Y)
 
 #include <string>
+#include <cstdarg> 
 
 namespace cat::core::utils
 {	
@@ -26,6 +27,19 @@ namespace cat::core::utils
 			delete object;
 			object = nullptr;
 		}
+	}
+
+	inline const char* to_str(const char* text, ...)
+	{
+		const auto BUFFER_SIZE = 2048 * 4;
+		char buffer[BUFFER_SIZE];
+
+		va_list args;
+		va_start(args, text);
+		std::vsnprintf(buffer, sizeof(buffer), text, args);
+		va_end(args);
+
+		return buffer;
 	}
 
 	template<typename T>
