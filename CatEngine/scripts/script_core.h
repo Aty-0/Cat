@@ -1,6 +1,5 @@
 #pragma once
-#include "core/common.h"
-#include <sol/sol.hpp>
+#include "scripts/script_common.h"
 
 namespace cat::scripts
 {

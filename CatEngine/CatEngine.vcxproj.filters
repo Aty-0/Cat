@@ -177,6 +177,21 @@
     <ClInclude Include="physics\object_layer_pair_filter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="scripts\script_api_graphics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\script_api_scene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\script_api_3rd_party.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\script_common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\script_api_game.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="core\engine.cpp">
@@ -288,6 +303,24 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="physics\object_layer_pair_filter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\script_api_core.h">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\script_api_game.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\script_api_core.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\script_api_graphics.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\script_api_scene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\script_api_3rd_party.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

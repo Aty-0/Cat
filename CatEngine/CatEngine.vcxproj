@@ -72,6 +72,11 @@
     <ClInclude Include="graphics\renderer.h" />
     <ClInclude Include="libs\uuid.h" />
     <ClInclude Include="physics\utils.h" />
+    <ClInclude Include="scripts\script_api_3rd_party.h" />
+    <ClInclude Include="scripts\script_api_game.h" />
+    <ClInclude Include="scripts\script_api_graphics.h" />
+    <ClInclude Include="scripts\script_api_scene.h" />
+    <ClInclude Include="scripts\script_common.h" />
     <ClInclude Include="scripts\script_core.h" />
   </ItemGroup>
   <ItemGroup>
@@ -111,6 +116,15 @@
     <ClCompile Include="graphics\renderer.cpp" />
     <ClCompile Include="physics\layers.h" />
     <ClCompile Include="physics\physics_core.cpp" />
+    <ClCompile Include="scripts\script_api_3rd_party.cpp" />
+    <ClCompile Include="scripts\script_api_graphics.cpp" />
+    <ClCompile Include="scripts\script_api_core.cpp" />
+    <ClCompile Include="scripts\script_api_core.h">
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </AdditionalOptions>
+    </ClCompile>
+    <ClCompile Include="scripts\script_api_game.cpp" />
+    <ClCompile Include="scripts\script_api_scene.cpp" />
     <ClCompile Include="scripts\script_core.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
       </ExcludedFromBuild>
