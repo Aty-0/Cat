@@ -35,7 +35,7 @@ namespace cat::game::components
 		m_vertex_buffer->set_attrib(1, static_cast<std::uint32_t>(ib_data.size() / 2), GL_FLOAT, sizeof(graphics::vertex), reinterpret_cast<void*>(offsetof(graphics::vertex, color)));
 		m_vertex_buffer->set_attrib(2, static_cast<std::uint32_t>(ib_data.size() / 2), GL_FLOAT, sizeof(graphics::vertex), reinterpret_cast<void*>(offsetof(graphics::vertex, uv)));
 		
-		m_vertex_buffer->unbind_all();
+		m_vertex_buffer->unbind_buffer();
 		
 		m_shader = std::make_shared<graphics::shader>(*new graphics::shader());
 		CAT_ASSERT(m_shader->load("sprite"));
