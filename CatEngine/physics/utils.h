@@ -4,7 +4,7 @@
 
 namespace cat::physics
 {
-	inline void TraceJPHCallback(const char* inFMT, ...)
+	inline void OnTraceJPHCallback(const char* inFMT, ...)
 	{
 		// Format the message
 		va_list list;
@@ -13,13 +13,12 @@ namespace cat::physics
 		vsnprintf(buffer, sizeof(buffer), inFMT, list);
 		va_end(list);
 
-		VERB("JPH Trace: %s", buffer);
+		VERB("Jolt Trace: %s", buffer);
 	}
 
-	inline bool AssertJPHCallback(const char* inExpression, const char* inMessage, const char* inFile, std::uint32_t inLine)
+	inline bool OnAssertJPHCallback(const char* inExpression, const char* inMessage, const char* inFile, std::uint32_t inLine)
 	{
-		//FATAL("%s : %i : (%s) : (%s)", inFile, inLine, inExpression, (inMessage != nullptr ? inMessage : ""));
-		ERR("%s : %i : (%s) : (%s)", inFile, inLine, inExpression, (inMessage != nullptr ? inMessage : ""));
+		FATAL("Jolt: %s : %i : (%s) : (%s)", inFile, inLine, inExpression, (inMessage != nullptr ? inMessage : ""));
 		return true;
 	};
 }

@@ -32,5 +32,7 @@ namespace cat::physics
 		
 		JPH::PhysicsSystem* m_physics_system;
 		JPH::BodyInterface* m_body_interface;
+		JPH::TempAllocatorImpl* m_temp_alloc;
+		JPH::JobSystemThreadPool* m_job_system;
 	};
 }

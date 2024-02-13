@@ -27,63 +27,56 @@ namespace cat::physics
 		VERB("physics_core::~physics_core");
 
 		JPH::UnregisterTypes();
+
+		cat::core::utils::safe_delete(m_temp_alloc);
+		cat::core::utils::safe_delete(m_job_system);
 		// Destroy the factory
 		cat::core::utils::safe_delete(JPH::Factory::sInstance);
 	}
 
 	void physics_core::update(float deltaTime, game::game_object* go)
 	{
+		if (deltaTime == 0.0f)
+			return;
+
 		const auto phbody = go->get_component<game::components::physical_body>();
 		if (phbody == nullptr)
 			return;
 
 		const auto id = phbody->getBodyId();
-
-		std::int32_t step = 0;
-		m_physics_system->OptimizeBroadPhase();
-		if (m_body_interface->IsActive(id))
-		{			
-			step++;
-			
-			// Output current position and velocity of the sphere
+		
+		//if (m_body_interface->IsActive(id))
+		{
 			JPH::RVec3 position = m_body_interface->GetCenterOfMassPosition(id);
 			JPH::Vec3 velocity = m_body_interface->GetLinearVelocity(id);
 			JPH::Vec3 rotation_in_euler = m_body_interface->GetRotation(id).GetEulerAngles();
 			
-			go->get_transform()->m_position = { position.GetX(), position.GetY(), position.GetZ() };
-			go->get_transform()->m_velocity = { velocity.GetX(), velocity.GetY(), velocity.GetZ() };
-			go->get_transform()->m_rotation = { rotation_in_euler.GetX(), rotation_in_euler.GetY(), rotation_in_euler.GetZ() };
+			const auto transform = go->get_transform();
+			transform->m_position = { position.GetX(), position.GetY(), position.GetZ() };
+			transform->m_velocity = { velocity.GetX(), velocity.GetY(), velocity.GetZ() };
+			transform->m_rotation = { rotation_in_euler.GetX(), rotation_in_euler.GetY(), rotation_in_euler.GetZ() };
 			
-			//VERB("step %i posx: %f posy: %f posz: %f velx: %f vely: %f velz: %f", step,
-			//	position.GetX(), position.GetY(), position.GetZ(),
-			//	velocity.GetX(), velocity.GetY(), velocity.GetZ());
-
-			const auto collSteps = 1.0f;
-			const auto phDeltaTime = deltaTime; 
-
-			
-			// FIXME: 
-			static JPH::TempAllocatorImpl alloc(32 * 1024 * 1024);
-			static JPH::JobSystemThreadPool threadPool(JPH::cMaxPhysicsJobs,
-				JPH::cMaxPhysicsBarriers, std::thread::hardware_concurrency() - 1);
-
 			// Step the world
-			m_physics_system->Update(phDeltaTime, collSteps, &alloc, &threadPool);
+			m_physics_system->Update(deltaTime, 1, m_temp_alloc, m_job_system);
 		}
-
+		
 	}
 
 	void physics_core::init()
 	{
 		VERB("physics_core::init");
 
-		JPH::Trace = TraceJPHCallback;
-		JPH_IF_ENABLE_ASSERTS(JPH::AssertFailed = AssertJPHCallback;)
-
+		JPH::Trace = OnTraceJPHCallback;
+		JPH_IF_ENABLE_ASSERTS(JPH::AssertFailed = OnAssertJPHCallback;)
 
 		JPH::RegisterDefaultAllocator();
 		JPH::Factory::sInstance = new JPH::Factory();
 		JPH::RegisterTypes();
+
+		m_temp_alloc = new JPH::TempAllocatorImpl(32 * 1024 * 1024);
+
+		const auto threadCount = std::thread::hardware_concurrency() - 1;
+		m_job_system = new JPH::JobSystemThreadPool(JPH::cMaxPhysicsJobs, JPH::cMaxPhysicsBarriers, threadCount);
 
 		// Add our filters
 		static bp_layer_interfacу bp_layer_interface;
@@ -96,9 +89,8 @@ namespace cat::physics
 			object_vs_object_layer_filter);
 
 		// set body interface from physics system 
-		m_body_interface = &m_physics_system->GetBodyInterface();
-
-		//JPH::Factory::sInstance->Clear();
+		m_body_interface = &m_physics_system->GetBodyInterface();		
+		m_physics_system->OptimizeBroadPhase();
 	}
 
 	JPH::BodyInterface* physics_core::getBodyInterface() 
