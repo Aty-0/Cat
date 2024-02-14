@@ -192,6 +192,9 @@
     <ClInclude Include="scripts\script_api_game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="graphics\piece.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="core\engine.cpp">
@@ -321,6 +324,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="scripts\script_api_3rd_party.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics\piece.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

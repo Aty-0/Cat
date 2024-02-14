@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="graphics\piece.h" />
     <ClInclude Include="physics\object_layer_pair_filter.h" />
     <ClInclude Include="physics\object_vs_bp_layer_filter.h" />
     <ClInclude Include="physics\bp_layer_interfacу.h" />
@@ -80,6 +81,7 @@
     <ClInclude Include="scripts\script_core.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="graphics\piece.cpp" />
     <ClCompile Include="physics\object_layer_pair_filter.cpp" />
     <ClCompile Include="physics\object_vs_bp_layer_filter.cpp" />
     <ClCompile Include="physics\bp_layer_interfacу.cpp" />
