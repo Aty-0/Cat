@@ -12,11 +12,7 @@
 #include "Libs/imgui/imgui_impl_glfw.h"
 
 #include "graphics/frame_buffer.h"
-#include "graphics/vertex_buffer.h"
-#include "graphics/index_buffer.h"
-#include "graphics/vertex.h"
-#include "graphics/shader.h"
-#include "graphics/texture.h"
+#include "graphics/piece.h"
 
 namespace cat::graphics
 {
@@ -24,11 +20,9 @@ namespace cat::graphics
 
 	renderer::renderer() : 
 		m_renderImgui(true), 
-		m_curr_frame_buff(nullptr),
+		m_postProcessFramebuffer(nullptr),
+		m_postProcessPiece(nullptr),
 		m_disable_post_proc(false),
-		m_post_proc_ib(nullptr),
-		m_post_proc_shader(nullptr),
-		m_post_proc_vb(nullptr),
 		m_time(nullptr),
 		m_window(nullptr)
 	{
@@ -163,7 +157,7 @@ namespace cat::graphics
 
 		if (m_disable_post_proc)
 		{
-			m_curr_frame_buff->bind();
+			m_postProcessFramebuffer->bind();
 		}
 
 		glEnable(GL_DEPTH_TEST);
@@ -180,7 +174,7 @@ namespace cat::graphics
 
 		if (m_disable_post_proc)
 		{
-			m_curr_frame_buff->unbind_buffer();
+			m_postProcessFramebuffer->unbind_buffer();
 			
 			// Clear all relevant buffers
 			glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -261,38 +255,22 @@ namespace cat::graphics
 
 	void renderer::init_post_process()
 	{
-		m_curr_frame_buff = std::make_shared<frame_buffer>(*new frame_buffer());
-		m_curr_frame_buff->gen();
-
-		std::vector<graphics::vertex> vb_data = { { glm::vec3(1.0f,  1.0f, 0.0f), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 1.0f) }, 
-												{ glm::vec3(1.0f, -1.0f, 0.0f),   glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 0.0f) }, 
-												{ glm::vec3(-1.0f, -1.0f, 0.0f),  glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), glm::vec2(-1.0f, 0.0f) },
-												{ glm::vec3(-1.0f,  1.0f, 0.0f),  glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), glm::vec2(-1.0f, 1.0f) } 
+		m_postProcessFramebuffer = std::make_shared<frame_buffer>(*new frame_buffer());
+		m_postProcessFramebuffer->gen();
+		std::vector<graphics::vertex> vertices = { { glm::vec3(1.0f,  1.0f, 0.0f), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 1.0f) },
+											{ glm::vec3(1.0f, -1.0f, 0.0f),   glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 0.0f) },
+											{ glm::vec3(-1.0f, -1.0f, 0.0f),  glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), glm::vec2(-1.0f, 0.0f) },
+											{ glm::vec3(-1.0f,  1.0f, 0.0f),  glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), glm::vec2(-1.0f, 1.0f) }
 		};
-
-		m_post_proc_vb = std::make_shared<vertex_buffer>(*new vertex_buffer());
-
-		m_post_proc_vb->gen();
-		m_post_proc_vb->set_buffer_data<graphics::vertex>(vb_data, GL_STATIC_DRAW);
-
-		std::vector<std::uint32_t> ib_data =
+		
+		std::vector<std::uint32_t> indices =
 		{
-			0, 1, 3, 
-			1, 2, 3  
+			0, 1, 3,
+			1, 2, 3
 		};
 
-		m_post_proc_ib = std::make_shared<index_buffer>(*new index_buffer());
-		m_post_proc_ib->gen();
-		m_post_proc_ib->set_buffer_data<std::uint32_t>(ib_data, GL_STATIC_DRAW);
-
-		m_post_proc_vb->set_attrib(0, static_cast<std::uint32_t>(ib_data.size() / 2), GL_FLOAT, sizeof(graphics::vertex), reinterpret_cast<void*>(offsetof(graphics::vertex, pos)));
-		m_post_proc_vb->set_attrib(1, static_cast<std::uint32_t>(ib_data.size() / 2), GL_FLOAT, sizeof(graphics::vertex), reinterpret_cast<void*>(offsetof(graphics::vertex, color)));
-		m_post_proc_vb->set_attrib(2, static_cast<std::uint32_t>(ib_data.size() / 2), GL_FLOAT, sizeof(graphics::vertex), reinterpret_cast<void*>(offsetof(graphics::vertex, uv)));
-
-		m_post_proc_vb->unbind_all();
-
-		m_post_proc_shader = std::make_shared<graphics::shader>(*new graphics::shader());
-		CAT_ASSERT(m_post_proc_shader->load("postprocess"));
+		m_postProcessPiece = new graphics::piece(vertices, indices, {}, "postprocess");
+		m_postProcessPiece->setTexture(0, m_postProcessFramebuffer->getTextureShared());
 
 		core::game_window::onWindowResized.add(std::bind(&graphics::renderer::recreate_post_process, this));
 	}
@@ -307,18 +285,13 @@ namespace cat::graphics
 			return;
 		
 		// Remove old and create new one 
-		m_curr_frame_buff->clear();
-		m_curr_frame_buff->gen();
+		m_postProcessFramebuffer->clear();
+		m_postProcessFramebuffer->gen();
 	}
 	
 	void renderer::draw_post_process_quad()
 	{
-		m_post_proc_shader->bind();
-		m_post_proc_vb->bind();
-
-		m_curr_frame_buff->get_texture()->bind();
-		draw_elements(6, GL_TRIANGLES);
-
-		m_curr_frame_buff->get_texture()->unbind();
+		m_postProcessPiece->begin();
+		m_postProcessPiece->end(this);
 	}
 }

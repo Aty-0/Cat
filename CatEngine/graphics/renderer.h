@@ -16,9 +16,7 @@ namespace cat::core
 namespace cat::graphics
 {
 	class frame_buffer;
-	class shader;
-	class vertex_buffer;
-	class index_buffer;
+	class piece;
 
 	class CATENGINE_API renderer : public core::utils::singleton<renderer>
 	{
@@ -52,15 +50,10 @@ namespace cat::graphics
 		void draw_post_process_quad();
 
 		// Using for post procces and other 
-		std::shared_ptr<frame_buffer> m_curr_frame_buff;
-
-		// TODO: Shader array
-		std::shared_ptr<shader> m_post_proc_shader;
-		std::shared_ptr<vertex_buffer> m_post_proc_vb;
-		std::shared_ptr<index_buffer>  m_post_proc_ib;
-
+		std::shared_ptr<frame_buffer> m_postProcessFramebuffer;
+		graphics::piece* m_postProcessPiece;
+	
 		bool m_disable_post_proc;
-
 		bool m_renderImgui;
 		void render_debug_imgui_window();
 	public:

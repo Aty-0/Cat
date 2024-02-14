@@ -14,12 +14,13 @@ namespace cat::graphics
 		void bind() override;
 		void clear() override;
 
-		[[nodiscard]] inline texture* get_texture() const;
+		[[nodiscard]] inline texture* getTexture() const;
+		[[nodiscard]] inline std::shared_ptr<texture> getTextureShared() const;
 
 		void unbind_buffer() override;
 	private:
 		std::uint32_t m_fbo;
 		std::uint32_t m_rbo;
-		std::shared_ptr<texture> m_frame_texture;
+		std::shared_ptr<texture> m_frameTexture;
 	};
 }

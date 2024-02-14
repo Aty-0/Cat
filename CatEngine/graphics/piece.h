@@ -30,12 +30,20 @@ namespace cat::graphics
 
 		virtual void begin();
 		virtual void end(graphics::renderer* render);
-
+		virtual void setTexture(std::uint32_t index, std::shared_ptr<graphics::texture> texture);
+		virtual void setTexture(std::uint32_t index, graphics::texture* texture);
+		virtual void setTexture(std::uint32_t index, const char* texture_name);
+		virtual void loadShader(const char* name);
 		virtual void reloadTextures();
 
 		[[nodiscard]] inline graphics::shader* getShader()const;
 		[[nodiscard]] inline graphics::vertex_buffer* getVertexBuffer() const;
 		[[nodiscard]] inline graphics::index_buffer* getIndexBuffer() const;
+		[[nodiscard]] inline graphics::texture* getTexture(std::uint32_t index) const;
+		
+		[[nodiscard]] inline std::vector<std::shared_ptr<graphics::texture>> 
+			getTextures() const;
+
 	private:
 		void createPiece(const std::vector<graphics::vertex>& vertices,
 			const std::vector<std::uint32_t>& indices,

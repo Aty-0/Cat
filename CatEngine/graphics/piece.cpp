@@ -52,7 +52,7 @@ namespace cat::graphics
 		m_vertex_buffer->unbind_buffer();
 
 		m_shader = std::make_shared<graphics::shader>(*new graphics::shader());
-		CAT_ASSERT(m_shader->load(shader_name));
+		loadShader(shader_name);
 
 		for (auto name : texture_names)
 		{
@@ -78,7 +78,7 @@ namespace cat::graphics
 
 	void piece::reloadTextures()
 	{
-		// TODO:
+		// TODO: 
 	}
 
 	void piece::begin()
@@ -86,11 +86,53 @@ namespace cat::graphics
 		m_shader->bind();
 	}
 
+	void piece::setTexture(std::uint32_t index, std::shared_ptr<graphics::texture> texture)
+	{		
+		CAT_ASSERT(texture != nullptr);
+	
+		for (auto it = m_textures.begin(); it != m_textures.end(); ++it)
+		{
+			if (index == std::distance(m_textures.begin(), it))
+			{
+				it->reset();
+				it->swap(texture);
+				return;
+			}
+		}
+		
+		// If index not found but we are want to set it
+		// We are just push that texture 
+		m_textures.push_back(texture);
+	}
+
+	void piece::setTexture(std::uint32_t index, graphics::texture* texture)
+	{		
+		CAT_ASSERT(texture != nullptr);
+		auto shared_tex = std::make_shared<graphics::texture>(*texture);
+		setTexture(index, shared_tex);
+	}
+
+	void piece::setTexture(std::uint32_t index, const char* texture_name)
+	{
+		const auto texture = std::make_shared<graphics::texture>(*new graphics::texture());
+		CAT_ASSERT(texture->load(texture_name));
+		setTexture(index, texture);
+	}
+
+	void piece::loadShader(const char* name)
+	{
+		CAT_ASSERT(m_shader != nullptr);
+		CAT_ASSERT(m_shader->load(name));
+	}
+
 	void piece::end(graphics::renderer* render)
 	{
 		std::uint32_t index_bind = 0;
 		for (auto texture : m_textures)
 		{
+			if (texture == nullptr)
+				return;
+
 			texture->bind(GL_TEXTURE0 + index_bind);
 			index_bind++;
 		}
@@ -102,6 +144,9 @@ namespace cat::graphics
 		std::uint32_t index_unbind = 0;
 		for (auto texture : m_textures)
 		{
+			if (texture == nullptr)
+				return;
+
 			texture->unbind(GL_TEXTURE0 + index_unbind);
 			index_unbind++;
 		}
@@ -121,4 +166,22 @@ namespace cat::graphics
 		return m_index_buffer.get();
 	}
 
+	graphics::texture* piece::getTexture(std::uint32_t index) const
+	{
+		for (auto it = m_textures.begin(); it != m_textures.end(); ++it)
+		{
+			if (index == std::distance(m_textures.begin(), it))
+			{				
+				return it->get();
+			}
+		}
+
+		return nullptr;
+	}
+	
+	std::vector<std::shared_ptr<graphics::texture>>
+		piece::getTextures() const
+	{
+		return m_textures;
+	}
 }
