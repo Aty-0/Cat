@@ -24,7 +24,7 @@ namespace cat::game::components
 	protected:
 		void rescale();
 
-		graphics::piece* m_piace;		
+		graphics::piece* m_piece;
 		glm::vec4 m_color;
 	};
 }

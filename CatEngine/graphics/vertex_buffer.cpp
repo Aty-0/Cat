@@ -10,7 +10,7 @@ namespace cat::graphics
 
 	vertex_buffer::~vertex_buffer() 
 	{
-
+		clear();
 	}
 
 	void vertex_buffer::bind()
@@ -32,8 +32,7 @@ namespace cat::graphics
 	{
 		if (m_vao)
 		{
-			glDeleteBuffers(1, &m_vao);
-
+			glDeleteVertexArrays(1, &m_vao);
 		}
 		
 		if (m_vbo)

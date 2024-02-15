@@ -54,26 +54,29 @@ namespace cat::graphics
 		m_shader = std::make_shared<graphics::shader>(*new graphics::shader());
 		loadShader(shader_name);
 
+
 		for (auto name : texture_names)
 		{
 			const auto texture = std::make_shared<graphics::texture>(*new graphics::texture());
 			CAT_ASSERT(texture->load(name));
-
 			m_textures.push_back(texture);
 		}
 	}
 
 	piece::~piece()
-	{
+	{		
+		m_vertex_buffer.reset();
+		m_index_buffer.reset();
+
 		m_shader.reset();
 
 		for (auto texture : m_textures)
+		{
 			texture.reset();
+		}
 
-		m_vertex_buffer->clear();
-		m_vertex_buffer.reset();
-		m_index_buffer->clear();
-		m_index_buffer.reset();
+		m_textures.clear();
+		m_textures.shrink_to_fit();
 	}
 
 	void piece::reloadTextures()
@@ -114,7 +117,12 @@ namespace cat::graphics
 
 	void piece::setTexture(std::uint32_t index, const char* texture_name)
 	{
-		const auto texture = std::make_shared<graphics::texture>(*new graphics::texture());
+		auto texture = m_textures[index];
+		if (texture == nullptr)
+		{
+			texture = std::make_shared<graphics::texture>(*new graphics::texture());
+		}
+
 		CAT_ASSERT(texture->load(texture_name));
 		setTexture(index, texture);
 	}
@@ -140,6 +148,9 @@ namespace cat::graphics
 		m_vertex_buffer->bind();
 		const auto size = m_index_buffer->size();
 		render->draw_elements(size, GL_TRIANGLES);
+
+		m_vertex_buffer->unbind_buffer_array();
+		m_shader->unbind();
 
 		std::uint32_t index_unbind = 0;
 		for (auto texture : m_textures)

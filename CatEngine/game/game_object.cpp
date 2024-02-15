@@ -45,10 +45,15 @@ namespace cat::game
 	{
 		onDestroy();
 		for (const auto component : m_components)
+		{
 			component.second->onDestroy();
+			delete component.second;
+		}
 
 		m_transform = nullptr;
 		m_components.clear();
+		m_components.shrink_to_fit();
+
 		m_type.clear();
 		m_name.clear();
 		m_prefix = 0;

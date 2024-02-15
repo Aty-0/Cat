@@ -19,8 +19,8 @@ namespace cat::graphics
 	}
 
 	shader::~shader()
-	{
-		glDeleteShader(m_shader_program);
+	{		
+		glDeleteProgram(m_shader_program);
 	}
 
 	bool shader::load(const char* name)
@@ -60,8 +60,10 @@ namespace cat::graphics
 			return false;
 		}
 
+		// Cleanup shaders
 		glDeleteShader(m_vertex_shader);
 		glDeleteShader(m_fragment_shader);
+
 		return true;
 	}
 
@@ -152,8 +154,16 @@ namespace cat::graphics
 
 	void shader::bind()
 	{
-		glUseProgram(m_shader_program);
-		update_default_uniforms();
+		if (m_shader_program != 0)
+		{
+			glUseProgram(m_shader_program);
+			update_default_uniforms();
+		}
+	}
+	
+	void shader::unbind()
+	{
+		glUseProgram(0);	
 	}
 
 	void shader::set_int32(const char* name, std::int32_t value)

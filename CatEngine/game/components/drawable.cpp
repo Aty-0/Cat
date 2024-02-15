@@ -10,19 +10,19 @@ namespace cat::game::components
 	drawable::drawable() : 
 		m_color(glm::vec4(1,1,1,1))
 	{
-		m_piace = new graphics::piece();
+		m_piece = new graphics::piece();
 
 		set_texture("default_texture");		
 	}
 
 	drawable::~drawable()
 	{
-		core::utils::safe_delete(m_piace);
+		core::utils::safe_delete(m_piece);
 	}
 
 	void drawable::rescale()
 	{
-		const auto texture = m_piace->getTexture(0);
+		const auto texture = m_piece->getTexture(0);
 		CAT_ASSERT(texture != nullptr);
 
 		const auto owner = get_owner();
@@ -37,10 +37,8 @@ namespace cat::game::components
 	}
 
 	void drawable::set_texture(const char* texture_name)
-	{
-		const auto texture = m_piace->getTexture(0);
-		CAT_ASSERT(texture != nullptr);		
-		CAT_ASSERT(texture->load(texture_name));
+	{	
+		m_piece->setTexture(0, texture_name);
 	}
 
 	void drawable::on_render(graphics::renderer* render) 
@@ -48,16 +46,16 @@ namespace cat::game::components
 		// TODO: Do this when we are change res for window and change texture 
 		rescale();
 		
-		m_piace->begin();
+		m_piece->begin();
 
-		const auto shader = m_piace->getShader();
+		const auto shader = m_piece->getShader();
 		const auto transform = get_owner()->get_transform();
 		auto& world_mat = transform->get_world_matrix();
 		world_mat = transform->get_matrix_transformation();
 		shader->set_mat4("transform.world", world_mat);
 		shader->set_vec4("drawable.color", m_color);
 		
-		m_piace->end(render);
+		m_piece->end(render);
 	}
 
 	void drawable::set_color(glm::vec4 color)

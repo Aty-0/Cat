@@ -35,13 +35,11 @@ namespace cat::scripts
 			// TODO: Can we use table for this ?
 			"create_component_basic", &game::game_object::create_component<game::components::component>,
 			"create_component_camera", &game::game_object::create_component<game::components::camera>,
-			"create_component_test_comp_rotator", &game::game_object::create_component<game::components::test_comp_rotator>,
 			"create_component_drawable", &game::game_object::create_component<game::components::drawable>,
 			"create_component_physical_body", &game::game_object::create_component<game::components::physical_body>,
 
 			"get_component_basic", &game::game_object::get_component<game::components::component>,
 			"get_component_camera", &game::game_object::get_component<game::components::camera>,
-			"get_component_test_comp_rotator", &game::game_object::get_component<game::components::test_comp_rotator>,
 			"get_component_drawable", &game::game_object::get_component<game::components::drawable>,
 			"get_component_physical_body", &game::game_object::get_component<game::components::physical_body>
 
@@ -58,8 +56,16 @@ namespace cat::scripts
 		);
 
 		// TODO:
-		api.new_usertype<game::components::camera>("camera");
+		api.new_usertype<game::components::camera>("camera", 
+			"getFront", &game::components::camera::get_front,
+			"getSpeed", &game::components::camera::get_speed
+		);
+
 		api.new_usertype<game::components::test_comp_rotator>("test_comp_rotator");
+
+		api.new_enum("motion_quality",
+			"Discrete", game::components::physical_body::motion_quality::Discrete,
+			"LinearCast", game::components::physical_body::motion_quality::LinearCast);
 
 		api.new_enum("motion_type",
 			"Static", game::components::physical_body::motion_type::Static,
@@ -67,7 +73,13 @@ namespace cat::scripts
 			"Kinematic", game::components::physical_body::motion_type::Kinematic);
 
 		api.new_usertype<game::components::physical_body>("physic_body",
-			"setMotionType", &game::components::physical_body::setMotionType);
+			"setMotionType", &game::components::physical_body::setMotionType,
+			"setMass", &game::components::physical_body::setMass,
+			"setFriction", &game::components::physical_body::setFriction,
+			"setGravityFactor", &game::components::physical_body::setGravityFactor,
+			"setMotionQuality", &game::components::physical_body::setMotionQuality
+			// TODO: Shape
+		);
 
 		// TODO:
 		api.new_usertype<game::components::drawable>("drawable",

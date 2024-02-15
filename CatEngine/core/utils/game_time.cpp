@@ -22,8 +22,8 @@ namespace cat::core::utils
 		m_frame_count++;
 
 		m_time = std::chrono::high_resolution_clock::now();
-		m_deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(m_time - m_time_lastUpdate).count() / 1000000.0f;
-
+		m_deltaTime = 1.0e-6f * std::chrono::duration_cast<std::chrono::microseconds>(m_time - m_time_lastUpdate).count();
+		
 		if (m_time - m_time_begin >= std::chrono::seconds{ 1 })
 		{
 			m_fps = m_frame_count;

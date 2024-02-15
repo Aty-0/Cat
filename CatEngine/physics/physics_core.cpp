@@ -91,6 +91,7 @@ namespace cat::physics
 		// set body interface from physics system 
 		m_body_interface = &m_physics_system->GetBodyInterface();		
 		m_physics_system->OptimizeBroadPhase();
+		m_physics_system->SetGravity(JPH::Vec3(0, -9.81f, 0));
 	}
 
 	JPH::BodyInterface* physics_core::getBodyInterface() 

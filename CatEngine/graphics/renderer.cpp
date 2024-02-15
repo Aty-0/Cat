@@ -41,9 +41,16 @@ namespace cat::graphics
 
 	void renderer::destroy()
 	{
+		INFO("Renderer destroy...");
+
 		ImGui_ImplOpenGL3_Shutdown();
 		ImGui_ImplGlfw_Shutdown();
 		ImGui::DestroyContext();
+
+		core::utils::safe_delete(m_postProcessPiece);
+		m_postProcessFramebuffer.reset();
+		m_time = nullptr;
+		m_window = nullptr;
 	}
 
 	void renderer::debug_print_existing_ext()
