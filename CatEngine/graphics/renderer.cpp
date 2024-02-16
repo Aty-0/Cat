@@ -48,7 +48,8 @@ namespace cat::graphics
 		ImGui::DestroyContext();
 
 		core::utils::safe_delete(m_postProcessPiece);
-		m_postProcessFramebuffer.reset();
+		// FIXME:
+		//m_postProcessFramebuffer.reset();
 		m_time = nullptr;
 		m_window = nullptr;
 	}
@@ -93,6 +94,23 @@ namespace cat::graphics
 
 		onImGuiRender.add(std::bind(&renderer::render_debug_imgui_window, this));
 		return true;
+	}
+
+	void renderer::setPolygonMode(std::int32_t mode)
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, mode);
+	}
+
+	void renderer::cull(std::int32_t cullmode, std::int32_t frontface)
+	{
+		glEnable(GL_CULL_FACE);
+		glCullFace(cullmode);
+		glFrontFace(frontface);
+	}
+
+	void renderer::disableCull()
+	{
+		glDisable(GL_CULL_FACE);
 	}
 
 	void renderer::on_get_opengl_error(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, GLchar const* message, void const* user_param)

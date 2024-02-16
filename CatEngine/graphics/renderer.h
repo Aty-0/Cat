@@ -28,6 +28,9 @@ namespace cat::graphics
 		void render();
 		void destroy();
 
+		void setPolygonMode(std::int32_t mode);
+		void cull(std::int32_t cullmode = GL_BACK, std::int32_t frontface = GL_CW);
+		void disableCull();
 
 		void draw_elements(std::int32_t count, std::int32_t type);
 

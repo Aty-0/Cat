@@ -4,7 +4,7 @@
 
 namespace cat::graphics
 {
-	piece::piece()
+	piece::piece() : m_polyMode(GL_FILL)
 	{
 		std::vector<graphics::vertex> vertices = { { glm::vec3(0.5f,  1.0f, 0.0f), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), glm::vec2(0.0f, -1.0f) },      // top right
 										{ glm::vec3(0.5f, -1.0f, 0.0f),   glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 0.0f) },      // bottom right
@@ -26,7 +26,7 @@ namespace cat::graphics
 		const std::vector<std::uint32_t>& indices,
 		const std::vector<const char*>& texture_names,
 		const char* shader_name
-		)
+		) : m_polyMode(GL_FILL)
 	{
 		createPiece(vertices, indices, texture_names, shader_name);
 	}
@@ -133,6 +133,11 @@ namespace cat::graphics
 		CAT_ASSERT(m_shader->load(name));
 	}
 
+	void piece::setPolyMode(std::int32_t mode)
+	{
+		m_polyMode = mode;
+	}
+
 	void piece::end(graphics::renderer* render)
 	{
 		std::uint32_t index_bind = 0;
@@ -147,7 +152,12 @@ namespace cat::graphics
 
 		m_vertex_buffer->bind();
 		const auto size = m_index_buffer->size();
+		
+		render->cull();
+		render->setPolygonMode(m_polyMode);
 		render->draw_elements(size, GL_TRIANGLES);
+		render->setPolygonMode(GL_FILL); // by default
+		render->disableCull();
 
 		m_vertex_buffer->unbind_buffer_array();
 		m_shader->unbind();
