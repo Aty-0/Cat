@@ -10,7 +10,7 @@ namespace cat::io
 	{
 		const auto type_name = core::utils::get_class_name_string<type>();
 		
-		INFO("resource_manager::read %s %s", type_name.c_str(), name);
+		VERB("resource_manager::read %s %s", type_name.c_str(), name);
 		std::ifstream file = get_file(type_name.c_str(), name, ext);
 		if (!file.is_open())
 			return nullptr;
