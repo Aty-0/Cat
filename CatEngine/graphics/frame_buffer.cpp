@@ -13,6 +13,7 @@ namespace cat::graphics
 
 	frame_buffer::~frame_buffer()
 	{
+		clear();
 		m_frameTexture.reset();
 	}
 

@@ -21,9 +21,10 @@ namespace cat::graphics
 		template<typename type>
 		[[nodiscard]] inline type* get() const { return reinterpret_cast<type>(m_data); }
 		
-		[[nodiscard]] inline std::int32_t size() const { return sizeof(m_data); }
+		[[nodiscard]] inline std::int32_t size() const { return static_cast<std::int32_t>(m_size); }
 
 	protected:
 		void* m_data;
+		std::size_t m_size;
 	};
 }
