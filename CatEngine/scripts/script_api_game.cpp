@@ -5,6 +5,7 @@
 #include "game/game_object.h"
 #include "game/components/component.h"
 #include "game/components/drawable.h"
+#include "game/components/sprite.h"
 #include "game/components/test_comp_rotator.h"
 #include "game/components/camera.h"
 #include "game/components/physical_body.h"
@@ -37,11 +38,13 @@ namespace cat::scripts
 			"create_component_camera", &game::game_object::create_component<game::components::camera>,
 			"create_component_drawable", &game::game_object::create_component<game::components::drawable>,
 			"create_component_physical_body", &game::game_object::create_component<game::components::physical_body>,
+			"create_component_sprite", &game::game_object::create_component<game::components::sprite>,
 
 			"get_component_basic", &game::game_object::get_component<game::components::component>,
 			"get_component_camera", &game::game_object::get_component<game::components::camera>,
 			"get_component_drawable", &game::game_object::get_component<game::components::drawable>,
-			"get_component_physical_body", &game::game_object::get_component<game::components::physical_body>
+			"get_component_physical_body", &game::game_object::get_component<game::components::physical_body>,
+			"get_component_sprite", &game::game_object::get_component<game::components::sprite>
 
 
 		);
@@ -72,7 +75,7 @@ namespace cat::scripts
 			"Dynamic", game::components::physical_body::motion_type::Dynamic,
 			"Kinematic", game::components::physical_body::motion_type::Kinematic);
 
-		api.new_usertype<game::components::physical_body>("physic_body",
+		api.new_usertype<game::components::physical_body>("physical_body",
 			"setMotionType", &game::components::physical_body::setMotionType,
 			"setMass", &game::components::physical_body::setMass,
 			"setFriction", &game::components::physical_body::setFriction,
@@ -83,9 +86,13 @@ namespace cat::scripts
 
 		// TODO:
 		api.new_usertype<game::components::drawable>("drawable",
-			"set_color", &game::components::drawable::set_color,
-			"set_texture", &game::components::drawable::set_texture
+			"set_color", &game::components::drawable::set_color
 		);
+
+		api.new_usertype<game::components::sprite>("sprite",
+			"set_texture", &game::components::sprite::set_texture
+		);
+
 
 		api.new_usertype<game::components::transform>("transform",
 			"set_position", &game::components::transform::set_position,

@@ -14,16 +14,13 @@ namespace cat::game::components
 	{
 	public:
 		drawable();
-		~drawable();
+		virtual ~drawable();
 
 		[[nodiscard]] inline glm::vec4 get_color() const;
 		void on_render(graphics::renderer* render) override;
 
 		void set_color(glm::vec4 color);
-		void set_texture(const char* texture_name);
 	protected:
-		void rescale();
-
 		graphics::piece* m_piece;
 		glm::vec4 m_color;
 	};

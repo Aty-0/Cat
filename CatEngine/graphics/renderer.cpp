@@ -34,7 +34,7 @@ namespace cat::graphics
 
 	}
 
-	void renderer::toggle_imgui_rendering()
+	void renderer::imguiToggleVisibility()
 	{
 		m_renderImgui =! m_renderImgui;
 	}
@@ -54,7 +54,7 @@ namespace cat::graphics
 		m_window = nullptr;
 	}
 
-	void renderer::debug_print_existing_ext()
+	void renderer::debugPrintExistingExt()
 	{
 		std::int32_t ext_num = 0;
 		glGetIntegerv(GL_NUM_EXTENSIONS, &ext_num);
@@ -85,14 +85,14 @@ namespace cat::graphics
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		glEnable(GL_DEBUG_OUTPUT);
-		glDebugMessageCallback(on_get_opengl_error, nullptr);
+		glDebugMessageCallback(onGetError, nullptr);
 		
-		if (!init_imgui())
+		if (!imguiInit())
 			return false;
 		
 		m_time = core::utils::game_time::get_instance();
 
-		onImGuiRender.add(std::bind(&renderer::render_debug_imgui_window, this));
+		onImGuiRender.add(std::bind(&renderer::imguiRenderDebugWindow, this));
 		return true;
 	}
 
@@ -113,7 +113,7 @@ namespace cat::graphics
 		glDisable(GL_CULL_FACE);
 	}
 
-	void renderer::on_get_opengl_error(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, GLchar const* message, void const* user_param)
+	void renderer::onGetError(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, GLchar const* message, void const* user_param)
 	{
 		const auto source_str = [source]() {
 			switch (source)
@@ -178,7 +178,7 @@ namespace cat::graphics
 			|| m_window->get_height() == 0)
 			return;
 
-		imgui_new_frame();
+		imguiNewFrame();
 
 		if (m_disable_post_proc)
 		{
@@ -193,10 +193,9 @@ namespace cat::graphics
 		static const auto sm = game::scene::scene_manager::get_instance();
 		sm->render(this);
 
-		// TODO: UI rendering will be located there 
-	
 		glDisable(GL_DEPTH_TEST);
-
+		// TODO: UI rendering will be located there 
+		
 		if (m_disable_post_proc)
 		{
 			m_postProcessFramebuffer->unbind_buffer();
@@ -205,13 +204,13 @@ namespace cat::graphics
 			glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT);
 
-			draw_post_process_quad();
+			drawPostProcessPiece();
 		}
 
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 	}
 
-	bool renderer::init_imgui()
+	bool renderer::imguiInit()
 	{
 		INFO("Initialize Imgui...");
 		m_window = core::game_window::get_instance();
@@ -238,7 +237,7 @@ namespace cat::graphics
 		return true;
 	}
 	
-	void renderer::render_debug_imgui_window()
+	void renderer::imguiRenderDebugWindow()
 	{
 		ImGui::Begin("Debug window");
 
@@ -247,18 +246,18 @@ namespace cat::graphics
 		ImGui::Text("Delta time %f", m_time->get_delta_time());
 		if (ImGui::Checkbox("Disable Post Process", &m_disable_post_proc))
 		{
-			recreate_post_process();
+			recreateFrameBuffer();
 		}
 
 		ImGui::End();
 	}
 
-	void renderer::imgui_render()
+	void renderer::imguiRender()
 	{
 		onImGuiRender.run_all();		
 	}
 
-	void renderer::imgui_new_frame()
+	void renderer::imguiNewFrame()
 	{
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
@@ -266,19 +265,23 @@ namespace cat::graphics
 
 		if (m_renderImgui)
 		{
-			imgui_render();
+			imguiRender();
 		}
 
 		ImGui::Render();
 	}
 
+	void renderer::draw(std::int32_t count, std::int32_t type)
+	{
+		glDrawArrays(type, 0, count);
+	}
 
-	void renderer::draw_elements(std::int32_t count, std::int32_t type)
+	void renderer::drawElements(std::int32_t count, std::int32_t type)
 	{
 		glDrawElements(type, count, GL_UNSIGNED_INT, 0);
 	}
 
-	void renderer::init_post_process()
+	void renderer::initPostProcess()
 	{
 		m_postProcessFramebuffer = std::make_shared<frame_buffer>(*new frame_buffer());
 		m_postProcessFramebuffer->gen();
@@ -297,12 +300,11 @@ namespace cat::graphics
 		m_postProcessPiece = new graphics::piece(vertices, indices, {}, "postprocess");
 		m_postProcessPiece->setTexture(0, m_postProcessFramebuffer->getTextureShared());
 
-		core::game_window::onWindowResized.add(std::bind(&graphics::renderer::recreate_post_process, this));
+		core::game_window::onWindowResized.add(std::bind(&graphics::renderer::recreateFrameBuffer, this));
 	}
 
-	void renderer::recreate_post_process()
+	void renderer::recreateFrameBuffer()
 	{
-		//VERB("renderer::recreate_post_process");		
 		if (m_window->get_width() == 0
 			|| m_window->get_height() == 0 
 			|| !m_disable_post_proc
@@ -314,9 +316,41 @@ namespace cat::graphics
 		m_postProcessFramebuffer->gen();
 	}
 	
-	void renderer::draw_post_process_quad()
+	void renderer::drawPostProcessPiece()
 	{
 		m_postProcessPiece->begin();
 		m_postProcessPiece->end(this);
 	}
+
+	void renderer::debugDrawLine(glm::vec3 begin, glm::vec3 end)
+	{
+		const std::vector<graphics::vertex> vertices = 
+		{ 
+			{ begin, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 0.0f) },
+			{ end,   glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 0.0f) },
+		};
+
+		// FIX ME: Memory leak...
+		static graphics::piece* piece = nullptr; 
+		
+		if (piece == nullptr)
+		{
+			piece = new graphics::piece(vertices, { }, { }, "debug");
+			piece->setPolyMode(GL_LINE);
+		}
+		
+		
+		piece->begin();
+		
+		const auto shader = piece->getShader();
+		glm::mat4 world = glm::mat4();
+		world = glm::translate(world, end) * glm::scale(world, glm::vec3(1,1,1));
+		
+		shader->set_mat4("transform.world", world);
+		
+		piece->end(this);
+
+		core::utils::safe_delete(piece);
+	}
+
 }

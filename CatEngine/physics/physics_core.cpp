@@ -24,8 +24,12 @@ namespace cat::physics
 
 	physics_core::~physics_core()
 	{	
-		VERB("physics_core::~physics_core");
 
+	}
+
+	void physics_core::destroy()
+	{
+		VERB("physics_core destroy...");
 		JPH::UnregisterTypes();
 
 		cat::core::utils::safe_delete(m_temp_alloc);
@@ -54,7 +58,8 @@ namespace cat::physics
 			const auto transform = go->get_transform();
 			transform->m_position = { position.GetX(), position.GetY(), position.GetZ() };
 			transform->m_velocity = { velocity.GetX(), velocity.GetY(), velocity.GetZ() };
-			transform->m_rotation = { rotation_in_euler.GetX(), rotation_in_euler.GetY(), rotation_in_euler.GetZ() };
+			transform->m_rotation = { glm::degrees(rotation_in_euler.GetX()), 
+				glm::degrees(rotation_in_euler.GetY()), glm::degrees(rotation_in_euler.GetZ()) };
 			
 			// Step the world
 			m_physics_system->Update(deltaTime, 1, m_temp_alloc, m_job_system);

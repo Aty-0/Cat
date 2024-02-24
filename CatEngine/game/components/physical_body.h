@@ -40,10 +40,9 @@ namespace cat::game::components
 		// Create a basic body 
 		void createBody();
 
-		// Synchronize the game object transform position and the physics engine body position
+		// Synchronize the game object transform and the jolt body transform 
+		void updateBodyInterfaceRotation();
 		void updateBodyInterfacePosition();
-
-		// Synchronize the game object transform velocity and the physics engine body velocity
 		void updateBodyInterfaceVelocity();
 	};
 }

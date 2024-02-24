@@ -36,14 +36,19 @@ namespace cat::graphics
 		const std::vector<const char*>& texture_names,
 		const char* shader_name)
 	{
+		CAT_ASSERT(!vertices.empty());
+
 		m_vertex_buffer = std::make_shared<graphics::vertex_buffer>(*new graphics::vertex_buffer());
 
 		m_vertex_buffer->gen();
 		m_vertex_buffer->set_buffer_data<graphics::vertex>(vertices, GL_STATIC_DRAW);
-
-		m_index_buffer = std::make_shared<graphics::index_buffer>(*new graphics::index_buffer());
-		m_index_buffer->gen();
-		m_index_buffer->set_buffer_data<std::uint32_t>(indices, GL_STATIC_DRAW);
+		
+		if (!indices.empty())
+		{
+			m_index_buffer = std::make_shared<graphics::index_buffer>(*new graphics::index_buffer());
+			m_index_buffer->gen();
+			m_index_buffer->set_buffer_data<std::uint32_t>(indices, GL_STATIC_DRAW);
+		}
 
 		m_vertex_buffer->set_attrib(0, 3, GL_FLOAT, sizeof(graphics::vertex), reinterpret_cast<void*>(offsetof(graphics::vertex, pos)));
 		m_vertex_buffer->set_attrib(1, 4, GL_FLOAT, sizeof(graphics::vertex), reinterpret_cast<void*>(offsetof(graphics::vertex, color)));
@@ -69,11 +74,6 @@ namespace cat::graphics
 		m_index_buffer.reset();
 
 		m_shader.reset();
-
-		for (auto texture : m_textures)
-		{
-			texture.reset();
-		}
 
 		m_textures.clear();
 		m_textures.shrink_to_fit();
@@ -151,12 +151,20 @@ namespace cat::graphics
 		}
 
 		m_vertex_buffer->bind();
-		const auto size = m_index_buffer->size();
 		
 		render->cull();
-		render->setPolygonMode(m_polyMode);
-		render->draw_elements(size, GL_TRIANGLES);
-		render->setPolygonMode(GL_FILL); // by default
+		if (m_index_buffer != nullptr)
+		{
+			render->setPolygonMode(m_polyMode);
+			const auto size = m_index_buffer->size();
+			render->drawElements(size, GL_TRIANGLES);
+			render->setPolygonMode(GL_FILL); // by default
+		}
+		else
+		{
+			const auto size = m_vertex_buffer->size();
+			render->draw(size, m_polyMode == GL_FILL ? GL_TRIANGLES : GL_LINES);
+		}
 		render->disableCull();
 
 		m_vertex_buffer->unbind_buffer_array();
