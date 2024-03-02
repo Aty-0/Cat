@@ -8,12 +8,13 @@ namespace cat::graphics
 		m_fbo(0), 
 		m_rbo(0)
 	{
-		m_frame_texture = std::make_shared<texture>(*new texture());
+		m_frameTexture = std::make_shared<texture>(*new texture());
 	}
 
 	frame_buffer::~frame_buffer()
 	{
-		m_frame_texture.reset();
+		clear();
+		m_frameTexture.reset();
 	}
 
 	void frame_buffer::gen()
@@ -21,13 +22,13 @@ namespace cat::graphics
 		glGenFramebuffers(1, &m_fbo);
 		bind();
 
-		m_frame_texture->create_framebuffer_texture();
+		m_frameTexture->create_framebuffer_texture();
 
 		glGenRenderbuffers(1, &m_rbo);
 		glBindRenderbuffer(GL_RENDERBUFFER, m_rbo);
 
 		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 
-			m_frame_texture->get_width(), m_frame_texture->get_height());
+			m_frameTexture->get_width(), m_frameTexture->get_height());
 
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_rbo); 
 
@@ -55,12 +56,17 @@ namespace cat::graphics
 		{
 			glDeleteFramebuffers(1, &m_fbo);
 			glDeleteRenderbuffers(1, &m_rbo);	
-			m_frame_texture->clear();
+			m_frameTexture->clear();
 		}
 	}
 
-	texture* frame_buffer::get_texture() const
+	std::shared_ptr<texture> frame_buffer::getTextureShared() const
 	{
-		return m_frame_texture.get();
+		return m_frameTexture;
+	}
+
+	texture* frame_buffer::getTexture() const
+	{
+		return m_frameTexture.get();
 	}
 }

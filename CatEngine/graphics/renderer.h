@@ -16,9 +16,7 @@ namespace cat::core
 namespace cat::graphics
 {
 	class frame_buffer;
-	class shader;
-	class vertex_buffer;
-	class index_buffer;
+	class piece;
 
 	class CATENGINE_API renderer : public core::utils::singleton<renderer>
 	{
@@ -30,39 +28,40 @@ namespace cat::graphics
 		void render();
 		void destroy();
 
+		void setPolygonMode(std::int32_t mode);
+		void cull(std::int32_t cullmode = GL_BACK, std::int32_t frontface = GL_CW);
+		void disableCull();
 
-		void draw_elements(std::int32_t count, std::int32_t type);
+		void draw(std::int32_t count, std::int32_t type);
+		void drawElements(std::int32_t count, std::int32_t type);
 
-		void init_post_process();
-		void toggle_imgui_rendering();
+		void initPostProcess();
+		void imguiToggleVisibility();
+
+
+		void debugDrawLine(glm::vec3 begin, glm::vec3 end);
+
 	private:
-		void debug_print_existing_ext();
-		bool init_imgui();
+		bool imguiInit();
+		void imguiRenderDebugWindow();
+		void imguiRender();
+		void imguiNewFrame();
+		void drawPostProcessPiece();
+		void recreateFrameBuffer();
+		void debugPrintExistingExt();
 		
-		void imgui_render();
-		void imgui_new_frame();
+		static void onGetError(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, GLchar const* message, void const* user_param);
 
-		static void on_get_opengl_error(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, GLchar const* message, void const* user_param);
 
+
+		std::shared_ptr<frame_buffer> m_postProcessFramebuffer;
+		graphics::piece* m_postProcessPiece;
 		core::game_window* m_window;
 		core::utils::game_time* m_time;
 
-		// TODO: Make postprocess class 
-		void recreate_post_process();
-		void draw_post_process_quad();
-
-		// Using for post procces and other 
-		std::shared_ptr<frame_buffer> m_curr_frame_buff;
-
-		// TODO: Shader array
-		std::shared_ptr<shader> m_post_proc_shader;
-		std::shared_ptr<vertex_buffer> m_post_proc_vb;
-		std::shared_ptr<index_buffer>  m_post_proc_ib;
-
+	
 		bool m_disable_post_proc;
-
 		bool m_renderImgui;
-		void render_debug_imgui_window();
 	public:
 		static core::callback_storage onImGuiRender;
 

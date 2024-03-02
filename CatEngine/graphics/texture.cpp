@@ -162,7 +162,7 @@ namespace cat::graphics
 		return m_filter_mag;
 	}
 
-	texture::wrap   texture::get_wrap() const
+	texture::wrap texture::get_wrap() const
 	{
 		return m_wrap;
 	}

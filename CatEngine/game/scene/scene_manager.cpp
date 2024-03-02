@@ -168,19 +168,19 @@ namespace cat::game::scene
 		if (go->get_prefix() == -1 ||
 			go->get_type() == CAT_ENGINE_GAMEOBJECT_TYPE)						
 		{
-			ERR("[Scene Manager] Can't delete object Name: UUID: %s",
+			ERR("[Scene Manager] [%s] Can't delete object Name: %s UUID: %s",
 				m_scene->m_name.c_str(),
-				go->get_name(),
-				object_uuid.get_id_str());
+				go->get_name().c_str(),
+				object_uuid.get_id_str().c_str());
 		}
 
 		auto it = find_game_object_uuid(object_uuid.get_id());
 		if (it != m_scene->m_storage.end())
 		{
-			INFO("[Scene Manager] Delete object Name: UUID: %s",
+			INFO("[Scene Manager] [%s] Delete object Name: %s UUID: %s",
 				m_scene->m_name.c_str(),
-				go->get_name(),
-				object_uuid.get_id_str());
+				go->get_name().c_str(),
+				object_uuid.get_id_str().c_str());
 		
 			m_scene->m_storage.erase(it);
 		}

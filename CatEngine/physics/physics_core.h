@@ -18,6 +18,7 @@ namespace cat::physics
 		physics_core();
 		~physics_core();
 
+		void destroy();
 		void init();
 		void update(float deltaTime, game::game_object* go);
 		

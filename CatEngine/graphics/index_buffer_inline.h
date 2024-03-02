@@ -8,6 +8,7 @@ namespace cat::graphics
 	inline bool index_buffer::set_buffer_data(std::vector<type> _data, std::uint32_t draw)
 	{
 		m_data = _data.data();
+		m_size = _data.size();
 
 		if (m_data == nullptr)
 		{

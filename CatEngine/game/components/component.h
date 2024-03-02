@@ -22,7 +22,7 @@ namespace cat::game::components
 		friend game_object;
 	public:
 		component();
-		~component();
+		virtual ~component();
 
 		
 		virtual void on_render(graphics::renderer* renderer) { }

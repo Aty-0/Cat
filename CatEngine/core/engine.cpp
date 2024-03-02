@@ -60,8 +60,8 @@ namespace cat::core
 		const static auto pc = physics::physics_core::get_instance();
 		pc->init();
 
-		VERB("Initialize post process in render...");
-		m_renderer->init_post_process();
+		VERB("Initialize post process in renderer...");
+		m_renderer->initPostProcess();
 		
 		VERB("Run scene manager...");
 		m_sm = game::scene::scene_manager::get_instance();
@@ -82,7 +82,7 @@ namespace cat::core
 		m_input->add_listener(input_key_code::KEYBOARD_ESCAPE, input_key_state::Press, input_device::Keyboard,
 			std::bind(&core::engine::destroy, this));
 		m_input->add_listener(input_key_code::KEYBOARD_F8, input_key_state::Press, input_device::Keyboard,
-			std::bind(&graphics::renderer::toggle_imgui_rendering, m_renderer));
+			std::bind(&graphics::renderer::imguiToggleVisibility, m_renderer));
 
 
 		// if window is active we are call onLoop function
@@ -145,12 +145,12 @@ namespace cat::core
 	void engine::destroy()
 	{
 		INFO("Engine destroy");
-		
 		m_on_global_update->clear();
-
+		const static auto pc = physics::physics_core::get_instance();
+		pc->destroy();
+		m_sm->clear();
 		m_window->destroy();
 		m_renderer->destroy();
-
 		
 		glfwTerminate();
 		exit(EXIT_SUCCESS);

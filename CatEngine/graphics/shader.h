@@ -25,6 +25,7 @@ namespace cat::graphics
 
 
 		void bind();
+		void unbind();
 		[[nodiscard]] inline std::uint32_t get_program() const;
 
 	private:

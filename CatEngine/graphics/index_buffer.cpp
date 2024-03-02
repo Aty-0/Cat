@@ -10,7 +10,7 @@ namespace cat::graphics
 
 	index_buffer::~index_buffer()
 	{
-
+		clear();
 	}
 
 	void index_buffer::gen()

@@ -19,6 +19,7 @@ namespace cat::game::components
 		[[nodiscard]] inline glm::mat4& get_projection();
 		[[nodiscard]] inline float get_speed() const;
 		[[nodiscard]] inline float get_zoom() const;
+		[[nodiscard]] inline glm::vec3 get_front() const;
 					 
 		void move_right();
 		void move_left();

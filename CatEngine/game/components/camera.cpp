@@ -172,6 +172,11 @@ namespace cat::game::components
 
 	}
 
+	glm::vec3 camera::get_front() const
+	{
+		return m_front;
+	}
+
 	glm::mat4& camera::get_view()
 	{
 		return m_view;
