@@ -19,13 +19,13 @@ namespace cat::scripts
 		// run script by name 
 		bool run(const char* name, bool safe = true);
 		
-		bool run_func(const char* name, const char* func_name);
+		bool runFunc(const char* name, const char* func_name);
 
-		[[nodiscard]] inline script* get_script(const char* name) const;
+		[[nodiscard]] inline script* getScript(const char* name) const;
 
 	private:
 		std::vector<std::pair<std::string, script*>> m_scripts;
 
-		void add_engine_api(sol::state& lua);
+		void addCatAPI(sol::state& lua);
 	};
 }

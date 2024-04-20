@@ -5,7 +5,7 @@
 #include "game/components/physical_body.h"
 
 #include "physics/utils.h"
-#include "physics/bp_layer_interfacу.h"
+#include "physics/bp_layer_interfacy.h"
 #include "physics/object_vs_bp_layer_filter.h"
 #include "physics/object_layer_pair_filter.h"
 
@@ -13,7 +13,7 @@
 #include <Jolt/Core/Factory.h>
 #include <Jolt/Physics/PhysicsSettings.h>
 
-
+#include "core/utils/game_time.h"
 
 namespace cat::physics
 {
@@ -32,39 +32,29 @@ namespace cat::physics
 		VERB("physics_core destroy...");
 		JPH::UnregisterTypes();
 
-		cat::core::utils::safe_delete(m_temp_alloc);
-		cat::core::utils::safe_delete(m_job_system);
+		cat::core::utils::safeDelete(m_temp_alloc);
+		cat::core::utils::safeDelete(m_job_system);
 		// Destroy the factory
-		cat::core::utils::safe_delete(JPH::Factory::sInstance);
+		cat::core::utils::safeDelete(JPH::Factory::sInstance);
 	}
 
-	void physics_core::update(float deltaTime, game::game_object* go)
+	void physics_core::update(float deltaTime)
 	{
-		if (deltaTime == 0.0f)
+		if (deltaTime == 0.0f || deltaTime > 1)
 			return;
 
-		const auto phbody = go->get_component<game::components::physical_body>();
-		if (phbody == nullptr)
-			return;
-
-		const auto id = phbody->getBodyId();
-		
-		//if (m_body_interface->IsActive(id))
+		// Step the world	
+		static auto acc_time = 0.0f;
+		const float phDeltaTime = 1.0f / 60.0f; 
+		acc_time += deltaTime;
+		std::int32_t steps = 1;
+		while (acc_time > phDeltaTime)
 		{
-			JPH::RVec3 position = m_body_interface->GetCenterOfMassPosition(id);
-			JPH::Vec3 velocity = m_body_interface->GetLinearVelocity(id);
-			JPH::Vec3 rotation_in_euler = m_body_interface->GetRotation(id).GetEulerAngles();
-			
-			const auto transform = go->get_transform();
-			transform->m_position = { position.GetX(), position.GetY(), position.GetZ() };
-			transform->m_velocity = { velocity.GetX(), velocity.GetY(), velocity.GetZ() };
-			transform->m_rotation = { glm::degrees(rotation_in_euler.GetX()), 
-				glm::degrees(rotation_in_euler.GetY()), glm::degrees(rotation_in_euler.GetZ()) };
-			
-			// Step the world
-			m_physics_system->Update(deltaTime, 1, m_temp_alloc, m_job_system);
+			acc_time -= phDeltaTime;
+			m_physics_system->Update(steps * acc_time, steps, m_temp_alloc, m_job_system);
+			steps++;
 		}
-		
+
 	}
 
 	void physics_core::init()
@@ -78,7 +68,7 @@ namespace cat::physics
 		JPH::Factory::sInstance = new JPH::Factory();
 		JPH::RegisterTypes();
 
-		m_temp_alloc = new JPH::TempAllocatorImpl(32 * 1024 * 1024);
+		m_temp_alloc = new JPH::TempAllocatorImpl(64 * 1024 * 1024);
 
 		const auto threadCount = std::thread::hardware_concurrency() - 1;
 		m_job_system = new JPH::JobSystemThreadPool(JPH::cMaxPhysicsJobs, JPH::cMaxPhysicsBarriers, threadCount);

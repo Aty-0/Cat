@@ -31,23 +31,23 @@ namespace cat::graphics
 
 		bool load(const char* name);
 		void create(std::uint32_t tex_type, std::uint32_t format, std::uint32_t width, std::uint32_t height, void* data);
-		void set_texture_filter(texture::filter filter_min, texture::filter filter_mag);
-		void set_texture_wrap(texture::wrap wrap);
-		void create_framebuffer_texture();
+		void setFilter(texture::filter filter_min, texture::filter filter_mag);
+		void setWrap(texture::wrap wrap);
+		void createFramebufferTexture();
 
 		void bind(std::uint32_t active_texture = GL_TEXTURE0);
 		void unbind(std::uint32_t active_texture = GL_TEXTURE0);
 
 		void clear();
 
-		[[nodiscard]] inline std::int32_t   get_width() const;
-		[[nodiscard]] inline std::int32_t   get_height() const;
-		[[nodiscard]] inline std::int32_t   get_nrChannels() const;
-		[[nodiscard]] inline std::uint32_t  get_instance() const;
-		[[nodiscard]] inline std::uint32_t  get_tex_type() const;
-		[[nodiscard]] inline texture::filter get_filter_min() const;
-		[[nodiscard]] inline texture::filter get_filter_mag() const;
-		[[nodiscard]] inline texture::wrap   get_wrap() const;
+		[[nodiscard]] inline std::int32_t   getWidth() const;
+		[[nodiscard]] inline std::int32_t   getHeight() const;
+		[[nodiscard]] inline std::int32_t   getNrChannels() const;
+		[[nodiscard]] inline std::uint32_t  getInstance() const;
+		[[nodiscard]] inline std::uint32_t  getType() const;
+		[[nodiscard]] inline texture::filter getFilterMin() const;
+		[[nodiscard]] inline texture::filter getFilterMag() const;
+		[[nodiscard]] inline texture::wrap   getWrap() const;
 	private:
 		std::int32_t  m_width;
 		std::int32_t  m_height;

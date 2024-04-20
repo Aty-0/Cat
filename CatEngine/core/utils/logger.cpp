@@ -5,9 +5,9 @@
 
 #pragma warning(disable:4996)
 
-// TODO: macro ifdef windows
-
-#include <windows.h>
+#ifdef _WIN64
+	#include <windows.h>
+#endif
 
 #define VA_LIST_OUTPUT(buffer) 	va_list args; \
 		va_start(args, text); \
@@ -25,7 +25,7 @@ namespace cat::core::utils
 	{
 		m_level = logger::log_level::VERB;
 		
-		create_log_file();
+		createLogFile();
 	}
 
 	logger::~logger()
@@ -33,19 +33,18 @@ namespace cat::core::utils
 		m_log_file.close();
 	}
 
-	std::string logger::get_time(bool printMinAndSec)
+	std::string logger::getTimeStr(bool useColonForTime) const
 	{
 		const auto _time = time(0);
 		const auto localTime = localtime(&_time);
+		const auto fmt = useColonForTime == true ? "%i.%i.%i %i:%i:%i" : "%i.%i.%i %i.%i.%i";
+		const auto str = toStr(fmt, (1900 + localTime->tm_year), (1 + localTime->tm_mon), localTime->tm_mday,
+			localTime->tm_hour, localTime->tm_min, localTime->tm_sec);
 
-		const char* textparsed = printMinAndSec == true ?
-			to_str("%i.%i.%i %i.%i.%i", (1900 + localTime->tm_year), (1 + localTime->tm_mon), localTime->tm_mday, localTime->tm_hour, localTime->tm_min, localTime->tm_sec) :
-			to_str("%i.%i.%i", (1900 + localTime->tm_year), (1 + localTime->tm_mon), localTime->tm_mday);
-
-		return textparsed;
+		return str;
 	}
 
-	void logger::create_log_file()
+	void logger::createLogFile()
 	{
 		// Create folder "Logs" if it's not exist
 		if (!std::filesystem::is_directory("Logs") || !std::filesystem::exists("Logs"))
@@ -56,44 +55,33 @@ namespace cat::core::utils
 			}
 		}
 
-		auto name = std::string();
-		auto time = get_time(true);
-		// set name for log file
-		name.append("CatLog-");
-		name.append(time);
-		name.append(".log");
-
-		m_log_file_path = "Logs/" + name;
+		const auto time = getTimeStr(false);
+		const auto path = toStr("Logs/CatLog-%s%s", time.c_str(), ".log");
+		
+		m_log_file_path = path;
 		m_log_file = std::ofstream(m_log_file_path, std::ios_base::app);
 
 		if (!m_log_file)
 		{
-			return;
+			throw std::runtime_error("Can't open a log file...");
 		}
 
 		m_log_file << "Cat Engine Log file\n\n";
 		m_log_file.close();
 	}
 
-	const char* logger::get_level_str(log_level level) const
+	std::string logger::getLevelStr(logger::log_level level) const
 	{
-		switch (level)
-		{
-		case log_level::INFO:
-			return "Info";
-		case log_level::VERB:
-			return "Verbose";
-		case log_level::ERR:
-			return "Error";
-		case log_level::FATAL:
-			return "Fatal";
-		case log_level::WARN:
-			return "Warning";
-		default:
-			return "Unknown";
-		}
-
-		return "";
+		const char* levelList[] = {
+			"Unknown",
+			"Verb",
+			"Info",
+			"Warning",
+			"Error",
+			"Fatal"
+		};
+		
+		return levelList[static_cast<std::uint8_t>(level)];
 	}
 
 	void logger::print(logger::log_level level, const char* text, ...)
@@ -109,43 +97,34 @@ namespace cat::core::utils
 		}
 
 		char buffer[2048];
+		*buffer = '\0';
 		VA_LIST_OUTPUT(buffer);
 
-		auto line = std::string();
-		// Print line count
-		line.append("[" + std::to_string(m_linecount) + "] ");
-
-		// Add to line corrent time
-		line.append(get_time(true));
-
-		// Add type and text from buffer
-		auto message = " [" + std::string(get_level_str(level)) + "]  " + std::string(buffer) + "\n";
-		line.append(message);
-		
+		const auto time_str  = getTimeStr(true);
+		const auto level_str = getLevelStr(level);
+		const auto line = toStr("[%i] [%s] [%s]: %s\n", m_linecount, time_str.c_str(), level_str.c_str(), buffer);
+	
 		// Add current line to log file
 		m_log_file << line;
 		m_log_file.close();
 
 		// Add line 
 		m_linecount++;
-
+#ifdef _WIN64
 		// If we are have debuging output
 		OutputDebugString(line.c_str());
-
+#endif
 		m_scroll_to_bottom = true;
 		console_text_buffer.append(line.c_str());
 
-		line.clear();
 		memset(buffer, 0, sizeof(buffer));
 
-		// trigger exception if it fatal error
-		if (level == log_level::FATAL)
-		{
+		if (level == log_level::FATAL)		
 			throw std::runtime_error(std::string(buffer));
-		}
+		
 	}
 
-	void logger::render_console()
+	void logger::draw()
 	{
 		ImGui::Begin("Console");
 		

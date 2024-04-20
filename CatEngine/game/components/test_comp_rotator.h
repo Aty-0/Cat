@@ -10,6 +10,6 @@ namespace cat::game::components
 		~test_comp_rotator();
 
 		void test();
-		void on_update(float delta_time) override;
+		void onUpdate(float delta_time) override;
 	};
 }

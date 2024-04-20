@@ -32,31 +32,31 @@ namespace cat::core
 			return false;
 		}
 		glfwMakeContextCurrent(m_window);
-		glfwSetErrorCallback(on_get_error);
-		glfwSetDropCallback(m_window, on_drop_callback);
+		glfwSetErrorCallback(game_window::onGetGLFWError);
+		glfwSetDropCallback(m_window, game_window::onDropCallback);
 		// TODO or FIXME: That's two callback behave the same, so what's i need to use
 		//				  Need to check GLFW documentation
-		glfwSetWindowSizeCallback(m_window, on_window_size_change);
-		glfwSetFramebufferSizeCallback(m_window, on_framebuffer_size_change);
+		glfwSetWindowSizeCallback(m_window, game_window::onWindowSizeChange);
+		glfwSetFramebufferSizeCallback(m_window, game_window::onFramebufferSizeChange);
 		
-		set_vsync(0);
+		setVsync(1);
 
 		return true;
 	}
 
-	void game_window::on_drop_callback(GLFWwindow* window, std::int32_t count, const char** paths)
+	void game_window::onDropCallback(GLFWwindow* window, std::int32_t count, const char** paths)
 	{
-		static const auto rm = io::resource_manager::get_instance();
-		rm->move_files_to_data(count, paths);		
+		static const auto rm = io::resource_manager::getInstance();
+		rm->moveFilesToData(count, paths);		
 	}
 
-	void game_window::set_vsync(bool vsync)
+	void game_window::setVsync(bool vsync)
 	{
 		m_vsync = vsync;
 		glfwSwapInterval(static_cast<std::int32_t>(m_vsync));
 	}
 
-	void game_window::on_get_error(std::int32_t error_code, const char* description)
+	void game_window::onGetGLFWError(std::int32_t error_code, const char* description)
 	{
 		ERR("GLFW Error %d %s", error_code, description);
 	}
@@ -64,9 +64,9 @@ namespace cat::core
 	// FIXME ? Looks wierd a bit 
 	static bool isFullyResized = false;
 
-	void game_window::on_window_size_change(GLFWwindow* window, std::int32_t width, std::int32_t height)
+	void game_window::onWindowSizeChange(GLFWwindow* window, std::int32_t width, std::int32_t height)
 	{
-		static const auto gw = get_instance();
+		static const auto gw = getInstance();
 		gw->m_resized = false;
 		isFullyResized = false;
 		
@@ -90,29 +90,29 @@ namespace cat::core
 		glfwPollEvents();
 	}
 
-	void game_window::on_framebuffer_size_change(GLFWwindow* window, std::int32_t width, std::int32_t height)
+	void game_window::onFramebufferSizeChange(GLFWwindow* window, std::int32_t width, std::int32_t height)
 	{	
 		glViewport(0, 0, width, height);
 	}
 
-	void game_window::set_top(std::int32_t top)
+	void game_window::setTop(std::int32_t top)
 	{
-		glfwSetWindowPos(m_window, get_left(), top);
+		glfwSetWindowPos(m_window, getLeft(), top);
 	}
 
-	void game_window::set_left(std::int32_t left)
+	void game_window::setLeft(std::int32_t left)
 	{
-		glfwSetWindowPos(m_window, left, get_top());
+		glfwSetWindowPos(m_window, left, getTop());
 	}
 
-	void game_window::set_width(std::uint32_t w)
+	void game_window::setWidth(std::uint32_t w)
 	{
-		glfwSetWindowSize(m_window, w, get_height());
+		glfwSetWindowSize(m_window, w, getHeight());
 	}
 
-	void game_window::set_height(std::uint32_t h)
+	void game_window::setHeight(std::uint32_t h)
 	{
-		glfwSetWindowSize(m_window, get_width(), h);
+		glfwSetWindowSize(m_window, getWidth(), h);
 	}
 
 	void game_window::destroy()
@@ -120,50 +120,50 @@ namespace cat::core
 		glfwDestroyWindow(m_window);
 	}
 
-	std::int32_t game_window::get_width()		const
+	std::int32_t game_window::getWidth()		const
 	{
 		std::int32_t w = 0; 
 		glfwGetWindowSize(m_window, &w, 0);
 		return w;
 	}
 
-	std::int32_t game_window::get_height()		const
+	std::int32_t game_window::getHeight()		const
 	{ 
 		std::int32_t h = 0;
 		glfwGetWindowSize(m_window, 0, &h);
 		return h;
 	}
 
-	std::int32_t game_window::get_top()		const
+	std::int32_t game_window::getTop()		const
 	{ 
 		std::int32_t t = 0;
 		glfwGetWindowPos(m_window, 0, &t);
 		return t; 
 	}
 
-	std::int32_t game_window::get_left()		const
+	std::int32_t game_window::getLeft()		const
 	{ 
 		std::int32_t l = 0;
 		glfwGetWindowPos(m_window, &l, 0);
 		return l;
 	}
 
-	bool game_window::is_resized()		const
+	bool game_window::isResized()		const
 	{
 		return m_resized;
 	}
 
-	bool game_window::get_vsync()		const
+	bool game_window::getVsync()		const
 	{
 		return m_vsync;
 	}
 
-	bool game_window::is_close()		const
+	bool game_window::isClose()		const
 	{
 		return static_cast<bool>(glfwWindowShouldClose(m_window)); 
 	}
 
-	GLFWwindow* game_window::get_GLFW_window() const
+	GLFWwindow* game_window::getGLFWWindowInstance() const
 	{ 
 		return m_window; 
 	}

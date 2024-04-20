@@ -22,14 +22,14 @@ namespace cat::core::utils
 		~logger();
 
 		 void				print(logger::log_level level, const char* text, ...);
-		 void				create_log_file();
+		 void				createLogFile();
 
-		 void				render_console();		
+		 void				draw();		
 	private:
-		 inline const char* get_level_str(logger::log_level level) const;
+		 inline std::string getLevelStr(logger::log_level level) const;
 
 		 // get current time in string 
-		 inline std::string	get_time(bool printMinAndSec);
+		 inline std::string	getTimeStr(bool useColonForTime) const;
 		 
 		 std::uint32_t	m_linecount;
 		 std::ofstream	m_log_file;
@@ -41,7 +41,7 @@ namespace cat::core::utils
 	
 
 	// quick access to logger
-	inline const auto log = cat::core::utils::logger::get_instance();
+	inline const auto log = cat::core::utils::logger::getInstance();
 }
 
 #define INFO(msg, ...) \
@@ -51,12 +51,16 @@ do \
 } \
 while(0)
 
+#ifndef NDEBUG
 #define VERB(msg, ...) \
 do \
 { \
 	 cat::core::utils::log->print(cat::core::utils::logger::log_level::VERB, msg, ##__VA_ARGS__); \
 } \
 while(0)
+#else
+	#define VERB(msg, ...) 
+#endif
 
 #define WARN(msg, ...) \
 do \

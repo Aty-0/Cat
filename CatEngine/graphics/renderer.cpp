@@ -14,6 +14,10 @@
 #include "graphics/frame_buffer.h"
 #include "graphics/piece.h"
 
+#include "libs/imgui/imgui_internal.h"
+
+#include "graphics/imgui_dark_theme.h"
+
 namespace cat::graphics
 {
 	core::callback_storage renderer::onImGuiRender;
@@ -47,7 +51,7 @@ namespace cat::graphics
 		ImGui_ImplGlfw_Shutdown();
 		ImGui::DestroyContext();
 
-		core::utils::safe_delete(m_postProcessPiece);
+		core::utils::safeDelete(m_postProcessPiece);
 		// FIXME:
 		//m_postProcessFramebuffer.reset();
 		m_time = nullptr;
@@ -90,7 +94,7 @@ namespace cat::graphics
 		if (!imguiInit())
 			return false;
 		
-		m_time = core::utils::game_time::get_instance();
+		m_time = core::utils::game_time::getInstance();
 
 		onImGuiRender.add(std::bind(&renderer::imguiRenderDebugWindow, this));
 		return true;
@@ -174,8 +178,8 @@ namespace cat::graphics
 
 	void renderer::render()
 	{
-		if (m_window->get_width() == 0 
-			|| m_window->get_height() == 0)
+		if (m_window->getWidth() == 0 
+			|| m_window->getHeight() == 0)
 			return;
 
 		imguiNewFrame();
@@ -190,7 +194,7 @@ namespace cat::graphics
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		static const auto sm = game::scene::scene_manager::get_instance();
+		static const auto sm = game::scene::scene_manager::getInstance();
 		sm->render(this);
 
 		glDisable(GL_DEPTH_TEST);
@@ -198,7 +202,7 @@ namespace cat::graphics
 		
 		if (m_disable_post_proc)
 		{
-			m_postProcessFramebuffer->unbind_buffer();
+			m_postProcessFramebuffer->unbindBuffer();
 			
 			// Clear all relevant buffers
 			glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -208,31 +212,48 @@ namespace cat::graphics
 		}
 
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+		auto io = ImGui::GetIO();
+		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+		{
+			auto backup_current_context = glfwGetCurrentContext();
+			ImGui::UpdatePlatformWindows();
+			ImGui::RenderPlatformWindowsDefault();
+			glfwMakeContextCurrent(backup_current_context);
+		}
 	}
 
 	bool renderer::imguiInit()
 	{
 		INFO("Initialize Imgui...");
-		m_window = core::game_window::get_instance();
+		m_window = core::game_window::getInstance();
 
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
-		ImGuiIO& io = ImGui::GetIO(); 
+		auto& io = ImGui::GetIO();
+
+		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;    
+		io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;     
+		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;    
+
+		// TODO: When we are make our ttf font loader
+		//		 Need to load it from memory
+		io.Fonts->AddFontFromFileTTF("gamedata/fonts/Roboto-Regular.ttf", 18);
+
+		applyDarkTheme(ImGui::GetStyle());
 		
-		if (!ImGui_ImplGlfw_InitForOpenGL(m_window->get_GLFW_window(), true))
+
+		if (!ImGui_ImplGlfw_InitForOpenGL(m_window->getGLFWWindowInstance(), true))
 		{
-			FATAL("ImGui For OpenGL Impl stage failed");
+			FATAL("ImGui GLFW impl failed!");
 			return false;
 		}
 
 		if (!ImGui_ImplOpenGL3_Init())
 		{
-			FATAL("ImGui OpenGL stage failed");
+			FATAL("ImGui OpenGL3 init failed!");
 			return false;
 		}
-
-		// Apply style
-		ImGui::StyleColorsDark();
 
 		return true;
 	}
@@ -241,9 +262,9 @@ namespace cat::graphics
 	{
 		ImGui::Begin("Debug window");
 
-		ImGui::Text("FPS %d", m_time->get_fps());
-		ImGui::Text("Time %f", m_time->get_time());
-		ImGui::Text("Delta time %f", m_time->get_delta_time());
+		ImGui::Text("FPS %d", m_time->getFps());
+		ImGui::Text("Time %f", m_time->getTime());
+		ImGui::Text("Delta time %f", m_time->getDeltaTime());
 		if (ImGui::Checkbox("Disable Post Process", &m_disable_post_proc))
 		{
 			recreateFrameBuffer();
@@ -254,7 +275,7 @@ namespace cat::graphics
 
 	void renderer::imguiRender()
 	{
-		onImGuiRender.run_all();		
+		onImGuiRender.runAll();		
 	}
 
 	void renderer::imguiNewFrame()
@@ -263,8 +284,44 @@ namespace cat::graphics
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 
+
 		if (m_renderImgui)
 		{
+			const auto viewport = ImGui::GetMainViewport();
+		
+			ImGui::SetNextWindowPos(viewport->Pos);
+			ImGui::SetNextWindowSize(viewport->Size);
+			ImGui::SetNextWindowViewport(viewport->ID);
+			
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);			
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+		
+			const auto windowFlags = ImGuiWindowFlags_NoBringToFrontOnFocus |
+				ImGuiWindowFlags_NoNavFocus |
+				ImGuiWindowFlags_NoDocking |
+				ImGuiWindowFlags_NoTitleBar |
+				ImGuiWindowFlags_NoResize |
+				ImGuiWindowFlags_NoMove |
+				ImGuiWindowFlags_NoCollapse |
+				ImGuiWindowFlags_MenuBar |
+				ImGuiWindowFlags_NoBackground |
+				ImGuiWindowFlags_NoScrollbar;
+	
+			
+			ImGui::Begin("dockspace_wnd", nullptr, windowFlags);
+
+			ImGui::PopStyleVar(3);
+			
+			const auto dockId = ImGui::GetID("dockspace");
+			ImGui::DockSpace(dockId, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_PassthruCentralNode);
+			// FIXME: Crash here 
+			ImGui::BeginMainMenuBar();
+			// TODO: onMainMenuElementsDraw();
+			ImGui::EndMainMenuBar();
+
+			ImGui::End();
+
 			imguiRender();
 		}
 
@@ -283,7 +340,7 @@ namespace cat::graphics
 
 	void renderer::initPostProcess()
 	{
-		m_postProcessFramebuffer = std::make_shared<frame_buffer>(*new frame_buffer());
+		m_postProcessFramebuffer = std::make_shared<frame_buffer>();
 		m_postProcessFramebuffer->gen();
 		std::vector<graphics::vertex> vertices = { { glm::vec3(1.0f,  1.0f, 0.0f), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 1.0f) },
 											{ glm::vec3(1.0f, -1.0f, 0.0f),   glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 0.0f) },
@@ -305,10 +362,10 @@ namespace cat::graphics
 
 	void renderer::recreateFrameBuffer()
 	{
-		if (m_window->get_width() == 0
-			|| m_window->get_height() == 0 
+		if (m_window->getWidth() == 0
+			|| m_window->getHeight() == 0 
 			|| !m_disable_post_proc
-			|| !m_window->is_resized())
+			|| !m_window->isResized())
 			return;
 		
 		// Remove old and create new one 
@@ -322,16 +379,88 @@ namespace cat::graphics
 		m_postProcessPiece->end(this);
 	}
 
-	void renderer::debugDrawLine(glm::vec3 begin, glm::vec3 end)
+	// TODO:
+	// It's a dirty way to draw debug things
+	// We need to create a one buffer were we are can store vertices
+	// So, for that it will be better way i think 
+	void renderer::debugDrawCube(glm::vec3 pos, glm::vec3 rot, glm::vec3 scale, glm::vec4 color)
+	{
+		const std::vector<graphics::vertex> vertices =
+		{
+			{ { -0.5f,  0.5f, -0.5f }, color, { 0.0f, 0.0f }  },
+			{ { -0.5f, -0.5f, -0.5f }, color, { 0.0f, 0.0f }	  },
+			{ {  0.5f, -0.5f, -0.5f }, color, { 0.0f, 0.0f }  },
+			{ {  0.5f, -0.5f, -0.5f }, color, { 0.0f, 0.0f }  },
+			{ {  0.5f,  0.5f, -0.5f }, color, { 0.0f, 0.0f }   },
+			{ { -0.5f,  0.5f, -0.5f }, color, { 0.0f, 0.0f }	   },
+			{ { -0.5f, -0.5f,  0.5f }, color, { 0.0f, 0.0f }   },
+			{ { -0.5f, -0.5f, -0.5f }, color, { 0.0f,0.0f }  },
+			{ { -0.5f,  0.5f, -0.5f }, color, { 0.0f, 0.0f }    },
+			{ { -0.5f,  0.5f, -0.5f }, color, { 0.0f, 0.0f }	   },
+			{ { -0.5f,  0.5f,  0.5f }, color, { 0.0f, 0.0f }   },
+			{ { -0.5f, -0.5f,  0.5f }, color, { 0.0f, 0.0f }    },
+			{ {  0.5f, -0.5f, -0.5f }, color, { 0.0f, 0.0f }    },
+			{ {  0.5f, -0.5f,  0.5f }, color, { 0.0f, 0.0f }	   },
+			{ {  0.5f,  0.5f,  0.5f }, color, { 0.0f, 0.0f }   },
+			{ {  0.5f,  0.5f,  0.5f }, color, { 0.0f, 0.0f }    },
+			{ {  0.5f,  0.5f, -0.5f }, color, { 0.0f, 0.0f }    },
+			{ {  0.5f, -0.5f, -0.5f }, color, { 0.0f, 0.0f }	   },
+			{ { -0.5f, -0.5f,  0.5f }, color, { 0.0f, 0.0f }   },
+			{ { -0.5f,  0.5f,  0.5f }, color, { 0.0f, 0.0f }    },
+			{ {  0.5f,  0.5f,  0.5f }, color, { 0.0f, 0.0f }    },
+			{ {  0.5f,  0.5f,  0.5f }, color, { 0.0f, 0.0f }	   },
+			{ {  0.5f, -0.5f,  0.5f }, color, { 0.0f, 0.0f }  },
+			{ { -0.5f, -0.5f,  0.5f }, color, { 0.0f, 0.0f }    },
+			{ { -0.5f,  0.5f, -0.5f }, color, { 0.0f, 0.0f }    },
+			{ {  0.5f,  0.5f, -0.5f }, color, { 0.0f, 0.0f }	   },
+			{ {  0.5f,  0.5f,  0.5f }, color, { 0.0f, 0.0f }   },
+			{ {  0.5f,  0.5f,  0.5f }, color, { 0.0f, 0.0f }    },
+			{ { -0.5f,  0.5f,  0.5f }, color, { 0.0f, 0.0f }    },
+			{ { -0.5f,  0.5f, -0.5f }, color, { 0.0f, 0.0f }	   },
+			{ { -0.5f, -0.5f, -0.5f }, color, { 0.0f, 0.0f }   },
+			{ { -0.5f, -0.5f,  0.5f }, color, { 0.0f, 0.0f }    },
+			{ {  0.5f, -0.5f, -0.5f }, color, { 0.0f, 0.0f }    },
+			{ {  0.5f, -0.5f, -0.5f }, color, { 0.0f, 0.0f }	   },
+			{ { -0.5f, -0.5f,  0.5f }, color, { 0.0f, 0.0f }   },
+			{ {  0.5f, -0.5f,  0.5f }, color, { 0.0f, 0.0f }    }
+		};
+
+		static graphics::piece* piece = nullptr;
+
+		if (piece == nullptr)
+		{
+			piece = new graphics::piece(vertices, { }, { }, "debug");
+			piece->setPolyMode(GL_LINE);
+		}
+
+
+		piece->begin();
+
+		const auto shader = piece->getShader();
+		glm::mat4 world = glm::mat4();
+		
+		const auto rotation_matrix = glm::rotate(world, glm::radians(rot.z), glm::vec3(0, 0, 1))
+			* glm::rotate(world, glm::radians(rot.y), glm::vec3(0, 1, 0))
+			* glm::rotate(world, glm::radians(rot.x), glm::vec3(1, 0, 0));
+
+		world = glm::translate(world, pos) * rotation_matrix * glm::scale(world, scale);
+
+		shader->setMat4("transform.world", world);
+
+		piece->end(this);
+
+		//core::utils::safe_delete(piece);
+	}
+
+	void renderer::debugDrawLine(glm::vec3 begin, glm::vec3 end, glm::vec4 color)
 	{
 		const std::vector<graphics::vertex> vertices = 
 		{ 
-			{ begin, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 0.0f) },
-			{ end,   glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 0.0f) },
+			{ begin, color, glm::vec2(0.0f, 0.0f) },
+			{ end,   color, glm::vec2(0.0f, 0.0f) },
 		};
 
-		// FIX ME: Memory leak...
-		static graphics::piece* piece = nullptr; 
+		static graphics::piece* piece = nullptr;
 		
 		if (piece == nullptr)
 		{
@@ -346,11 +475,11 @@ namespace cat::graphics
 		glm::mat4 world = glm::mat4();
 		world = glm::translate(world, end) * glm::scale(world, glm::vec3(1,1,1));
 		
-		shader->set_mat4("transform.world", world);
+		shader->setMat4("transform.world", world);
 		
 		piece->end(this);
 
-		core::utils::safe_delete(piece);
+		//core::utils::safe_delete(piece);
 	}
 
 }

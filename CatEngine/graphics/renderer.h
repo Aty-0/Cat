@@ -39,7 +39,8 @@ namespace cat::graphics
 		void imguiToggleVisibility();
 
 
-		void debugDrawLine(glm::vec3 begin, glm::vec3 end);
+		void debugDrawLine(glm::vec3 begin, glm::vec3 end, glm::vec4 color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+		void debugDrawCube(glm::vec3 pos, glm::vec3 rot, glm::vec3 scale, glm::vec4 color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 
 	private:
 		bool imguiInit();

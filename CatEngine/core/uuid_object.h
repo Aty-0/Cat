@@ -23,17 +23,17 @@ namespace cat::core
 		void set(const uuids::uuid& uuid);
 
 		// Get current uuid in string format 
-		[[nodiscard]] inline std::string get_id_str() const;
+		[[nodiscard]] inline std::string getIDStr() const;
 
 		// Get current uuid
-		[[nodiscard]] inline uuids::uuid get_id() const;
+		[[nodiscard]] inline uuids::uuid getID() const;
 		
 
 		// Convert string to uuid 
-		static uuids::uuid to_id(const std::string id_str);
+		static uuids::uuid toID(const std::string id_str);
 
 		// Convert uuid to string 
-		static std::string to_str(uuids::uuid id);
+		static std::string toStr(uuids::uuid id);
 
 		[[nodiscard]] inline bool empty() const;
 		

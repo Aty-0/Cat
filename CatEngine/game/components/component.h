@@ -6,6 +6,10 @@
 namespace cat::game
 {
 	class game_object;
+	namespace scene
+	{
+		class scene_manager;
+	}
 }
 
 namespace cat::graphics
@@ -20,30 +24,31 @@ namespace cat::game::components
 	class CATENGINE_API component
 	{
 		friend game_object;
+		friend scene::scene_manager;
 	public:
 		component();
 		virtual ~component();
 
-		
-		virtual void on_render(graphics::renderer* renderer) { }
-		virtual void on_update(float deltaTime) { }
+		virtual void onRender(graphics::renderer* renderer) { }
+		virtual void onUpdate(float deltaTime) { }
 
-		[[nodiscard]] inline core::uuid_object get_uuid() const;
-		[[nodiscard]] inline std::string   get_name() const;
-		[[nodiscard]] inline game_object*  get_owner() const;		
+		[[nodiscard]] inline core::uuid_object getUUID() const;
+		[[nodiscard]] inline std::string   getName() const;
+		[[nodiscard]] inline game_object*  getOwner() const;		
 	protected:
-		void set_owner(game_object* go);
-		void set_name(std::string name);
+		void setOwner(game_object* go);
+		void setName(const std::string& name);
 
 	private:
 		std::string			m_name;
 		game_object*		m_owner;
-		bool				m_isSelected;
+		bool				m_select;
 		core::uuid_object	m_uuid;
 
 	public:
 		core::callback_storage onCreate;
 		core::callback_storage onDestroy;
 
+		core::callback_storage onEditGuiDraw;
 	};
 }

@@ -24,6 +24,7 @@ namespace cat::game::components
 
 		[[nodiscard]] inline JPH::BodyID getBodyId() const;
 
+		void onUpdate(float deltaTime) override;
 		void setMass(float mass);
 		void setShape(JPH::Ref<JPH::Shape> quality);
 		void setMotionQuality(motion_quality quality);
@@ -44,5 +45,6 @@ namespace cat::game::components
 		void updateBodyInterfaceRotation();
 		void updateBodyInterfacePosition();
 		void updateBodyInterfaceVelocity();
+		void updateBodyInterfaceScale();
 	};
 }

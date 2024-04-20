@@ -28,20 +28,21 @@ namespace cat::scripts
 		m_scripts.shrink_to_fit();
 	}
 	
-	void script_core::add_engine_api(sol::state& lua)
+	void script_core::addCatAPI(sol::state& lua)
 	{
 		// Create namespace for our API
 		sol::table api = lua.create_named_table("cat");
-		
-		add_core_api(api);
-		add_game_api(api);
-		add_graphics_api(api);
-		add_scene_api(api);
-		add_3rd_party_api(api);
+#ifndef CAT_DISABLE_LUA_CAT_API
+		addCoreAPI(api);
+		addGameAPI(api);
+		addGraphicsAPI(api);
+		addSceneAPI(api);
+		add3rdPartyAPI(api);
+#endif
 	}
 
 	// TODO: Error handler
-	bool script_core::run_func(const char* name, const char* func_name)
+	bool script_core::runFunc(const char* name, const char* func_name)
 	{
 		VERB("Script Core: Run func %s", name);
 		const auto it = std::find_if(m_scripts.begin(), m_scripts.end(), [name](std::pair<std::string, script*> const& el)
@@ -66,7 +67,7 @@ namespace cat::scripts
 		return true;
 	}
 	
-	script* script_core::get_script(const char* name) const
+	script* script_core::getScript(const char* name) const
 	{
 		const auto it = std::find_if(m_scripts.begin(), m_scripts.end(), [name](std::pair<std::string, script*> const& el)
 			{
@@ -89,7 +90,7 @@ namespace cat::scripts
 
 		if (it == m_scripts.end())
 		{
-			static const auto rm = io::resource_manager::get_instance();			
+			static const auto rm = io::resource_manager::getInstance();			
 			auto data = rm->read<const char*, script>(name, { "lua" });
 			
 			// Script was not found or it is empty		
@@ -109,7 +110,7 @@ namespace cat::scripts
 				sol::lib::io,
 				sol::lib::table);
 			
-			add_engine_api(sc->lua);
+			addCatAPI(sc->lua);
 			
 			try
 			{

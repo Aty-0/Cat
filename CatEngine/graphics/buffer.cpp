@@ -3,19 +3,19 @@
 
 namespace cat::graphics
 {
-	void buffer::unbind_buffer()
+	void buffer::unbindBuffer()
 	{
 
 	}
 
-	void buffer::unbind_buffer_array()
+	void buffer::unbindBufferArray()
 	{
 	
 	}
 
-	void buffer::unbind_all()
+	void buffer::unbindAll()
 	{
-		unbind_buffer();
-		unbind_buffer_array();
+		unbindBuffer();
+		unbindBufferArray();
 	}
 }

@@ -18,19 +18,19 @@ namespace cat::game::components
 		onCreate.remove(std::bind(&test_comp_rotator::test, this));
 	}
 
-	void test_comp_rotator::on_update(float delta_time)
+	void test_comp_rotator::onUpdate(float delta_time)
 	{
-		const auto owner = get_owner();
+		const auto owner = getOwner();
 		if (owner)
 		{
 			if (delta_time > 1)
 				return;
 
-			auto transform = owner->get_transform();
+			auto transform = owner->getTransform();
 			static float angle = 1;
 			angle += 15.0f * delta_time;
 			//VERB("%f",angle);
-			transform->set_rotation(glm::vec3(angle, 0, 0));
+			transform->setRotation(glm::vec3(angle, 0, 0));
 			//transform->set_scale(glm::vec3(angle, 1, 1));
 			static bool mode = false;
 			static float x = 0.0f;
@@ -46,7 +46,7 @@ namespace cat::game::components
 				mode = false;
 
 			//transform->set_position(glm::vec3(x, 0, 0));
-			transform->set_scale(glm::vec3(1 - (x * 0.5), 1, 1));
+			transform->setScale(glm::vec3(1 - (x * 0.5), 1, 1));
 
 		}
 	}

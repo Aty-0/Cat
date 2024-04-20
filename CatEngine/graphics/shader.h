@@ -12,26 +12,26 @@ namespace cat::graphics
 		bool load(const char* name);
 
 		// TODO: get rid of this funcs, need make something better 
-		void set_int32(const char* name, std::int32_t value);
-		void set_uint32(const char* name, std::uint32_t value);
-		void set_float(const char* name, float value);
-		void set_bool(const char* name, bool value);
-		void set_vec2(const char* name, glm::vec2& value);
-		void set_vec3(const char* name, glm::vec3& value);
-		void set_vec4(const char* name, glm::vec4& value);
-		void set_mat2(const char* name, glm::mat2& mat);
-		void set_mat3(const char* name, glm::mat3& mat);
-		void set_mat4(const char* name, glm::mat4& mat);
+		void setInt32(const char* name, std::int32_t value);
+		void setUInt32(const char* name, std::uint32_t value);
+		void setFloat(const char* name, float value);
+		void setBool(const char* name, bool value);
+		void setVec2(const char* name, glm::vec2& value);
+		void setVec3(const char* name, glm::vec3& value);
+		void setVec4(const char* name, glm::vec4& value);
+		void setMat2(const char* name, glm::mat2& mat);
+		void setMat3(const char* name, glm::mat3& mat);
+		void setMat4(const char* name, glm::mat4& mat);
 
 
 		void bind();
 		void unbind();
-		[[nodiscard]] inline std::uint32_t get_program() const;
+		[[nodiscard]] inline std::uint32_t getProgram() const;
 
 	private:
 		bool compile(const char* data, std::int32_t type, std::uint32_t& shader);
-		void update_default_uniforms();
-		const char* get_shader_type(std::int32_t type);
+		void updateDefaultUniforms();
+		inline const char* getShaderType(std::int32_t type);
 
 		std::uint32_t			m_shader_program;
 		std::uint32_t			m_vertex_shader;

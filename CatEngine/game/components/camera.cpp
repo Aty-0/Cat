@@ -16,15 +16,15 @@ namespace cat::game::components
 		m_front(glm::vec3(0.0f, 0.0f, 1.0f)),
 		m_right(glm::vec3(0.0f, 0.0f, 0.0f))
 	{
-		m_input = core::input_manager::get_instance();
+		m_input = core::input_manager::getInstance();
 
-		m_input->add_listener_sp(core::input_key_state::Move, core::input_device::Mouse, std::bind(&camera::track_mouse_move, this));
-		m_input->add_listener(core::input_key_code::KEYBOARD_W, core::input_key_state::Hold, core::input_device::Keyboard, std::bind(&game::components::camera::move_up, this));
-		m_input->add_listener(core::input_key_code::KEYBOARD_S, core::input_key_state::Hold, core::input_device::Keyboard, std::bind(&game::components::camera::move_down, this));
-		m_input->add_listener(core::input_key_code::KEYBOARD_A, core::input_key_state::Hold, core::input_device::Keyboard, std::bind(&game::components::camera::move_left, this));
-		m_input->add_listener(core::input_key_code::KEYBOARD_D, core::input_key_state::Hold, core::input_device::Keyboard, std::bind(&game::components::camera::move_right, this));
-		m_input->add_listener(core::input_key_code::KEYBOARD_LEFT_SHIFT, core::input_key_state::Hold,
-			core::input_device::Keyboard, std::bind(&game::components::camera::enable_mouse_move, this));
+		m_input->addListener(core::input_key_state::Move, core::input_device::Mouse, std::bind(&camera::trackMouse, this));
+		m_input->addListener(core::input_key_code::KEYBOARD_W, core::input_key_state::Hold, core::input_device::Keyboard, std::bind(&game::components::camera::moveUp, this));
+		m_input->addListener(core::input_key_code::KEYBOARD_S, core::input_key_state::Hold, core::input_device::Keyboard, std::bind(&game::components::camera::moveDown, this));
+		m_input->addListener(core::input_key_code::KEYBOARD_A, core::input_key_state::Hold, core::input_device::Keyboard, std::bind(&game::components::camera::moveLeft, this));
+		m_input->addListener(core::input_key_code::KEYBOARD_D, core::input_key_state::Hold, core::input_device::Keyboard, std::bind(&game::components::camera::moveRight, this));
+		m_input->addListener(core::input_key_code::KEYBOARD_LEFT_SHIFT, core::input_key_state::Hold,
+			core::input_device::Keyboard, std::bind(&game::components::camera::enableMouseControl, this));
 		//im->add_listener(core::input_key_code::KEYBOARD_Z, core::input_key_state::Release,
 		//	core::input_device::Keyboard, std::bind(&game::components::camera::disable_mouse_move, this));
 
@@ -36,30 +36,30 @@ namespace cat::game::components
 
 	}
 
-	void camera::disable_mouse_move()
+	void camera::disableMouseControl()
 	{
 		m_track_mouse = false;
 		m_input->unhideCursor();
 	}
 
-	void camera::enable_mouse_move()
+	void camera::enableMouseControl()
 	{
 		m_track_mouse = true;
 		m_input->hideCursor();
 	}
 
-	void camera::track_mouse_move()
+	void camera::trackMouse()
 	{
 		if (!m_track_mouse)
 			return;
 
-		auto xpos = m_input->get_mouse_pos().x;
-		auto ypos = m_input->get_mouse_pos().y;
+		auto xpos = m_input->getMousePos().x;
+		auto ypos = m_input->getMousePos().y;
 		
 		static float last_x = xpos;
 		static float last_y = ypos;
 
-		const auto transform = get_owner()->get_transform();
+		const auto transform = getOwner()->getTransform();
 		auto xoffset = xpos - last_x;
 		auto yoffset = last_y - ypos; // reversed since y-coordinates go from bottom to top
 
@@ -72,7 +72,7 @@ namespace cat::game::components
 		xoffset *= mouse_sensitivity;
 		yoffset *= mouse_sensitivity;
 
-		auto r = transform->get_rotation();
+		auto r = transform->getRotation();
 		
 		// when pitch is out of bounds, screen doesn't get flipped
 		if (r.y > 89.0f)
@@ -80,82 +80,82 @@ namespace cat::game::components
 		if (r.y < -89.0f)
 			r.y = -89.0f;
 
-		transform->set_rotation({ r.x + xoffset, r.y + yoffset, r.z });
+		transform->setRotation({ r.x + xoffset, r.y + yoffset, r.z });
 	}
 
-	void camera::move_right()
+	void camera::moveRight()
 	{
-		static const auto transform = get_owner()->get_transform();
-		static const auto time = core::utils::game_time::get_instance();
-		auto pos = transform->get_position();
-		pos += m_right * get_speed() * time->get_delta_time();
-		transform->set_position(pos);
+		static const auto transform = getOwner()->getTransform();
+		static const auto time = core::utils::game_time::getInstance();
+		auto pos = transform->getPosition();
+		pos += m_right * getSpeed() * time->getDeltaTime();
+		transform->setPosition(pos);
 
-		//transform->set_position(glm::vec3(transform->get_position().x + get_speed() *
-		//	time->get_delta_time(), transform->get_position().y, transform->get_position().z));
+		//transform->setPosition(glm::vec3(transform->getPosition().x + getSpeed() *
+		//	time->getDeltaTime(), transform->getPosition().y, transform->getPosition().z));
 	}
 
-	void camera::move_left()
+	void camera::moveLeft()
 	{
-		static const auto transform = get_owner()->get_transform();
-		static const auto time = core::utils::game_time::get_instance();
-		auto pos = transform->get_position();
-		pos -= m_right * get_speed() * time->get_delta_time();
-		transform->set_position(pos);
+		static const auto transform = getOwner()->getTransform();
+		static const auto time = core::utils::game_time::getInstance();
+		auto pos = transform->getPosition();
+		pos -= m_right * getSpeed() * time->getDeltaTime();
+		transform->setPosition(pos);
 
 		//transform->set_position(glm::vec3(transform->get_position().x - get_speed() *
 		// 	time->get_delta_time(), transform->get_position().y, transform->get_position().z));
 	}
 
-	void camera::move_up()
+	void camera::moveUp()
 	{
-		static const auto transform = get_owner()->get_transform();
-		static const auto time = core::utils::game_time::get_instance();
-		auto pos = transform->get_position();
-		pos += m_front * get_speed() * time->get_delta_time();
-		transform->set_position(pos);
+		static const auto transform = getOwner()->getTransform();
+		static const auto time = core::utils::game_time::getInstance();
+		auto pos = transform->getPosition();
+		pos += m_front * getSpeed() * time->getDeltaTime();
+		transform->setPosition(pos);
 
 		//transform->set_position(glm::vec3(transform->get_position().x, transform->get_position().y, 
 		//	transform->get_position().z + get_speed() *
 		//	time->get_delta_time()));
 	}
 
-	void camera::move_down()
+	void camera::moveDown()
 	{
-		static const auto transform = get_owner()->get_transform();
-		static const auto time = core::utils::game_time::get_instance();
-		auto pos = transform->get_position();
-		pos -= m_front * get_speed() * time->get_delta_time();
-		transform->set_position(pos);
+		static const auto transform = getOwner()->getTransform();
+		static const auto time = core::utils::game_time::getInstance();
+		auto pos = transform->getPosition();
+		pos -= m_front * getSpeed() * time->getDeltaTime();
+		transform->setPosition(pos);
 
 		//transform->set_position(glm::vec3(transform->get_position().x, transform->get_position().y, 
 		//	transform->get_position().z - get_speed() *
 		//	time->get_delta_time()));
 	}
 
-	void camera::on_render(graphics::renderer* renderer)
+	void camera::onRender(graphics::renderer* renderer)
 	{
 		// FIXME: 
-		if (m_input->get_key_state(core::input_key_code::KEYBOARD_LEFT_SHIFT, core::input_key_state::Release,
+		if (m_input->getKeyState(core::input_key_code::KEYBOARD_LEFT_SHIFT, core::input_key_state::Release,
 				core::input_device::Keyboard) && m_track_mouse)
 		{
-			disable_mouse_move();
+			disableMouseControl();
 		}
 
-		static const auto window = core::game_window::get_instance();
-		const auto transform = get_owner()->get_transform();
+		static const auto window = core::game_window::getInstance();
+		const auto transform = getOwner()->getTransform();
 
-		const float aspect_ratio = window->get_width() / window->get_height();
+		const auto aspect_ratio = static_cast<float>(window->getWidth() / window->getHeight());
 		
 		static auto cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 		const auto WUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
+		m_view = glm::lookAt(transform->getPosition(), transform->getPosition() + m_front, cameraUp);
 
-		m_view = glm::lookAt(transform->get_position(), transform->get_position() + m_front, cameraUp);
 		// Orthographic mode
 		//m_projection = glm::ortho(1.0f + m_zoom, -1.0f - m_zoom, 
 		//	(-1.0f * aspect_ratio) - m_zoom, (1.0f * aspect_ratio) + m_zoom, -1000.0f, 1000.0f);
-		auto r = transform->get_rotation();
+		auto r = transform->getRotation();
 
 		glm::vec3 front = { };
 
@@ -172,27 +172,27 @@ namespace cat::game::components
 
 	}
 
-	glm::vec3 camera::get_front() const
+	glm::vec3 camera::getFront() const
 	{
 		return m_front;
 	}
 
-	glm::mat4& camera::get_view()
+	glm::mat4& camera::getView()
 	{
 		return m_view;
 	}
 
-	glm::mat4& camera::get_projection()
+	glm::mat4& camera::getProjection()
 	{
 		return m_projection;
 	}
 
-	float camera::get_speed() const
+	float camera::getSpeed() const
 	{
 		return m_speed;
 	}
 
-	float camera::get_zoom() const
+	float camera::getZoom() const
 	{
 		return m_zoom;
 	}

@@ -5,7 +5,7 @@
 namespace cat::game
 {
 	template<typename T>
-	inline T* game_object::add_component(T* component, std::uint32_t priority)
+	inline decltype(auto) game_object::addComponent(T* component, std::uint32_t priority)
 	{
 		static_assert(!std::is_base_of<T, components::component>::value || std::is_same<T, components::component>::value,
 			"This is not Component or Component based class");
@@ -16,21 +16,21 @@ namespace cat::game
 			return nullptr;
 		}
 
-		component->set_owner(this);
-		component->set_name(core::utils::get_class_name_string(component));
+		component->setOwner(this);
+		component->setName(core::utils::getClassNameStr(component));
 
 		component->onCreate();
 
-		VERB("game_object::add_component %s -> %s", get_name().c_str(), component->get_name().c_str());
+		VERB("game_object::add_component %s -> %s", getName().c_str(), component->getName().c_str());
 
-		m_components.push_back(std::make_pair(std::make_pair(component->m_uuid->get_id(), std::type_index(typeid(T))), component));
+		m_components.emplace(std::make_pair(component->m_uuid->getID(), std::type_index(typeid(T)), component));
 		return component;
 	}
 
 	// TODO: delete by priority ?
 
 	template<typename T>
-	inline void game_object::delete_component()
+	inline void game_object::deleteComponent()
 	{
 		static_assert(!std::is_base_of<T, components::component>::value || std::is_same<T, components::component>::value,
 			"This is not Component or Component based class");
@@ -51,7 +51,7 @@ namespace cat::game
 
 		if (it == m_components.end())
 		{
-			ERR("game_object::delete_component %s Can't delete %s component is not found in game object!", get_name().c_str(), typeid(T).name());
+			ERR("game_object::delete_component %s Can't delete %s component is not found in game object!", getName().c_str(), typeid(T).name());
 			return;
 		}
 
@@ -62,17 +62,17 @@ namespace cat::game
 	}
 
 	template<typename T>
-	inline T* game_object::init_component(T* component)
+	inline decltype(auto) game_object::initComponent(T* component)
 	{
 		static_assert(!std::is_base_of<T, components::component>::value || std::is_same<T, components::component>::value,
 			"This is not Component or Component based class");
 
-		VERB("game_object::init_component in %s -> %s ", get_name().c_str(), core::utils::get_class_name_string<T>().c_str());
+		VERB("game_object::init_component in %s -> %s ", getName().c_str(), core::utils::getClassNameStr<T>().c_str());
 
 		component = new T();
-		component->set_owner(this);
-		component->set_name(core::utils::get_class_name_string(component));
-		component->m_uuid->set_id(component->make_new());
+		component->setOwner(this);
+		component->setName(core::utils::getClassNameStr(component));
+		component->m_uuid->setID(component->make_new());
 
 		// When name and owner is setted
 		component->onCreate();
@@ -81,28 +81,28 @@ namespace cat::game
 	}
 
 	template<typename T>
-	inline T* game_object::create_component(std::uint32_t priority)
+	inline decltype(auto) game_object::createComponent(std::uint32_t priority)
 	{
 		static_assert(!std::is_base_of<T, components::component>::value || std::is_same<T, components::component>::value,
 			"This is not Component or Component based class");
 
 		auto component = new T();
 
-		component->set_owner(this);
-		component->set_name(core::utils::get_class_name_string(component));
+		component->setOwner(this);
+		component->setName(core::utils::getClassNameStr(component));
 		component->m_uuid.set(component->m_uuid.make_new());
 
 		// When name and owner is setted
 		component->onCreate();
 
-		m_components.push_back(std::make_pair(std::make_pair(component->m_uuid.get_id(), std::type_index(typeid(*component))), component));
+		m_components.push_back(std::make_pair(std::make_pair(component->m_uuid.getID(), std::type_index(typeid(*component))), component));
 
-		VERB("game_object::create_component %s -> %s", get_name().c_str(), component->get_name().c_str());
+		VERB("game_object::create_component %s -> %s", getName().c_str(), component->getName().c_str());
 		return component;
 	}
 
 	template<typename T>
-	inline T* game_object::get_component()
+	inline T* game_object::getComponent()
 	{
 		static_assert(!std::is_base_of<T, components::component>::value || std::is_same<T, components::component>::value,
 			"This is not Component or Component based class");
@@ -130,28 +130,28 @@ namespace cat::game
 	}
 
 	template<typename T>
-	inline T* game_object::get_component_in_children()
+	inline T* game_object::getComponentInChildren()
 	{
 		static_assert(!std::is_base_of<T, components::component>::value || std::is_same<T, components::component>::value,
 			"This is not Component or Component based class");
 
-		if (m_transform->get_child() != nullptr)
+		if (m_transform->getChild() != nullptr)
 		{
-			return m_transform->get_child()->get_component<T>();
+			return m_transform->getChild()->getComponent<T>();
 		}
 
 		return nullptr;
 	}
 
 	template<typename T>
-	inline T* game_object::get_component_in_parent()
+	inline T* game_object::getComponentInParent()
 	{
 		static_assert(!std::is_base_of<T, components::component>::value || std::is_same<T, components::component>::value,
 			"This is not Component or Component based class");
 
-		if (m_transform->get_parent() != nullptr)
+		if (m_transform->getParent() != nullptr)
 		{
-			return m_transform->get_parent()->get_component<T>();
+			return m_transform->getParent()->getComponent<T>();
 		}
 
 		return nullptr;

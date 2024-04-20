@@ -19,15 +19,26 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="core\callback_storage.h" />
+    <ClInclude Include="game\components\cube.h" />
+    <ClInclude Include="game\components\sprite.h" />
+    <ClInclude Include="graphics\imgui_dark_theme.h" />
     <ClInclude Include="graphics\piece.h" />
+    <ClInclude Include="libs\imgui\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="libs\utfcpp\utf8.h" />
+    <ClInclude Include="libs\utfcpp\utf8\checked.h" />
+    <ClInclude Include="libs\utfcpp\utf8\core.h" />
+    <ClInclude Include="libs\utfcpp\utf8\cpp11.h" />
+    <ClInclude Include="libs\utfcpp\utf8\cpp17.h" />
+    <ClInclude Include="libs\utfcpp\utf8\unchecked.h" />
+    <ClInclude Include="libs\uuid.h" />
+    <ClInclude Include="physics\bp_layer_interfacy.h" />
     <ClInclude Include="physics\object_layer_pair_filter.h" />
     <ClInclude Include="physics\object_vs_bp_layer_filter.h" />
-    <ClInclude Include="physics\bp_layer_interfacу.h" />
     <ClInclude Include="core\common.h" />
     <ClInclude Include="core\engine.h" />
     <ClInclude Include="core\engine_api.h" />
     <ClInclude Include="core\input_manager.h" />
-    <ClInclude Include="core\callback_storage.h" />
     <ClInclude Include="physics\physics_core.h" />
     <ClInclude Include="core\utils\key_code.h" />
     <ClInclude Include="core\utils\logger.h" />
@@ -71,7 +82,6 @@
     <ClInclude Include="libs\stb\stb_truetype.h" />
     <ClInclude Include="libs\tinyxml2.h" />
     <ClInclude Include="graphics\renderer.h" />
-    <ClInclude Include="libs\uuid.h" />
     <ClInclude Include="physics\utils.h" />
     <ClInclude Include="scripts\script_api_3rd_party.h" />
     <ClInclude Include="scripts\script_api_game.h" />
@@ -81,10 +91,13 @@
     <ClInclude Include="scripts\script_core.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="core\callback_storage.cpp" />
+    <ClCompile Include="game\components\cube.cpp" />
+    <ClCompile Include="game\components\sprite.cpp" />
     <ClCompile Include="graphics\piece.cpp" />
+    <ClCompile Include="physics\bp_layer_interfacy.cpp" />
     <ClCompile Include="physics\object_layer_pair_filter.cpp" />
     <ClCompile Include="physics\object_vs_bp_layer_filter.cpp" />
-    <ClCompile Include="physics\bp_layer_interfacу.cpp" />
     <ClCompile Include="core\engine.cpp" />
     <ClCompile Include="core\input_manager.cpp" />
     <ClCompile Include="core\utils\logger.cpp" />
@@ -132,6 +145,9 @@
       </ExcludedFromBuild>
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="libs\imgui\LICENSE.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -261,12 +277,12 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;CATENGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;CATENGINE_EXPORTS;_WINDOWS;WIN32;_USRDLL;JPH_PROFILE_ENABLED;JPH_DEBUG_RENDERER;JPH_FLOATING_POINT_EXCEPTIONS_ENABLED;JPH_USE_AVX2;JPH_USE_AVX;JPH_USE_SSE4_1;JPH_USE_SSE4_2;JPH_USE_LZCNT;JPH_USE_TZCNT;JPH_USE_F16C;JPH_USE_FMADD;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>../Libs/boost/;../Libs/glm/;../Libs/glew-2.2.0/include/;../Libs/glfw/include/;../Libs/soil/include/;#(SolutionDir);../CatEngine/;$(PYTHON_SDK)/include/</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>../Libs/glm/;../Libs/glew-2.2.0/include/;../Libs/glfw/include/;../Libs/soil/include/;#(SolutionDir);../CatEngine/;../Libs/lua-5.4.6/src;../Libs/sol2;../Libs/jolt/include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -274,8 +290,8 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalLibraryDirectories>../Libs/glew-2.2.0/lib/Release/x64/;../Libs/glfw/Libs/Release;../x64/Release/;../Libs/soil/_release/</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glew32s.lib;glew32.lib;python3.lib;python39.lib;soil.lib;glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../Libs/glew-2.2.0/lib/Release/x64/;../Libs/boost/stage/lib/;../Libs/glfw/Libs/Release;../Libs/soil/_release/;../Libs/lua-5.4.6/lib;../Libs/sol2/lib/Release;../Libs/jolt/lib/Release</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Jolt.lib;lua-5.4.4.lib;glew32s.lib;glew32.lib;soil.lib;glfw3.lib;opengl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

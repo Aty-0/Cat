@@ -11,6 +11,7 @@
 
 namespace cat::scripts
 {
+#ifndef CAT_DISABLE_LUA_CAT_API
 	inline void info(const std::string& msg)
 	{
 		INFO("[LUA] %s", msg.c_str());
@@ -46,17 +47,18 @@ namespace cat::scripts
 		uuid.set(id);
 	}
 
-	typedef std::vector<std::pair<const char*, core::input_key_code>> full_keys_list;
+	using cat_str_keys_list = std::vector<std::pair<const char*, core::input_key_code>>;
+
 	struct cat_keys_list
 	{
-		full_keys_list kl = core::utils::FULL_LIST_OF_KEYS;
+		cat_str_keys_list kl = core::utils::FULL_LIST_OF_KEYS;
 	};
 
 	// TODO: Replace 
 	struct lua_keys_iterator_state
 	{
-		full_keys_list::iterator it;
-		full_keys_list::iterator last;
+		cat_str_keys_list::iterator it;
+		cat_str_keys_list::iterator last;
 
 		lua_keys_iterator_state(cat_keys_list& key_list)
 			: it(key_list.kl.begin()), last(key_list.kl.end())
@@ -95,7 +97,7 @@ namespace cat::scripts
 	}
 
 
-	void add_core_api(sol::table& api)
+	void addCoreAPI(sol::table& api)
 	{
 		// Add logger functions 
 		api.set_function("info", info);
@@ -107,28 +109,28 @@ namespace cat::scripts
 		// Add a core API		
 		api.new_usertype<core::game_window>("game_window",
 			"new", sol::no_constructor,
-			"get_instance", &core::game_window::get_instance,
-			"set_height", &core::game_window::set_height,
-			"set_left", &core::game_window::set_left,
-			"set_top", &core::game_window::set_top,
-			"set_width", &core::game_window::set_width,
-			"get_height", &core::game_window::get_height,
-			"get_left", &core::game_window::get_left,
-			"get_top", &core::game_window::get_top,
-			"get_width", &core::game_window::get_width
+			"get_instance", &core::game_window::getInstance,
+			"set_height", &core::game_window::setHeight,
+			"set_left", &core::game_window::setLeft,
+			"set_top", &core::game_window::setTop,
+			"set_width", &core::game_window::setWidth,
+			"get_height", &core::game_window::getHeight,
+			"get_left", &core::game_window::getLeft,
+			"get_top", &core::game_window::getTop,
+			"get_width", &core::game_window::getWidth
 		);
 
 		api.new_usertype<core::engine>("engine",
 			"new", sol::no_constructor,
-			"get_instance", &core::engine::get_instance,
+			"get_instance", &core::engine::getInstance,
 			"destroy", &core::engine::destroy
 		);
 
 		api.new_usertype<core::utils::game_time>("game_time",
 			"new", sol::no_constructor,
-			"get_instance", &core::utils::game_time::get_instance,
-			"get_delta_time", &core::utils::game_time::get_delta_time,
-			"get_fps", &core::utils::game_time::get_fps
+			"get_instance", &core::utils::game_time::getInstance,
+			"get_delta_time", &core::utils::game_time::getDeltaTime,
+			"get_fps", &core::utils::game_time::getFps
 		);
 
 		api.new_usertype<cat_keys_list>(
@@ -150,33 +152,34 @@ namespace cat::scripts
 
 		api.new_usertype<core::input_manager>("input",
 			"new", sol::no_constructor,
-			"get_instance", &core::input_manager::get_instance,
-			"add_listener", &core::input_manager::add_listener,
-			"clear_listeners", &core::input_manager::clear_listeners,
-			"get_key_state", &core::input_manager::get_key_state,
-			"get_mouse_pos", &core::input_manager::get_mouse_pos,
-			"unsubscribe_listener", &core::input_manager::unsubscribe_listener
+			"get_instance", &core::input_manager::getInstance,
+			"add_listener", sol::resolve<core::input_key_code, core::input_key_state, core::input_device, core::input_function>(&core::input_manager::addListener),
+			"addListenerOther", sol::resolve<core::input_key_state, core::input_device, core::input_function>(&core::input_manager::addListener),
+			"clear_listeners", &core::input_manager::clearListeners,
+			"get_key_state", &core::input_manager::getKeyState,
+			"get_mouse_pos", &core::input_manager::getMousePos,
+			"unsubscribe_listener", &core::input_manager::unsubscribeListener
 		);
 
 		// Core -> Utils Api
 		api.new_usertype<core::uuid_object>("uuid_object",
 			"empty", &core::uuid_object::empty,
-			"get_id", &core::uuid_object::get_id,
-			"get_id_str", &core::uuid_object::get_id_str,
+			"get_id", &core::uuid_object::getID,
+			"get_id_str", &core::uuid_object::getIDStr,
 			"make_new", &core::uuid_object::make_new,
 			"set", sol::overload(&uuid_set_str),
 			"set", sol::overload(&uuid_set_uuid),
-			"to_id", &core::uuid_object::to_id,
-			"to_str", &core::uuid_object::to_str
+			"to_id", &core::uuid_object::toID,
+			"to_str", &core::uuid_object::toStr
 		);
 
 		api.new_usertype<core::callback_storage>("callback_storage",
 			"add", &core::callback_storage::add,
 			"clear", &core::callback_storage::clear,
-			"run_all", &core::callback_storage::run_all,
+			"runAll", &core::callback_storage::runAll,
 			"remove", &core::callback_storage::remove,
 			"update", &core::callback_storage::update
 		);
-
 	}
+#endif
 }

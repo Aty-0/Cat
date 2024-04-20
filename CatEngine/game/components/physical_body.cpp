@@ -16,7 +16,7 @@ namespace cat::game::components
 {	
 	physical_body::physical_body()
 	{
-		static const auto pc = physics::physics_core::get_instance();
+		static const auto pc = physics::physics_core::getInstance();
 		m_core = pc;
 		onCreate.add(std::bind(&physical_body::createBody, this));
 	}
@@ -28,10 +28,34 @@ namespace cat::game::components
 		m_core->getBodyInterface()->DestroyBody(m_id);
 	}
 
+	void physical_body::onUpdate(float deltaTime)
+	{
+		const auto bodyInterface = m_core->getBodyInterface();
+
+		// Get transform from Jolt
+		const auto id = getBodyId();
+		const auto position = bodyInterface->GetCenterOfMassPosition(id);
+		const auto velocity = bodyInterface->GetLinearVelocity(id) * deltaTime;
+		const auto rotation_in_euler = bodyInterface->GetRotation(id).GetEulerAngles();
+
+		// Set transform for game object
+		const auto go = getOwner();
+		const auto transform = go->getTransform();
+		transform->m_position = { position.GetX(), position.GetY(), position.GetZ() };
+		transform->m_velocity = { velocity.GetX(), velocity.GetY(), velocity.GetZ() };
+		transform->m_rotation = glm::degrees(glm::vec3(rotation_in_euler.GetX(), rotation_in_euler.GetY(), rotation_in_euler.GetZ()));
+	}
+
+	void physical_body::updateBodyInterfaceScale()
+	{
+
+
+	}
+
 	// TODO: switch Activation state
 	void physical_body::updateBodyInterfaceRotation()
 	{
-		const auto transform = get_owner()->get_transform();
+		const auto transform = getOwner()->getTransform();
 		m_core->getBodyInterface()->SetRotation(m_id, 
 			JPH::Quat::sEulerAngles({ glm::radians(transform->m_rotation.x), 
 				glm::radians(transform->m_rotation.y), 
@@ -41,13 +65,13 @@ namespace cat::game::components
 
 	void physical_body::updateBodyInterfaceVelocity()
 	{
-		const auto transform = get_owner()->get_transform();
+		const auto transform = getOwner()->getTransform();
 		m_core->getBodyInterface()->SetLinearVelocity(m_id, { transform->m_velocity.x, transform->m_velocity.y, transform->m_velocity.z });
 	}
 
 	void physical_body::updateBodyInterfacePosition()
 	{
-		const auto transform = get_owner()->get_transform();
+		const auto transform = getOwner()->getTransform();
 		m_core->getBodyInterface()->SetPosition(m_id, { transform->m_position.x, transform->m_position.y, transform->m_position.z },
 			JPH::EActivation::Activate);
 	}
@@ -105,7 +129,7 @@ namespace cat::game::components
 	void physical_body::createBody()
 	{
 		//VERB("physic_body::createBody -> name: %s", get_owner()->get_name().c_str());
-		const auto transform = get_owner()->get_transform();
+		const auto transform = getOwner()->getTransform();
 		// TODO: other shape types
 		
 		JPH::BoxShapeSettings box_shape_settings(JPH::Vec3(transform->m_scale.x * 0.5f, 
@@ -132,6 +156,7 @@ namespace cat::game::components
 		transform->onPositionChanged.add(std::bind(&physical_body::updateBodyInterfacePosition, this));
 		transform->onRotationChanged.add(std::bind(&physical_body::updateBodyInterfaceRotation, this));
 		transform->onVelocityChanged.add(std::bind(&physical_body::updateBodyInterfaceVelocity, this));
+		transform->onScaleChanged.add(std::bind(&physical_body::updateBodyInterfaceScale, this));
 
 		setMass(10.0f);
 	}

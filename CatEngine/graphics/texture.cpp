@@ -27,11 +27,11 @@ namespace cat::graphics
 		}
 	}
 
-	void texture::create_framebuffer_texture()
+	void texture::createFramebufferTexture()
 	{
-		const auto window = core::game_window::get_instance();
-		m_width	= window->get_width();
-		m_height = window->get_height();
+		const auto window = core::game_window::getInstance();
+		m_width	= window->getWidth();
+		m_height = window->getHeight();
 		m_tex_type = GL_TEXTURE_2D;
 
 		glGenTextures(1, &m_instance);
@@ -39,7 +39,7 @@ namespace cat::graphics
 
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_width,
 			m_height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-		set_texture_filter(texture::filter::Linear, texture::filter::Linear);
+		setFilter(texture::filter::Linear, texture::filter::Linear);
 
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_instance, 0);
 		VERB("texture::create_framebuffer_texture %i %i %i", m_instance, m_width, m_height);
@@ -48,23 +48,18 @@ namespace cat::graphics
 	bool texture::load(const char* name)
 	{		
 		// All stbi supported file extensions except gif
-		static const std::vector<const char*> ext = { "jpg", "png", "tga", "bmp", "hdr", "pic", "pnm" };
-		std::int32_t width = 0;
-		std::int32_t height = 0;
-		
-		stbi_uc* data = io::resource_manager::get_instance()->read<stbi_uc*, texture>(name, ext); 
-		const auto size = io::resource_manager::get_instance()->size<texture>(name, ext) * 4;
+		const std::vector<const char*> ext = { "jpg", "png", "tga", "bmp", "hdr", "pic", "pnm" };
+		auto data = io::resource_manager::getInstance()->get<stbi_uc*, texture>(name, ext);
 		
 		if (data == nullptr)
 		{
 			return false;
 		}
 
-		void* stbi_data = static_cast<void*>(stbi_load_from_memory(data, size, &width, &height, &m_nrChannels, 4));
-		
-		// Other way for load texture 
-		//const auto file_path = io::resource_manager::get_instance()->file_path<texture>(name, ext);
-		//void* stbi_data = static_cast<void*>(stbi_load(file_path.c_str(), &width, &height, &m_nrChannels, 4));
+		std::int32_t width = 0;
+		std::int32_t height = 0;	
+		const auto size = io::resource_manager::getInstance()->size<texture>(name, ext) * 4;
+		const auto stbi_data = static_cast<void*>(stbi_load_from_memory(data, static_cast<int32_t>(size), &width, &height, &m_nrChannels, 4));
 		
 		if (stbi_data == nullptr)
 		{
@@ -76,7 +71,7 @@ namespace cat::graphics
 		return true;
 	}
 
-	void texture::set_texture_filter(texture::filter filter_min, texture::filter filter_mag)
+	void texture::setFilter(texture::filter filter_min, texture::filter filter_mag)
 	{
 		m_filter_min = filter_min;
 		m_filter_mag = filter_mag;
@@ -85,7 +80,7 @@ namespace cat::graphics
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, m_filter_mag);
 	}
 	
-	void texture::set_texture_wrap(texture::wrap wrap)
+	void texture::setWrap(texture::wrap wrap)
 	{
 		m_wrap = wrap;
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, m_wrap);
@@ -104,8 +99,8 @@ namespace cat::graphics
 
 		glBindTexture(m_tex_type, m_instance);
 
-		set_texture_wrap(texture::wrap::Repeat);
-		set_texture_filter(texture::filter::Linear,
+		setWrap(texture::wrap::Repeat);
+		setFilter(texture::filter::Linear,
 			texture::filter::Linear);
 
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -123,46 +118,49 @@ namespace cat::graphics
 
 	void texture::bind(std::uint32_t active_texture)
 	{
-		glActiveTexture(active_texture);
-		glBindTexture(m_tex_type, m_instance);
+		if (m_instance != 0)
+		{
+			glActiveTexture(active_texture);
+			glBindTexture(m_tex_type, m_instance);
+		}
 	}
 
-	std::int32_t texture::get_width() const
+	std::int32_t texture::getWidth() const
 	{
 		return m_width;
 	}
 
-	std::int32_t texture::get_height() const
+	std::int32_t texture::getHeight() const
 	{
 		return m_height;
 	}
 
-	std::int32_t texture::get_nrChannels() const
+	std::int32_t texture::getNrChannels() const
 	{
 		return m_nrChannels;
 	}
 
-	std::uint32_t texture::get_instance() const
+	std::uint32_t texture::getInstance() const
 	{
 		return m_instance;
 	}
 
-	std::uint32_t texture::get_tex_type() const
+	std::uint32_t texture::getType() const
 	{
 		return m_tex_type;
 	}
 
-	texture::filter texture::get_filter_min() const
+	texture::filter texture::getFilterMin() const
 	{
 		return m_filter_min;
 	}
 
-	texture::filter texture::get_filter_mag() const
+	texture::filter texture::getFilterMag() const
 	{
 		return m_filter_mag;
 	}
 
-	texture::wrap texture::get_wrap() const
+	texture::wrap texture::getWrap() const
 	{
 		return m_wrap;
 	}

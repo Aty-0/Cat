@@ -20,7 +20,7 @@
 namespace cat::core::utils
 {	
 	template<typename T>
-	inline void safe_delete(T*& object)
+	inline void safeDelete(T*& object)
 	{
 		if (object != nullptr)
 		{
@@ -29,21 +29,24 @@ namespace cat::core::utils
 		}
 	}
 
-	inline const char* to_str(const char* text, ...)
+	inline std::string toStr(const char* fmt, ...)
 	{
-		const auto BUFFER_SIZE = 2048 * 4;
-		char buffer[BUFFER_SIZE];
-
-		va_list args;
-		va_start(args, text);
-		std::vsnprintf(buffer, sizeof(buffer), text, args);
+		const auto len = std::size_t { 1024 };
+		char buffer[len];
+		std::va_list args;
+		va_start(args, fmt);
+		auto result = std::vsnprintf(buffer, sizeof(buffer), fmt, args);
 		va_end(args);
+		if (result < 0)
+			throw std::runtime_error("size of vsnprintf is less then zero...");
+		
+		buffer[result] = '\0';
 
-		return buffer;
+		return std::string{ buffer, static_cast<std::size_t>(result) };
 	}
 
 	template<typename T>
-	[[nodiscard]] inline std::string get_class_name_string(T obj)
+	[[nodiscard]] inline std::string getClassNameStr(T obj)
 	{
 		// Get class name by typeid function
 		auto class_name = std::string(typeid(obj).name());
@@ -71,7 +74,7 @@ namespace cat::core::utils
 	}
 
 	template<typename T>
-	[[nodiscard]] inline std::string get_class_name_string()
+	[[nodiscard]] inline std::string getClassNameStr()
 	{
 		// Get class name by typeid function
 		auto class_name = std::string(typeid(T).name());
@@ -98,7 +101,7 @@ namespace cat::core::utils
 		return class_name;
 	}
 
-	[[nodiscard]] inline std::string get_file_extension(const std::string& filename)
+	[[nodiscard]] inline std::string getFileExtension(const std::string& filename)
 	{
 		const auto off = filename.find_last_of('.');
 

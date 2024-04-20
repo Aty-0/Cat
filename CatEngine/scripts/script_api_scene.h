@@ -3,5 +3,5 @@
 
 namespace cat::scripts
 {
-	void add_scene_api(sol::table& api);
+	void addSceneAPI(sol::table& api);
 }

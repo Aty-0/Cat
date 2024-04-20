@@ -4,15 +4,16 @@
 
 namespace cat::graphics
 {
+	// By default we are making a sprite
 	piece::piece() : m_polyMode(GL_FILL)
 	{
-		std::vector<graphics::vertex> vertices = { { glm::vec3(0.5f,  1.0f, 0.0f), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), glm::vec2(0.0f, -1.0f) },      // top right
+		const std::vector<graphics::vertex> vertices = { { glm::vec3(0.5f,  1.0f, 0.0f), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), glm::vec2(0.0f, -1.0f) },      // top right
 										{ glm::vec3(0.5f, -1.0f, 0.0f),   glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 0.0f) },      // bottom right
 										{ glm::vec3(-1.0f, -1.0f, 0.0f),  glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), glm::vec2(-1.0f, 0.0f) },      // bottom left
 										{ glm::vec3(-1.0f,  1.0f, 0.0f),  glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), glm::vec2(-1.0f, -1.0f) }       // top left 
 		};
 
-		std::vector<std::uint32_t> indices =
+		const std::vector<std::uint32_t> indices =
 		{
 			0, 1, 3,  // first triangle
 			1, 2, 3   // second triangle
@@ -38,31 +39,31 @@ namespace cat::graphics
 	{
 		CAT_ASSERT(!vertices.empty());
 
-		m_vertex_buffer = std::make_shared<graphics::vertex_buffer>(*new graphics::vertex_buffer());
+		m_vertex_buffer = std::make_shared<graphics::vertex_buffer>();
 
 		m_vertex_buffer->gen();
-		m_vertex_buffer->set_buffer_data<graphics::vertex>(vertices, GL_STATIC_DRAW);
+		m_vertex_buffer->setBufferData<graphics::vertex>(vertices, GL_STATIC_DRAW);
 		
 		if (!indices.empty())
 		{
-			m_index_buffer = std::make_shared<graphics::index_buffer>(*new graphics::index_buffer());
+			m_index_buffer = std::make_shared<graphics::index_buffer>();
 			m_index_buffer->gen();
-			m_index_buffer->set_buffer_data<std::uint32_t>(indices, GL_STATIC_DRAW);
+			m_index_buffer->setBufferData<std::uint32_t>(indices, GL_STATIC_DRAW);
 		}
 
-		m_vertex_buffer->set_attrib(0, 3, GL_FLOAT, sizeof(graphics::vertex), reinterpret_cast<void*>(offsetof(graphics::vertex, pos)));
-		m_vertex_buffer->set_attrib(1, 4, GL_FLOAT, sizeof(graphics::vertex), reinterpret_cast<void*>(offsetof(graphics::vertex, color)));
-		m_vertex_buffer->set_attrib(2, 2, GL_FLOAT, sizeof(graphics::vertex), reinterpret_cast<void*>(offsetof(graphics::vertex, uv)));
+		m_vertex_buffer->setAttrib(0, 3, GL_FLOAT, sizeof(graphics::vertex), reinterpret_cast<void*>(offsetof(graphics::vertex, pos)));
+		m_vertex_buffer->setAttrib(1, 4, GL_FLOAT, sizeof(graphics::vertex), reinterpret_cast<void*>(offsetof(graphics::vertex, color)));
+		m_vertex_buffer->setAttrib(2, 2, GL_FLOAT, sizeof(graphics::vertex), reinterpret_cast<void*>(offsetof(graphics::vertex, uv)));
 
-		m_vertex_buffer->unbind_buffer();
+		m_vertex_buffer->unbindBuffer();
 
-		m_shader = std::make_shared<graphics::shader>(*new graphics::shader());
+		m_shader = std::make_shared<graphics::shader>();
 		loadShader(shader_name);
 
 
 		for (auto name : texture_names)
 		{
-			const auto texture = std::make_shared<graphics::texture>(*new graphics::texture());
+			const auto texture = std::make_shared<graphics::texture>();
 			CAT_ASSERT(texture->load(name));
 			m_textures.push_back(texture);
 		}
@@ -120,7 +121,7 @@ namespace cat::graphics
 		auto texture = m_textures[index];
 		if (texture == nullptr)
 		{
-			texture = std::make_shared<graphics::texture>(*new graphics::texture());
+			texture = std::make_shared<graphics::texture>();
 		}
 
 		CAT_ASSERT(texture->load(texture_name));
@@ -167,7 +168,7 @@ namespace cat::graphics
 		}
 		render->disableCull();
 
-		m_vertex_buffer->unbind_buffer_array();
+		m_vertex_buffer->unbindBufferArray();
 		m_shader->unbind();
 
 		std::uint32_t index_unbind = 0;

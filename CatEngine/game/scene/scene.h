@@ -22,8 +22,8 @@ namespace cat::game::scene
 		// Destroy scene, remove all from scene 
 		void destroy();
 
-		[[nodiscard]] inline scene_go_storage& get_storage();
-		[[nodiscard]] inline std::string get_name() const;
+		[[nodiscard]] inline scene_go_storage& getStorage();
+		[[nodiscard]] inline std::string getName() const;
 
 	private:
 		scene_go_storage m_storage;

@@ -43,19 +43,19 @@ namespace cat::graphics
 		m_data = nullptr; // reset data pointer
 	}
 
-	void vertex_buffer::set_attrib(std::uint32_t num, std::uint32_t size,
+	void vertex_buffer::setAttrib(std::uint32_t num, std::uint32_t size,
 		GLenum type, std::int32_t typesize, const void* offset)
 	{
 		glEnableVertexAttribArray(num);
 		glVertexAttribPointer(num, size, type, GL_FALSE, typesize, offset);
 	}
 
-	void vertex_buffer::unbind_buffer()
+	void vertex_buffer::unbindBuffer()
 	{
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 
-	void vertex_buffer::unbind_buffer_array()
+	void vertex_buffer::unbindBufferArray()
 	{
 		glBindVertexArray(0);
 	}

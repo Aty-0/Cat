@@ -15,7 +15,7 @@ namespace cat::core::editor
 		const auto flags = ImGuiTreeNodeFlags_DefaultOpen;
 		static const auto rootName = io::resource_manager::DATA_NAME.c_str();
 
-		const std::initializer_list<const char*> types =
+		static const auto types =
 		{
 			"Texture",
 			"Script",

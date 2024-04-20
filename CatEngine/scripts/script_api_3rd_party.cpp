@@ -2,7 +2,8 @@
 
 namespace cat::scripts
 {
-	void add_3rd_party_api(sol::table& api)
+#ifndef CAT_DISABLE_LUA_CAT_API
+	void add3rdPartyAPI(sol::table& api)
 	{
 		// TODO
 		api.new_usertype<glm::mat2>("mat2");
@@ -34,4 +35,5 @@ namespace cat::scripts
 			"w", &glm::vec4::w
 		);
 	}
+#endif //  CAT_DISABLE_LUA
 }

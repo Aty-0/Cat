@@ -20,7 +20,7 @@ namespace cat::io
 
 	}	
 
-	std::ifstream resource_manager::get_file(const char* type, const char* name, std::vector<const char*> ext)
+	std::ifstream resource_manager::getFile(const char* type, const char* name, std::vector<const char*> ext)
 	{
 		const auto PATH_TO_DATA = DATA_NAME + "/" + std::string(type);
 
@@ -68,7 +68,7 @@ namespace cat::io
 		return std::ifstream();
 	}
 
-	void resource_manager::move_files_to_data(std::int32_t count, const char** paths)
+	void resource_manager::moveFilesToData(std::int32_t count, const char** paths)
 	{
 		const std::initializer_list<std::pair<const char*, const char*>> exts =
 		{
@@ -91,7 +91,7 @@ namespace cat::io
 			auto pos = file_name.rfind("\\");
 			file_name.erase(0, pos + 1);
 
-			auto ext = core::utils::get_file_extension(file_name);
+			auto ext = core::utils::getFileExtension(file_name);
 			for (auto cur_ext = exts.begin(); cur_ext != exts.end(); cur_ext++)
 			{
 				if (cur_ext->second == ext)

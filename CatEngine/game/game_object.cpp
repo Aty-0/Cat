@@ -11,7 +11,7 @@ namespace cat::game
 		m_enabled(true)
 	{
 		// This is the basic setup for game object 
-		m_transform = create_component<components::transform>();
+		m_transform = createComponent<components::transform>();
 	}
 
 	game_object::game_object(std::string name, std::string type, std::int32_t prefix, std::string uuid) :
@@ -22,23 +22,13 @@ namespace cat::game
 		m_enabled(true)
 	{
 		// Basic setup: set name, type and prefix 
-		set_name(name);
-		set_type(type);
-		set_prefix(prefix);
-
-		if (uuid == CAT_UUID_REGENERATE)
-		{
-			m_uuid.set(m_uuid.make_new());
-		}
-		else if (!uuid.empty())
-		{
-			// If uuid is invalid we are get assert
-			m_uuid.set(uuid); 
-		}
+		setName(name);
+		setType(type);
+		setPrefix(prefix);
+		m_uuid.set(uuid == CAT_UUID_REGENERATE || uuid == "" ? m_uuid.make_new() : core::uuid_object::toID(uuid));
 
 		onCreate();
-
-		m_transform = create_component<components::transform>();
+		m_transform = createComponent<components::transform>();
 	}
 
 	game_object::~game_object()
@@ -67,7 +57,7 @@ namespace cat::game
 			{
 				if (component.second != nullptr)
 				{
-					component.second->on_update(deltaTime);
+					component.second->onUpdate(deltaTime);
 				}
 			}
 		}
@@ -81,85 +71,85 @@ namespace cat::game
 			{
 				if (component.second != nullptr)
 				{
-					component.second->on_render(renderer);
+					component.second->onRender(renderer);
 				}
 			}
 		}
 	}
 
-	void game_object::set_name(std::string name)
+	void game_object::setName(std::string name)
 	{
 		name.empty() ? m_name = CAT_DEFAULT_GAMEOBJECT_NAME : m_name = name;
 	}
 
-	void game_object::set_type(std::string type)
+	void game_object::setType(std::string type)
 	{
 		type.empty() ? m_type = CAT_DEFAULT_GAMEOBJECT_TYPE : m_type = type;
 	}
 
-	void game_object::set_visible(bool visible)
+	void game_object::setVisible(bool visible)
 	{
 		m_visible = visible;
 
-		const auto child = get_transform()->get_child();
+		const auto child = getTransform()->getChild();
 		if (child != nullptr)
 		{
-			child->set_visible(visible);
+			child->setVisible(visible);
 		}
 	}
 
-	void game_object::set_enabled(bool enabled)
+	void game_object::setEnabled(bool enabled)
 	{
 		m_enabled = enabled;
 
-		const auto child = get_transform()->get_child();
+		const auto child = getTransform()->getChild();
 		if (child != nullptr)
 		{
-			child->set_enabled(enabled);
+			child->setEnabled(enabled);
 		}
 	}
 
-	void game_object::set_prefix(std::int32_t prefix)
+	void game_object::setPrefix(std::int32_t prefix)
 	{
 		m_prefix = prefix;
 	}
 
-	components::transform* game_object::get_transform() const
+	components::transform* game_object::getTransform() const
 	{
 		return m_transform;
 	}
 
-	components_list game_object::get_components() const
+	game_object::components_list game_object::getComponents() const
 	{
 		return m_components;
 	}
 
-	std::string game_object::get_name()   const
+	std::string game_object::getName()   const
 	{
 		return m_name;
 	}
 
-	std::int32_t game_object::get_prefix() const
+	std::int32_t game_object::getPrefix() const
 	{
 		return m_prefix;
 	}
 
-	std::string game_object::get_type()   const
+	std::string game_object::getType()   const
 	{
 		return m_type;
 	}
 
-	bool game_object::is_visible() const
+	bool game_object::isVisible() const
 	{
 		return m_visible;
 	}
 
-	bool game_object::is_enabled() const
+	bool game_object::isEnabled() const
 	{
 		return m_enabled;
 	}
 
-	core::uuid_object game_object::get_uuid() const
+	core::uuid_object game_object::getUUID() const
 	{
 		return m_uuid;
 	}

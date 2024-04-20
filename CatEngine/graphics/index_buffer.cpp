@@ -32,12 +32,12 @@ namespace cat::graphics
 		}
 	}
 
-	void index_buffer::unbind_buffer()
+	void index_buffer::unbindBuffer()
 	{
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 
-	void index_buffer::unbind_buffer_array()
+	void index_buffer::unbindBufferArray()
 	{
 		glBindVertexArray(0);
 	}

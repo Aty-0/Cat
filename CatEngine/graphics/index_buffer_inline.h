@@ -5,7 +5,7 @@
 namespace cat::graphics
 {
 	template<typename type>
-	inline bool index_buffer::set_buffer_data(std::vector<type> _data, std::uint32_t draw)
+	inline bool index_buffer::setBufferData(std::vector<type> _data, std::uint32_t draw)
 	{
 		m_data = _data.data();
 		m_size = _data.size();

@@ -17,7 +17,7 @@ namespace cat::graphics
 		[[nodiscard]] inline texture* getTexture() const;
 		[[nodiscard]] inline std::shared_ptr<texture> getTextureShared() const;
 
-		void unbind_buffer() override;
+		void unbindBuffer() override;
 	private:
 		std::uint32_t m_fbo;
 		std::uint32_t m_rbo;

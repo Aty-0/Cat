@@ -4,35 +4,41 @@
 #include "core/utils/logger.h"
 #include <chrono>
 
+#include "libs/imgui/imgui.h"
+#include "libs/imgui/imgui_impl_glfw.h"
+
 namespace cat::core
 {
+	input_manager* input_manager::m_self = nullptr;
+
 	input_manager::input_manager()
 	{
-
+		m_self = this;
 	}
 
 	input_manager::~input_manager()
 	{
-		clear_listeners();
+		clearListeners();
 		m_window = nullptr;
+		m_self = nullptr;
 	}
 
 	void input_manager::init()
 	{
-		const auto window = core::game_window::get_instance();
+		const auto window = core::game_window::getInstance();
 
-		m_window = window->get_GLFW_window();
+		m_window = window->getGLFWWindowInstance();
 
 		// Set callbacks
-		glfwSetKeyCallback(m_window, on_keyboard_buttons_click);
-		glfwSetMouseButtonCallback(m_window, on_mouse_buttons_click);		
-		glfwSetCursorPosCallback(m_window, on_mouse_move);		
-		glfwSetScrollCallback(m_window, on_scroll);
+		glfwSetKeyCallback(m_window, onKeyboardButtonClick);
+		glfwSetMouseButtonCallback(m_window, onMouseButtonClick);		
+		glfwSetCursorPosCallback(m_window, onCursorMove);		
+		glfwSetScrollCallback(m_window, onScroll);
 		
 		glfwSetInputMode(m_window, GLFW_STICKY_KEYS, GLFW_TRUE);
 	}
 	
-	void input_manager::parse_mouse_sp_listeners(input_key_state state)
+	void input_manager::parseListenersOther(input_key_state state)
 	{
 		for (const auto& currentEvent : m_listeners_storage)
 		{
@@ -46,31 +52,49 @@ namespace cat::core
 		}
 	}
 
-	void input_manager::on_scroll(GLFWwindow* window, double xoffset, double yoffset)
+	void input_manager::onMouseButtonClick(GLFWwindow* window, std::int32_t button, std::int32_t action, std::int32_t mods)
 	{
-		static const auto input_manager = input_manager::get_instance();
-		input_manager->m_scroll_coords = { static_cast<float>(xoffset), static_cast<float>(xoffset) };
-		input_manager->parse_mouse_sp_listeners(input_key_state::Scroll);
+		m_self->parseListeners(window, button, 0, action, mods);
+
+		ImGui_ImplGlfw_MouseButtonCallback(window, button, action, mods);
 	}
 
-	void input_manager::on_mouse_move(GLFWwindow* window, double xpos, double ypos)
-	{			
-		static const auto input_manager = input_manager::get_instance();
-		input_manager->m_mouse_coords = { static_cast<float>(xpos), static_cast<float>(ypos) };
-		input_manager->parse_mouse_sp_listeners(input_key_state::Move);
+	void input_manager::onKeyboardButtonClick(GLFWwindow* window, std::int32_t key, std::int32_t scancode, std::int32_t action, std::int32_t mods)
+	{
+		m_self->parseListeners(window, key, scancode, action, mods);
+		
+		ImGui_ImplGlfw_KeyCallback(window, key, scancode, action, mods);
 	}
 
-	void input_manager::add_listener_sp(input_key_state keyState, input_device device, input_function inputevent)
+	void input_manager::onScroll(GLFWwindow* window, double xoffset, double yoffset)
+	{
+		m_self->m_scroll_coords = { static_cast<float>(xoffset), static_cast<float>(xoffset) };
+		m_self->parseListenersOther(input_key_state::Scroll);
+		
+
+		ImGui_ImplGlfw_ScrollCallback(window, xoffset, yoffset);
+	}
+
+	void input_manager::onCursorMove(GLFWwindow* window, double xpos, double ypos)
+	{	
+		m_self->m_mouse_coords = { static_cast<float>(xpos), static_cast<float>(ypos) };
+		m_self->parseListenersOther(input_key_state::Move);
+		
+
+		ImGui_ImplGlfw_CursorPosCallback(window, xpos, ypos);
+	}
+
+	void input_manager::addListener(input_key_state keyState, input_device device, input_function inputevent)
 	{
 		if (device == input_device::Keyboard ||
 			device == input_device::Unknown)
 			return;
 
-		m_listeners_storage.push_back(std::move(std::make_unique<input_event>(input_event(input_key_code::KEYBOARD_UNKNOWN, 
-			keyState, device, inputevent))));
+		m_listeners_storage.push_back(std::move(std::make_unique<input_event>(input_key_code::KEYBOARD_UNKNOWN, 
+			keyState, device, inputevent)));
 	}
 
-	void input_manager::unsubscribe_listener(input_key_code code, input_key_state keyState)
+	void input_manager::unsubscribeListener(input_key_code code, input_key_state keyState)
 	{
 		VERB("input_manager::unsubscribe_listener Code:%d State:%d ", code, keyState);
 		for (std::vector<std::unique_ptr<input_event>>::iterator currentEvent = m_listeners_storage.begin(); currentEvent != m_listeners_storage.end();)
@@ -85,26 +109,13 @@ namespace cat::core
 		}
 	}
 
-	void input_manager::add_listener(input_key_code code, input_key_state keyState, input_device device, input_function inputevent)
+	void input_manager::addListener(input_key_code code, input_key_state keyState, input_device device, input_function inputevent)
 	{
 		VERB("Added event to input manager Code:%d State:%d Device:%d ", code, keyState, device);
-		m_listeners_storage.push_back(std::move(std::make_unique<input_event>(input_event(code, keyState, device, inputevent))));
+		m_listeners_storage.push_back(std::move(std::make_unique<input_event>(code, keyState, device, inputevent)));
 	}
 
-	void input_manager::on_mouse_buttons_click(GLFWwindow* window, std::int32_t button, std::int32_t action, std::int32_t mods)
-	{
-		static const auto input_manager = input_manager::get_instance();
-		input_manager->parse_listeners(window, button, 0, action, mods);
-	}
-
-	void input_manager::on_keyboard_buttons_click(GLFWwindow* window, std::int32_t key, std::int32_t scancode, std::int32_t action, std::int32_t mods)
-	{
-		//VERB("is pressed [%s] state is: %i", glfwGetKeyName(key, scancode), action);
-		static const auto input_manager = input_manager::get_instance();
-		input_manager->parse_listeners(window, key, scancode, action, mods);
-	}
-
-	void input_manager::update_key(input_key_code code, input_key_state state)
+	void input_manager::updateKey(input_key_code code, input_key_state state)
 	{
 		switch (state)
 		{
@@ -146,7 +157,7 @@ namespace cat::core
 
 			const auto cur_state = static_cast<input_key_state>(glfwGetKey(m_window, key_int));
 			// update current key
-			update_key(key, cur_state);
+			updateKey(key, cur_state);
 
 
 			for (const auto& currentEvent : m_listeners_storage)
@@ -181,7 +192,7 @@ namespace cat::core
 		}
 	}
 
-	void input_manager::clear_listeners()
+	void input_manager::clearListeners()
 	{
 		m_listeners_storage.clear();
 		m_listeners_storage.shrink_to_fit();
@@ -199,7 +210,7 @@ namespace cat::core
 		glfwSetCursorPos(m_window, m_last_mouse_coords.x, m_last_mouse_coords.y);
 	}
 
-	void input_manager::parse_listeners(GLFWwindow* window, std::int32_t key_or_buttons, std::int32_t scancode, std::int32_t action, std::int32_t mods)
+	void input_manager::parseListeners(GLFWwindow* window, std::int32_t key_or_buttons, std::int32_t scancode, std::int32_t action, std::int32_t mods)
 	{
 		// Skip unknown buttons 
 		if (key_or_buttons == static_cast<std::int32_t>(input_key_code::KEYBOARD_UNKNOWN))
@@ -218,7 +229,7 @@ namespace cat::core
 		}
 	}
 
-	bool input_manager::get_key_state(input_key_code code, input_key_state keyState, input_device device)
+	bool input_manager::getKeyState(input_key_code code, input_key_state keyState, input_device device)
 	{
 		switch (device)
 		{
@@ -235,13 +246,13 @@ namespace cat::core
 	}
 
 	// FIXME: This function won't work correctly if no "special" listeners in storage
-	glm::vec2 input_manager::get_scroll_pos() const
+	glm::vec2 input_manager::getScrollPos() const
 	{
 		return m_scroll_coords;
 	}
 
 	// FIXME: This function won't work correctly if no "special" listeners in storage
-	glm::vec2 input_manager::get_mouse_pos() const
+	glm::vec2 input_manager::getMousePos() const
 	{ 			
 		// static const auto window = core::game_window::get_instance();
 		// double x = 0.0;

@@ -8,7 +8,7 @@ namespace cat::graphics
 		m_fbo(0), 
 		m_rbo(0)
 	{
-		m_frameTexture = std::make_shared<texture>(*new texture());
+		m_frameTexture = std::make_shared<texture>();
 	}
 
 	frame_buffer::~frame_buffer()
@@ -22,22 +22,22 @@ namespace cat::graphics
 		glGenFramebuffers(1, &m_fbo);
 		bind();
 
-		m_frameTexture->create_framebuffer_texture();
+		m_frameTexture->createFramebufferTexture();
 
 		glGenRenderbuffers(1, &m_rbo);
 		glBindRenderbuffer(GL_RENDERBUFFER, m_rbo);
 
 		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 
-			m_frameTexture->get_width(), m_frameTexture->get_height());
+			m_frameTexture->getWidth(), m_frameTexture->getHeight());
 
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_rbo); 
 
 		CAT_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
 		
-		unbind_buffer();
+		unbindBuffer();
 	}
 
-	void frame_buffer::unbind_buffer() 
+	void frame_buffer::unbindBuffer() 
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}

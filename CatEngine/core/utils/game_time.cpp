@@ -34,18 +34,18 @@ namespace cat::core::utils
 		m_time_lastUpdate = m_time;
 	}
 
-	const std::int32_t game_time::get_fps() const
+	const std::int32_t game_time::getFps() const
 	{ 
 		return m_fps;
 	}
 
-	const float game_time::get_delta_time() const
+	const float game_time::getDeltaTime() const
 	{ 
 		return m_deltaTime;
 	}
 
-	const float game_time::get_time() const
+	const float game_time::getTime() const
 	{ 
-		return (float)glfwGetTime();
+		return static_cast<float>(glfwGetTime());
 	}
 }

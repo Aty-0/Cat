@@ -15,9 +15,9 @@ namespace cat::core::utils
 
 		void tick();
 
-		[[nodiscard]] inline const std::int32_t get_fps() const;
-		[[nodiscard]] inline const float get_delta_time() const;
-		[[nodiscard]] inline const float get_time() const;
+		[[nodiscard]] inline const std::int32_t getFps() const;
+		[[nodiscard]] inline const float getDeltaTime() const;
+		[[nodiscard]] inline const float getTime() const;
 											  
 	private:								  
 		std::int32_t m_fps;

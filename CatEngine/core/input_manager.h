@@ -66,56 +66,57 @@ namespace cat::core
 		void init();
 		void update();	
 
-		void unsubscribe_listener(input_key_code code = input_key_code::KEYBOARD_UNKNOWN,
+		void unsubscribeListener(input_key_code code = input_key_code::KEYBOARD_UNKNOWN,
 			input_key_state keyState = input_key_state::Unknown);
 
 		// Add key listener 
-		void add_listener(input_key_code code = input_key_code::KEYBOARD_UNKNOWN, 
+		void addListener(input_key_code code = input_key_code::KEYBOARD_UNKNOWN, 
 						input_key_state keyState = input_key_state::Unknown, 
 						input_device device = input_device::Unknown, input_function inputevent = nullptr);
 
 
 		// Mostly needed for special behavior like scroll or move
 		// TODO: input_device needed ? Have joystick special cases ?
-		void add_listener_sp(input_key_state keyState = input_key_state::Unknown, input_device device = input_device::Unknown,
+		void addListener(input_key_state keyState = input_key_state::Unknown, input_device device = input_device::Unknown,
 			input_function inputevent = nullptr);
 
 		// Clear listener storage
-		void clear_listeners();
+		void clearListeners();
 		
 		// If we need to get key state value
-		inline bool get_key_state(input_key_code code, input_key_state keyState, 
+		inline bool getKeyState(input_key_code code, input_key_state keyState, 
 								input_device device);
 		
 		// Get mouse current coordinates
-		[[nodiscard]] inline glm::vec2 get_mouse_pos() const;
-		[[nodiscard]] inline glm::vec2 get_scroll_pos() const;
+		[[nodiscard]] inline glm::vec2 getMousePos() const;
+		[[nodiscard]] inline glm::vec2 getScrollPos() const;
 
 		void hideCursor();
 		void unhideCursor();
 
 	private:
-		void update_key(input_key_code code, input_key_state state);
+		void updateKey(input_key_code code, input_key_state state);
 
-		void parse_listeners(GLFWwindow* window, std::int32_t key_or_buttons, 
+		void parseListeners(GLFWwindow* window, std::int32_t key_or_buttons, 
 			std::int32_t scancode, std::int32_t action, std::int32_t mods);
+
+		// Parsing event's like a scrolling and mouse movement
+		void parseListenersOther(input_key_state state);
 		
-		// sp - special case
-		void parse_mouse_sp_listeners(input_key_state state);
 		glm::vec2 m_last_mouse_coords;
 		glm::vec2 m_mouse_coords;
 		glm::vec2 m_scroll_coords;
-
 		std::vector<std::unique_ptr<input_event>> m_listeners_storage;
 		bool m_keyboard_key_up[GLFW_KEY_LAST + 1];
 		bool m_keyboard_key_down[GLFW_KEY_LAST + 1];
-		GLFWwindow* m_window;
+		GLFWwindow* m_window;		
+		static input_manager* m_self; // For callbacks
 
 		// GLFW Callbacks
-		static void on_scroll(GLFWwindow* window, double xoffset, double yoffset);
-		static void on_mouse_move(GLFWwindow* window, double xpos, double ypos);
-		static void on_mouse_buttons_click(GLFWwindow* window, std::int32_t button, std::int32_t action, std::int32_t mods);
-		static void on_keyboard_buttons_click(GLFWwindow* window, std::int32_t key, std::int32_t scancode, std::int32_t action, std::int32_t mods);
+		static void onScroll(GLFWwindow* window, double xoffset, double yoffset);
+		static void onCursorMove(GLFWwindow* window, double xpos, double ypos);
+		static void onMouseButtonClick(GLFWwindow* window, std::int32_t button, std::int32_t action, std::int32_t mods);
+		static void onKeyboardButtonClick(GLFWwindow* window, std::int32_t key, std::int32_t scancode, std::int32_t action, std::int32_t mods);
 
 	};
 }

@@ -3,5 +3,5 @@
 
 namespace cat::scripts
 {
-	void add_graphics_api(sol::table& api);
+	void addGraphicsAPI(sol::table& api);
 }

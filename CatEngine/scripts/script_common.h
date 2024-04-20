@@ -6,3 +6,7 @@
 
 #pragma warning (disable : 5260)
 #include <sol/sol.hpp>
+
+// If we need a faster compilation 
+// Because sol slow asf
+//#define CAT_DISABLE_LUA_CAT_API

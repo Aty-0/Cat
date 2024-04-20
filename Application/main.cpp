@@ -2,7 +2,7 @@
 
 int main()
 {
-	cat::core::engine* e = cat::core::engine::get_instance();
+	cat::core::engine* e = cat::core::engine::getInstance();
 	e->run();
 
 

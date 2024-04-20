@@ -17,6 +17,11 @@ namespace cat
 	{
 		class renderer;
 	}
+
+	namespace physics
+	{
+		class physics_core;
+	}
 }
 
 
@@ -38,17 +43,13 @@ namespace cat::core
 		engine();
 		~engine();
 
-		// run engine 
-		inline bool run();
-		// turn off engine 
+		bool run();
 		void destroy();
 
-	private:
-		inline bool init_GLFW();
-		inline bool load_all();
-
-		void on_loop();
-		void on_update(float delta_time);
+	private:		
+		inline void onLoop();
+		inline void onUpdate(float delta_time);
+		inline bool initGLFW();
 
 		core::input_manager*  m_input;
 		core::game_window*	  m_window;
@@ -56,11 +57,11 @@ namespace cat::core
 		utils::game_time*	  m_time;
 		io::resource_manager* m_rm;
 		game::scene::scene_manager* m_sm;
+		physics::physics_core* m_physics;
 
-		callback_storage*	m_on_global_update;
-
-	// Mostly needed for script core
 	public:
-		[[nodiscard]] inline callback_storage* get_on_global_update() const;
+		// Mostly needed for script core
+		// If we are want to add something to global update
+		static callback_storage* onGlobalUpdate;
 	};	
 }

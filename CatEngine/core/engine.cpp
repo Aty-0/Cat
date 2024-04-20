@@ -15,6 +15,8 @@
 
 namespace cat::core
 {
+	callback_storage* engine::onGlobalUpdate = nullptr;
+
 	engine::engine()
 	{
 
@@ -29,67 +31,64 @@ namespace cat::core
 	{		
 		INFO("Initialize engine...");
 
-		if (!init_GLFW())
+		if (!initGLFW())
 			return false;
 
 		VERB("Initialize game window...");
-		m_window = core::game_window::get_instance();
+		m_window = core::game_window::getInstance();
 		if (!m_window->create())
 			return false;
 
 		VERB("Initialize renderer...");
-		m_renderer = graphics::renderer::get_instance();		
+		m_renderer = graphics::renderer::getInstance();
 		if (!m_renderer->init())
 			return false;
 
-
 		VERB("Initialize input manager...");
-		m_input = core::input_manager::get_instance();
+		m_input = core::input_manager::getInstance();
 		m_input->init();
 
-		m_time = core::utils::game_time::get_instance();
+		m_time = core::utils::game_time::getInstance();
 
 		VERB("Initialize resource manager...");
-		m_rm = io::resource_manager::get_instance();
+		m_rm = io::resource_manager::getInstance();
 		
-		// TODO: Remove it 
-		VERB("Allocate global update callback");
-		m_on_global_update = new core::callback_storage();
 
 		VERB("Initialize physics core...");
-		const static auto pc = physics::physics_core::get_instance();
-		pc->init();
+		m_physics = physics::physics_core::getInstance();
+		m_physics->init();
 
 		VERB("Initialize post process in renderer...");
 		m_renderer->initPostProcess();
 		
 		VERB("Run scene manager...");
-		m_sm = game::scene::scene_manager::get_instance();
+		m_sm = game::scene::scene_manager::getInstance();
 		m_sm->create();
 
 		
 		VERB("Run main script and initialize script core...");
-		const static auto sc = scripts::script_core::get_instance();
+		onGlobalUpdate = new core::callback_storage();
+		const static auto sc = scripts::script_core::getInstance();
 		CAT_ASSERT(sc->run("main"));			
-		sc->run_func("main", "cat_main");
+		sc->runFunc("main", "cat_main");
 
-		VERB("Add onImGuiRender callbacks editor windows...");
-		m_renderer->onImGuiRender.add(std::bind(&core::utils::logger::render_console, core::utils::logger::get_instance()));
-		m_renderer->onImGuiRender.add(std::bind(&core::editor::filesystem_tree_ui::render, core::editor::filesystem_tree_ui::get_instance()));
+		VERB("Add some editor windows...");
+		m_renderer->onImGuiRender.add(std::bind(&core::utils::logger::draw, core::utils::logger::getInstance()));
+		m_renderer->onImGuiRender.add(std::bind(&core::editor::filesystem_tree_ui::render, core::editor::filesystem_tree_ui::getInstance()));
 		
 		VERB("Add engine input callbacks...");
 		// add exit hotkey
-		m_input->add_listener(input_key_code::KEYBOARD_ESCAPE, input_key_state::Press, input_device::Keyboard,
+		m_input->addListener(input_key_code::KEYBOARD_ESCAPE, input_key_state::Press, input_device::Keyboard,
 			std::bind(&core::engine::destroy, this));
-		m_input->add_listener(input_key_code::KEYBOARD_F8, input_key_state::Press, input_device::Keyboard,
+		m_input->addListener(input_key_code::KEYBOARD_F8, input_key_state::Press, input_device::Keyboard,
 			std::bind(&graphics::renderer::imguiToggleVisibility, m_renderer));
 
 
 		// if window is active we are call onLoop function
 		INFO("Run loop...");
-		while (!m_window->is_close())
+		while (!m_window->isClose())
 		{
-			on_loop();
+			onLoop();
 		}
 
 		// if loop are breaked we are destroy engine
@@ -98,15 +97,15 @@ namespace cat::core
 		return true;
 	}
 
-	void engine::on_update(float DeltaTime)
+	void engine::onUpdate(float DeltaTime)
 	{
+		m_physics->update(DeltaTime);
 		m_sm->update(DeltaTime);
 		m_input->update();
-
-		m_on_global_update->run_all();
+		onGlobalUpdate->runAll();
 	}
 
-	bool engine::init_GLFW()
+	bool engine::initGLFW()
 	{
 		INFO("Initialize GLFW...");
 
@@ -125,40 +124,27 @@ namespace cat::core
 		return true;
 	}
 
-	void engine::on_loop()
+	void engine::onLoop()
 	{
 		m_window->pool();
 		// Update things
 		m_time->tick();
-		on_update(m_time->get_delta_time());
+		onUpdate(m_time->getDeltaTime());
 		// Renderer update
 		m_renderer->render();
 		m_window->swap();
 	}
 
-
-	callback_storage* engine::get_on_global_update() const
-	{
-		return m_on_global_update;
-	}
-
 	void engine::destroy()
 	{
 		INFO("Engine destroy");
-		m_on_global_update->clear();
-		const static auto pc = physics::physics_core::get_instance();
-		pc->destroy();
+		onGlobalUpdate->clear();
+		m_physics->destroy();
 		m_sm->clear();
 		m_window->destroy();
 		m_renderer->destroy();
 		
 		glfwTerminate();
 		exit(EXIT_SUCCESS);
-	}
-
-	bool engine::load_all()
-	{
-		INFO("Load all...");
-		return true;
 	}
 }

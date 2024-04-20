@@ -26,33 +26,36 @@ namespace cat::game::components
 
         void                reset();
 
-        void                set_position(glm::vec3 pos);
-        void                set_velocity(glm::vec3 vel);
-        void                set_rotation(glm::vec3 rot);
-        void                set_scale(glm::vec3 scale);
-        void                set_scale_factor(glm::vec3 scale);
-        void                set_parent(game_object* go);
+        void                setPosition(glm::vec3 pos);
+        void                setVelocity(glm::vec3 vel);
+        void                setRotation(glm::vec3 rot);
+        void                setScale(glm::vec3 scale);
+        void                setScaleFactor(glm::vec3 scale);
+        void                setParent(game_object* go);
 
-        [[nodiscard]] inline glm::vec3    get_position()  const;
-        [[nodiscard]] inline glm::vec3    get_rotation()  const;
-        [[nodiscard]] inline glm::vec3    get_velocity()  const;
-        [[nodiscard]] inline glm::vec3    get_scale()     const;
-        [[nodiscard]] inline glm::vec3    get_scale_factor() const;
-        [[nodiscard]] inline glm::mat4&   get_world_matrix();
+        [[nodiscard]] inline glm::vec3    getPosition()  const;
+        [[nodiscard]] inline glm::vec3    getRotation()  const;
+        [[nodiscard]] inline glm::vec3    getVelocity()  const;
+        [[nodiscard]] inline glm::vec3    getScale()     const;
+        [[nodiscard]] inline glm::vec3    getScaleFactor() const;
+        [[nodiscard]] inline glm::mat4&   getWorldMatrix();
        
-        [[nodiscard]] inline const char*  to_string() const;
+        [[nodiscard]] inline std::string toStr() const;
 
-        [[nodiscard]] inline game_object* get_child() const;
-        [[nodiscard]] inline game_object* get_parent() const;
+        [[nodiscard]] inline game_object* getChild() const;
+        [[nodiscard]] inline game_object* getParent() const;
 
         // is current GameObject is child for setted GameObject
-        [[nodiscard]] inline bool is_child_of(game_object* go) const;
+        [[nodiscard]] inline bool isChildOf(game_object* go) const;
 
-        [[nodiscard]] inline glm::mat4 get_matrix_transformation();
+        [[nodiscard]] inline glm::mat4 getTransformation();
 
 
     protected:
-        void set_child(game_object* go);
+        void setChild(game_object* go);
+        
+        // For component inspector 
+        void onGuiDrawCallback();
 
     public:
         core::callback_storage onPositionChanged;

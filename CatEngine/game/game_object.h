@@ -17,31 +17,39 @@ namespace cat::graphics
 
 namespace cat::game
 {
-	using components_list = std::vector<std::pair<std::pair<uuids::uuid, std::type_index>, components::component*>>;
+	namespace scene
+	{
+		class scene_manager;
+	}
+
 	class CATENGINE_API game_object
 	{
 	public:
+		using components_list = std::vector<std::pair<std::pair<uuids::uuid, std::type_index>, components::component*>>;
+		
+		friend scene::scene_manager;
+
 		game_object();
 		explicit game_object(std::string name, std::string type, std::int32_t prefix, std::string id = std::string());
 		virtual ~game_object();
 
 		void render(graphics::renderer* renderer);
 		void update(float deltaTime);
-		void set_name(std::string name);
-		void set_prefix(std::int32_t prefix);
-		void set_type(std::string type);
-		void set_visible(bool visible);
-		void set_enabled(bool enabled);
+		void setName(std::string name);
+		void setPrefix(std::int32_t prefix);
+		void setType(std::string type);
+		void setVisible(bool visible);
+		void setEnabled(bool enabled);
 
-		[[nodiscard]] inline std::string  get_name()   const;
-		[[nodiscard]] inline std::int32_t get_prefix() const;
-		[[nodiscard]] inline std::string  get_type()   const;
-		[[nodiscard]] inline bool	is_visible() const;
-		[[nodiscard]] inline bool	is_enabled() const;
+		[[nodiscard]] inline std::string  getName()   const;
+		[[nodiscard]] inline std::int32_t getPrefix() const;
+		[[nodiscard]] inline std::string  getType()   const;
+		[[nodiscard]] inline bool	isVisible() const;
+		[[nodiscard]] inline bool	isEnabled() const;
 
-		[[nodiscard]] inline components::transform* get_transform() const;
-		[[nodiscard]] inline components_list get_components() const;
-		[[nodiscard]] inline core::uuid_object get_uuid() const;
+		[[nodiscard]] inline components::transform* getTransform() const;
+		[[nodiscard]] inline components_list getComponents() const;
+		[[nodiscard]] inline core::uuid_object getUUID() const;
 
 	private:
 		std::string m_name;
@@ -49,31 +57,32 @@ namespace cat::game
 		std::string m_type;
 		bool m_enabled;
 		bool m_visible;
+		bool m_select;
 		components::transform* m_transform;
 		core::uuid_object m_uuid;
 
 	public:
 		template<typename T>
-		T* add_component(T* component, std::uint32_t priority = 0);
+		decltype(auto) addComponent(T* component, std::uint32_t priority = 0);
 
 		template<typename T>
-		T* init_component(T* component);
+		decltype(auto) initComponent(T* component);
+
+		template<typename T>
+		decltype(auto) createComponent(std::uint32_t priority = 0);
 
 		// TODO: delete by priority ?
 		template<typename T>
-		void delete_component();
+		void deleteComponent();
 
 		template<typename T>
-		T* create_component(std::uint32_t priority = 0);
+		[[nodiscard]] T* getComponent();
 
 		template<typename T>
-		[[nodiscard]] T* get_component();
+		[[nodiscard]] T* getComponentInChildren();
 
 		template<typename T>
-		[[nodiscard]] T* get_component_in_children();
-
-		template<typename T>
-		[[nodiscard]] T* get_component_in_parent();
+		[[nodiscard]] T* getComponentInParent();
 
 	private:
 		components_list m_components;

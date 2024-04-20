@@ -2,6 +2,8 @@
 #include "core/utils/logger.h"
 #include "game/game_object.h"
 
+#include "graphics/renderer.h"
+
 namespace cat::game::components
 {
     transform::transform() :
@@ -12,7 +14,7 @@ namespace cat::game::components
         m_scale_factor(VEC3_ONE),
         m_world_matrix(glm::mat4(1.0f))
     {
-
+        onEditGuiDraw.add(std::bind(&transform::onGuiDrawCallback, this));
     }
 
     transform::~transform()
@@ -20,7 +22,7 @@ namespace cat::game::components
 
     }
 
-    glm::mat4 transform::get_matrix_transformation()
+    glm::mat4 transform::getTransformation()
     {
         m_world_matrix = glm::mat4(1);
         auto pos = VEC3_ZERO;
@@ -28,7 +30,7 @@ namespace cat::game::components
         auto scale = VEC3_ONE;
         if (m_parent)
         {
-            auto transform = m_parent->get_transform();
+            auto transform = m_parent->getTransform();
             pos = transform->m_position;
             rot = transform->m_rotation;
             scale = transform->m_scale;
@@ -41,25 +43,25 @@ namespace cat::game::components
         return glm::translate(m_world_matrix, m_position + pos) * rotation_matrix * glm::scale(m_world_matrix, m_scale * m_scale_factor * scale);
     }
 
-    void transform::set_position(glm::vec3 pos)
+    void transform::setPosition(glm::vec3 pos)
     {
         m_position = pos;
         onPositionChanged();
     }
 
-    void transform::set_rotation(glm::vec3 rot)
+    void transform::setRotation(glm::vec3 rot)
     {
         m_rotation = rot;
         onRotationChanged();
     }
 
-    void transform::set_scale(glm::vec3 scale)
+    void transform::setScale(glm::vec3 scale)
     {
         m_scale = scale;
         onScaleChanged();
     }
 
-    void transform::set_scale_factor(glm::vec3 scale)
+    void transform::setScaleFactor(glm::vec3 scale)
     {
         m_scale_factor = scale;
     }
@@ -78,7 +80,7 @@ namespace cat::game::components
     }
 
 
-    bool transform::is_child_of(game_object* go) const
+    bool transform::isChildOf(game_object* go) const
     {
         if (m_child == nullptr)
         {
@@ -86,12 +88,12 @@ namespace cat::game::components
             return false;
         }
 
-        return m_child == go->get_transform()->get_child();
+        return m_child == go->getTransform()->getChild();
     }
 
-    void transform::set_child(game_object* go)
+    void transform::setChild(game_object* go)
     {
-        if (get_owner() == go)
+        if (getOwner() == go)
         {
             ERR("You can't assign yourself as child!");
             return;
@@ -100,67 +102,68 @@ namespace cat::game::components
         m_child = go;
     }
 
-    void transform::set_parent(game_object* go)
+    void transform::setParent(game_object* go)
     {
-        if (get_owner() == go)
+        const auto owner = getOwner();
+        if (owner == go)
         {
             ERR("You can't assign yourself as parent!");
             return;
         }
 
-        go->get_transform()->set_child(get_owner());
+        go->getTransform()->setChild(owner);
         m_parent = go;
     }
 
-    glm::vec3 transform::get_scale_factor()   const
+    glm::vec3 transform::getScaleFactor()   const
     {
         return m_scale_factor;
     }
 
-    glm::vec3 transform::get_position()  const
+    glm::vec3 transform::getPosition()  const
     {
         return m_position;
     }
 
-    glm::vec3 transform::get_rotation()  const
+    glm::vec3 transform::getRotation()  const
     {
         return m_rotation;
     }
 
-    glm::vec3 transform::get_scale()     const
+    glm::vec3 transform::getScale()     const
     {
         return m_scale;
     }
 
-    glm::vec3 transform::get_velocity()     const
+    glm::vec3 transform::getVelocity()     const
     {
         return m_velocity;
     }
 
-    glm::mat4& transform::get_world_matrix()
+    glm::mat4& transform::getWorldMatrix()
     {
         return m_world_matrix;
     }
 
-    game_object* transform::get_child() const
+    game_object* transform::getChild() const
     {
         return m_child;
     }
 
-    game_object* transform::get_parent() const
+    game_object* transform::getParent() const
     {
         return m_parent;
     }
 
-    void transform::set_velocity(glm::vec3 vel)
+    void transform::setVelocity(glm::vec3 vel)
     {
         m_velocity = vel;
         onVelocityChanged();
     }
 
-    const char* transform::to_string() const
+    std::string transform::toStr() const
     {
-        auto text = core::utils::to_str("pos: %f %f %f\nrot: %f %f %f\nscale: %f %f %f\nvel: %f %f %f\nsc_factor: %f %f %f",
+        const auto text = core::utils::toStr("pos: %f %f %f\nrot: %f %f %f\nscale: %f %f %f\nvel: %f %f %f\nsc_factor: %f %f %f",
             m_position.x, m_position.y, m_position.z,
             m_rotation.x, m_rotation.y, m_rotation.z,
             m_scale.x, m_scale.y, m_scale.z,
@@ -169,6 +172,54 @@ namespace cat::game::components
         );
 
         return text;
+    }
+
+    void transform::onGuiDrawCallback()
+    {
+        float pos[3] = { m_position.x, m_position.y, m_position.z };
+        if (ImGui::InputFloat3("position", pos))
+        {
+            m_position.x = pos[0]; 
+            m_position.y = pos[1]; 
+            m_position.z = pos[2];
+
+            onPositionChanged();
+        }
+
+        float rot[3] = { m_rotation.x, m_rotation.y, m_rotation.z };
+        if (ImGui::InputFloat3("rotation", rot))
+        {
+            m_rotation.x = rot[0];
+            m_rotation.y = rot[1];
+            m_rotation.z = rot[2];
+
+            onRotationChanged();
+        }
+
+        float scale[3] = { m_scale.x, m_scale.y, m_scale.z };
+        if (ImGui::InputFloat3("scale", scale))
+        {
+            m_scale.x = scale[0];
+            m_scale.y = scale[1];
+            m_scale.z = scale[2];
+
+            onScaleChanged();
+        }
+
+        float vel[3] = { m_velocity.x, m_velocity.y, m_velocity.z };
+        if (ImGui::InputFloat3("velocity", vel))
+        {
+            m_velocity.x = vel[0];
+            m_velocity.y = vel[1];
+            m_velocity.z = vel[2];
+
+            onVelocityChanged();
+        }
+
+        if (ImGui::Button("reset"))
+        {
+            reset();
+        }
     }
 
 }

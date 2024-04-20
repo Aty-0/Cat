@@ -3,5 +3,5 @@
 
 namespace cat::scripts
 {
-	void add_core_api(sol::table& api);
+	void addCoreAPI(sol::table& api);
 }

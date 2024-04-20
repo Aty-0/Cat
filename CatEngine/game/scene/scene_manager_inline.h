@@ -4,7 +4,7 @@
 namespace cat::game::scene
 {
 	template<typename T>
-	inline T* scene_manager::get_game_object_name(std::string name)
+	inline T* scene_manager::getGameObjectName(std::string name)
 	{
 		static_assert(!std::is_base_of<T, game::game_object>::value || std::is_same<T, game::game_object>::value,
 			"This is not GameObject or GameObject based class");
@@ -36,7 +36,7 @@ namespace cat::game::scene
 	}
 
 	template<typename T>
-	inline T* scene_manager::get_game_object_uuid(uuids::uuid uuid)
+	inline T* scene_manager::getGameObjectUUID(uuids::uuid uuid)
 	{
 		static_assert(!std::is_base_of<T, game::game_object>::value || std::is_same<T, game::game_object>::value,
 			"This is not GameObject or GameObject based class");
@@ -62,14 +62,14 @@ namespace cat::game::scene
 		catch (std::out_of_range)
 		{
 			VERB("scene_manager::get_game_object_name Error: Trying to get object with uuid %s but it is not exist", 
-				core::uuid_object::to_str(uuid).c_str());
+				core::uuid_object::toStr(uuid).c_str());
 		}
 
 		return nullptr;
 	}
 
 	template<typename T>
-	inline T* scene_manager::create_game_object(std::string name, std::string type, std::int32_t prefix, 
+	inline decltype(auto) scene_manager::createGameObject(std::string name, std::string type, std::int32_t prefix,
 		glm::vec3 position, glm::vec3 rotation, glm::vec3 scale)
 	{
 		static_assert(!std::is_base_of<T, game::game_object>::value || std::is_same<T, game::game_object>::value,
@@ -79,20 +79,20 @@ namespace cat::game::scene
 		CAT_ASSERT(m_scene);
 
 		const auto object = new T(name, type, prefix, std::string());
-		const auto transform = object->get_transform();
+		const auto transform = object->getTransform();
 
 		// If we get there assertion fail it means something very bad happened. 
 		CAT_ASSERT(transform);
 
-		transform->set_position(position);
-		transform->set_rotation(rotation);
-		transform->set_scale(scale);
+		transform->setPosition(position);
+		transform->setRotation(rotation);
+		transform->setScale(scale);
 
 		return add<T>(object);
 	}
 
 	template<typename T>
-	inline T* scene_manager::create_game_object_ninit()
+	inline decltype(auto) scene_manager::createGameObjectWithoutInit()
 	{
 		static_assert(!std::is_base_of<T, game::game_object>::value || std::is_same<T, game::game_object>::value,
 			"This is not GameObject or GameObject based class");
@@ -111,21 +111,20 @@ namespace cat::game::scene
 		CAT_ASSERT(m_scene);
 		CAT_ASSERT(g);
 		// Can't add game object if it doesn't have name or own id
-		CAT_ASSERT(!(g->get_name().empty() || g->get_uuid().empty()));
+		CAT_ASSERT(!(g->getName().empty() || g->getUUID().empty()));
 		// Check on unique name 
-		g->set_name(make_name_unique(g->get_name()));
+		g->setName(makeGameObjectNameUnique(g->getName()));
 
-		VERB("[Scene Manager] [%s] Add [%s] Name: %s UUID: %s at Position (%f %f %f)",
-			m_scene->m_name.c_str(), core::utils::get_class_name_string(g).c_str(),
-			g->get_name().c_str(), g->get_uuid().get_id_str().c_str(),
-			g->get_transform()->get_position().x, g->get_transform()->get_position().y, g->get_transform()->get_position().z);
+		VERB("[Scene Manager] [%s] Add [%s] Name: %s UUID: %s %s",
+			m_scene->m_name.c_str(), core::utils::getClassNameStr(g).c_str(),
+			g->getName().c_str(), g->getUUID().getIDStr().c_str(),
+			g->getTransform()->toStr().c_str());
 
 		// Add object to storage
 		const auto go_shared = std::make_shared<T>(*g);
-		m_scene->m_storage.push_back(std::move(std::make_pair(std::make_pair(g->get_name(), g->get_uuid().get_id()), go_shared)));
+		m_scene->m_storage.push_back(std::make_pair(std::make_pair(g->getName(), g->getUUID().getID()), go_shared));
 
-		const auto object = go_shared.get();
-		return object;
+		return go_shared.get();
 	}
 
 	template<typename T>
@@ -135,12 +134,12 @@ namespace cat::game::scene
 			"This is not GameObject or GameObject based class");
 
 		VERB("[Scene Manager] [%s] Clone object Name: %s New name: %s", m_scene->m_name.c_str(),
-			go->get_uuid().get_id_str().c_str(),
+			go->getUUID().getIDStr().c_str(),
 			new_name.empty() ? "No" : new_name.c_str());
 
 		const auto new_obj = new T(*go);
-		const auto name = new_name.empty() ? new_obj->get_name() + "_clone" : new_name;
-		new_obj->init(name, new_obj->get_type(), new_obj->get_prefix(), "REGENERATE");
+		const auto name = new_name.empty() ? new_obj->getName() + "_clone" : new_name;
+		new_obj->init(name, new_obj->getType(), new_obj->getPrefix(), "REGENERATE");
 
 		return add<T>(new_obj);
 	}

@@ -15,22 +15,22 @@ namespace cat::game::components
 		camera();
 		virtual ~camera();
 
-		[[nodiscard]] inline glm::mat4& get_view();
-		[[nodiscard]] inline glm::mat4& get_projection();
-		[[nodiscard]] inline float get_speed() const;
-		[[nodiscard]] inline float get_zoom() const;
-		[[nodiscard]] inline glm::vec3 get_front() const;
+		[[nodiscard]] inline glm::mat4& getView();
+		[[nodiscard]] inline glm::mat4& getProjection();
+		[[nodiscard]] inline float getSpeed() const;
+		[[nodiscard]] inline float getZoom() const;
+		[[nodiscard]] inline glm::vec3 getFront() const;
 					 
-		void move_right();
-		void move_left();
-		void move_up();
-		void move_down();
+		void moveRight();
+		void moveLeft();
+		void moveUp();
+		void moveDown();
 		
-		void on_render(graphics::renderer* renderer) override;
+		void onRender(graphics::renderer* renderer) override;
 	private:
-		void enable_mouse_move();
-		void disable_mouse_move();
-		void track_mouse_move();
+		void enableMouseControl();
+		void disableMouseControl();
+		void trackMouse();
 
 
 		glm::mat4 m_view;

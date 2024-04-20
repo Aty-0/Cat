@@ -6,10 +6,6 @@
 #include <Jolt/Core/TempAllocator.h>
 #include <Jolt/Core/JobSystemThreadPool.h>
 
-namespace cat::game
-{
-	class game_object;
-}
 namespace cat::physics
 {
 	class CATENGINE_API physics_core : public core::utils::singleton<physics_core>
@@ -20,7 +16,7 @@ namespace cat::physics
 
 		void destroy();
 		void init();
-		void update(float deltaTime, game::game_object* go);
+		void update(float deltaTime);
 		
 		[[nodiscard]] inline JPH::BodyInterface* getBodyInterface();
 		[[nodiscard]] inline JPH::PhysicsSystem* getPhysicsSystem();

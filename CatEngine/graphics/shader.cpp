@@ -25,14 +25,14 @@ namespace cat::graphics
 
 	bool shader::load(const char* name)
 	{
-		static const auto rm = io::resource_manager::get_instance();
-		auto vertex_data = rm->read<const char*, shader>((std::string(name) + "_v").c_str(), {"glsl"});
+		static const auto rm = io::resource_manager::getInstance();
+		auto vertex_data = rm->get<const char*, shader>((std::string(name) + "_v").c_str(), {"glsl"});
 		if (!compile(vertex_data, GL_VERTEX_SHADER, m_vertex_shader))
 		{
 			return false;
-		}
-
-		auto frag_data = rm->read<const char*, shader>((std::string(name) + "_f").c_str(), {"glsl"});
+		}	
+		
+		auto frag_data = rm->get<const char*, shader>((std::string(name) + "_f").c_str(), {"glsl"});
 		if (!compile(frag_data, GL_FRAGMENT_SHADER, m_fragment_shader))
 		{
 			return false;
@@ -48,9 +48,10 @@ namespace cat::graphics
 		// check for linking errors
 		glGetProgramiv(m_shader_program, GL_LINK_STATUS, &status);
 
-		char err_buffer[512] = "\0";
 		if (!status)
 		{
+			char err_buffer[512] = "\0";
+	
 			glGetShaderInfoLog(m_shader_program, sizeof(err_buffer), NULL, err_buffer);
 
 			ERR("link error");
@@ -67,7 +68,7 @@ namespace cat::graphics
 		return true;
 	}
 
-	const char* shader::get_shader_type(std::int32_t type)
+	const char* shader::getShaderType(std::int32_t type)
 	{
 		switch (type)
 		{
@@ -86,7 +87,7 @@ namespace cat::graphics
 
 	bool shader::compile(const char* data, std::int32_t type, std::uint32_t& shader)
 	{
-		const auto type_str = get_shader_type(type);
+		const auto type_str = getShaderType(type);
 		VERB("shader::compile %s", type_str);
 
 		shader = glCreateShader(type);
@@ -96,9 +97,10 @@ namespace cat::graphics
 		std::int32_t status = 0;
 		glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
 
-		char err_buffer[512] = "\0";
 		if (!status)
 		{
+			char err_buffer[512] = "\0";
+			
 			glGetShaderInfoLog(shader, sizeof(err_buffer), NULL, err_buffer);
 			if (err_buffer == NULL || !err_buffer && err_buffer[0] == '\0')
 			{
@@ -110,44 +112,44 @@ namespace cat::graphics
 			}
 			return false;
 		}
-
+		
 	
 		return true;
 	}
 
-	void shader::update_default_uniforms()
+	void shader::updateDefaultUniforms()
 	{
-		static const auto time = core::utils::game_time::get_instance();
+		static const auto time = core::utils::game_time::getInstance();
 
 		
-		set_float("base.delta_time", time->get_delta_time());
-		set_float("base.time", time->get_time());
+		setFloat("base.delta_time", time->getDeltaTime());
+		setFloat("base.time", time->getTime());
 
 		// TODO: Move to constructor 
 		//		 Make static 
-		static const auto sm = game::scene::scene_manager::get_instance();
-		static const auto camera_go = sm->get_game_object_name<>(game::components::camera::EngineCameraName);
+		static const auto sm = game::scene::scene_manager::getInstance();
+		static const auto camera_go = sm->getGameObjectName<>(game::components::camera::EngineCameraName);
 		
 		// FIXME: Make it simpler 
-		static const auto window = core::game_window::get_instance();
-		static auto aspect_ratio = window->get_width() / window->get_height();
-		set_float("base.aspect_ratio", aspect_ratio);
+		static const auto window = core::game_window::getInstance();
+		static auto aspect_ratio = static_cast<float>(window->getWidth() / window->getHeight());
+		setFloat("base.aspect_ratio", aspect_ratio);
 
 	
 		if (camera_go != nullptr)
 		{
-			static const auto camera_comp = camera_go->get_component<game::components::camera>();
+			static const auto camera_comp = camera_go->getComponent<game::components::camera>();
 
 			if (camera_comp != nullptr)
 			{
-				set_mat4("transform.view", camera_comp->get_view());
-				set_mat4("transform.projection", camera_comp->get_projection());
+				setMat4("transform.view", camera_comp->getView());
+				setMat4("transform.projection", camera_comp->getProjection());
 			}
 		}
 
 	}
 
-	std::uint32_t shader::get_program() const
+	std::uint32_t shader::getProgram() const
 	{
 		return m_shader_program;
 	}
@@ -157,7 +159,7 @@ namespace cat::graphics
 		if (m_shader_program != 0)
 		{
 			glUseProgram(m_shader_program);
-			update_default_uniforms();
+			updateDefaultUniforms();
 		}
 	}
 	
@@ -166,52 +168,52 @@ namespace cat::graphics
 		glUseProgram(0);	
 	}
 
-	void shader::set_int32(const char* name, std::int32_t value)
+	void shader::setInt32(const char* name, std::int32_t value)
 	{
 		glUniform1i(glGetUniformLocation(m_shader_program, name), value);
 	}
 
-	void shader::set_uint32(const char* name, std::uint32_t value)
+	void shader::setUInt32(const char* name, std::uint32_t value)
 	{
 		glUniform1i(glGetUniformLocation(m_shader_program, name), value);
 	}
 
-	void shader::set_float(const char* name, float value)
+	void shader::setFloat(const char* name, float value)
 	{
 		glUniform1f(glGetUniformLocation(m_shader_program, name), value);
 	}
 
-	void shader::set_bool(const char* name, bool value)
+	void shader::setBool(const char* name, bool value)
 	{
-		glUniform1i(glGetUniformLocation(m_shader_program, name), (std::int32_t)value);
+		glUniform1i(glGetUniformLocation(m_shader_program, name), static_cast<std::int32_t>(value));
 	}
 
-	void shader::set_vec2(const char* name, glm::vec2& value)
+	void shader::setVec2(const char* name, glm::vec2& value)
 	{
 		glUniform2fv(glGetUniformLocation(m_shader_program, name), 1, &value[0]);
 	}
 
-	void shader::set_vec3(const char* name, glm::vec3& value)
+	void shader::setVec3(const char* name, glm::vec3& value)
 	{
 		glUniform3fv(glGetUniformLocation(m_shader_program, name), 1, &value[0]);
 	}
 
-	void shader::set_vec4(const char* name, glm::vec4& value)
+	void shader::setVec4(const char* name, glm::vec4& value)
 	{
 		glUniform4fv(glGetUniformLocation(m_shader_program, name), 1, &value[0]);
 	}
 
-	void shader::set_mat2(const char* name, glm::mat2& mat)
+	void shader::setMat2(const char* name, glm::mat2& mat)
 	{
 		glUniformMatrix2fv(glGetUniformLocation(m_shader_program, name), 1, GL_FALSE, &mat[0][0]);
 	}
 
-	void shader::set_mat3(const char* name, glm::mat3& mat)
+	void shader::setMat3(const char* name, glm::mat3& mat)
 	{
 		glUniformMatrix3fv(glGetUniformLocation(m_shader_program, name), 1, GL_FALSE, &mat[0][0]);
 	}
 
-	void shader::set_mat4(const char* name, glm::mat4& mat)
+	void shader::setMat4(const char* name, glm::mat4& mat)
 	{
 		glUniformMatrix4fv(glGetUniformLocation(m_shader_program, name), 1, GL_FALSE, &mat[0][0]);
 	}

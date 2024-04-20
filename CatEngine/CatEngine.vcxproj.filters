@@ -78,9 +78,6 @@
     <ClInclude Include="core\utils\singleton.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="core\callback_storage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="graphics\buffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -150,9 +147,6 @@
     <ClInclude Include="graphics\frame_buffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="libs\uuid.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="scripts\script_core.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -163,9 +157,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="game\components\physical_body.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="physics\bp_layer_interfacу.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="physics\utils.h">
@@ -196,6 +187,42 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="game\components\sprite.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\utfcpp\utf8\checked.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\utfcpp\utf8\core.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\utfcpp\utf8\cpp11.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\utfcpp\utf8\cpp17.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\utfcpp\utf8\unchecked.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\utfcpp\utf8.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\uuid.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="physics\bp_layer_interfacy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="game\components\cube.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="core\callback_storage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\imgui\imgui_impl_opengl3_loader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics\imgui_dark_theme.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -299,9 +326,6 @@
     <ClCompile Include="game\components\physical_body.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="physics\bp_layer_interfacу.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="physics\layers.h">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -335,5 +359,17 @@
     <ClCompile Include="game\components\sprite.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="physics\bp_layer_interfacy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="game\components\cube.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="core\callback_storage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="libs\imgui\LICENSE.txt" />
   </ItemGroup>
 </Project>

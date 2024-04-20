@@ -33,13 +33,17 @@ namespace cat::game::scene
 		// Destroy current scene 
 		void clear();
 		
-		void debug_render_imgui_window();
+		void drawEditorSceneInspector();
 
-		[[nodiscard]] inline scene* get_scene() const;
+		[[nodiscard]] inline scene* getScene() const;
+
+		void rename(game::game_object* go, std::string new_name);
+		void replace(game::game_object* go_first, game::game_object* go_second);
+		void del(game::game_object* go);
 
 		// Create game object in scene
 		template<typename T = game::game_object>
-		T* create_game_object(
+		inline decltype(auto) createGameObject(
 			std::string name = std::string(),
 			std::string type = std::string(),
 			std::int32_t prefix = 0,
@@ -49,18 +53,15 @@ namespace cat::game::scene
 
 		// Get game object by name
 		template<typename T = game::game_object>
-		T* get_game_object_name(std::string name);
+		inline T* getGameObjectName(std::string name);
 
 		// Get game object by uuid
 		template<typename T = game::game_object>
-		T* get_game_object_uuid(uuids::uuid uuid);
+		inline T* getGameObjectUUID(uuids::uuid uuid);
 
 		// Create game object function without full initialization 
 		template<typename T = game::game_object>
-		T* create_game_object_ninit();
-		void rename(game::game_object* go, std::string new_name);
-		void del(game::game_object* go);
-		void replace(game::game_object* go_first, game::game_object* go_second);
+		inline decltype(auto) createGameObjectWithoutInit();
 
 		template<typename T = game::game_object>
 		decltype(auto) clone(T* go, std::string new_name = std::string());
@@ -69,14 +70,14 @@ namespace cat::game::scene
 		template<typename T = game::game_object>
 		decltype(auto) add(T* g);
 
-		scene_go_storage::iterator find_game_object_str(const std::string& name);
-		scene_go_storage::iterator find_game_object_uuid(const uuids::uuid& uuid);
+		scene_go_storage::iterator findGameObjectStr(const std::string& name);
+		scene_go_storage::iterator findGameObjectUUID(const uuids::uuid& uuid);
 
 		// Check name on uniqueness, if we found object with same name we are add num prefix 
-		inline std::string make_name_unique(const std::string& name);
+		inline std::string makeGameObjectNameUnique(const std::string& name);
 	private:
 		scene* m_scene;
-
+		game::game_object* m_selected;
 	};
 }
 

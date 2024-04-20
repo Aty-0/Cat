@@ -7,7 +7,7 @@ namespace cat::game::components
 {
 	component::component() :
 		m_owner(nullptr),
-		m_isSelected(false),
+		m_select(false),
 		m_name(std::string())
 	{
 
@@ -16,31 +16,31 @@ namespace cat::game::components
 	component::~component()
 	{
 		m_owner = nullptr;
-		m_isSelected = false;
+		m_select = false;
 		m_name = std::string();
 	}
 
-	void component::set_name(std::string name)
+	void component::setName(const std::string& name)
 	{
 		m_name = name;
 	}
 
-	void component::set_owner(game_object* go)
+	void component::setOwner(game_object* go)
 	{
 		m_owner = go;
 	}
 	
-	std::string component::get_name() const
+	std::string component::getName() const
 	{
 		return m_name;
 	}
 
-	game_object* component::get_owner() const
+	game_object* component::getOwner() const
 	{
 		return m_owner;
 	}
 
-	core::uuid_object component::get_uuid() const
+	core::uuid_object component::getUUID() const
 	{
 		return m_uuid;
 	}

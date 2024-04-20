@@ -3,15 +3,13 @@
 
 namespace cat::game::components
 {
-	class CATENGINE_API sprite : public drawable
+	class CATENGINE_API cube : public drawable
 	{
 	public:
-		sprite();
+		cube();
 
 		void setTexture(const char* texture_name);
 
-	private:
-		void rescale();
 	};
 }
 
