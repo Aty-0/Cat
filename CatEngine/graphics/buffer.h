@@ -3,6 +3,7 @@
 
 namespace cat::graphics
 {
+	template<typename T>
 	class CATENGINE_API buffer
 	{
 	public:
@@ -18,13 +19,30 @@ namespace cat::graphics
 		virtual void unbindAll();
 
 
-		template<typename type>
-		[[nodiscard]] inline type* get() const { return reinterpret_cast<type>(m_data); }
-		
-		[[nodiscard]] inline std::int32_t size() const { return static_cast<std::int32_t>(m_size); }
+		[[nodiscard]] inline T* get() const { return reinterpret_cast<T>(m_data.data()); }	
+		[[nodiscard]] inline std::vector<T> const getVector() { return m_data; }	
+		[[nodiscard]] inline std::uint32_t size() const { return static_cast<std::uint32_t>(m_data.size()); }
 
 	protected:
-		void* m_data;
-		std::size_t m_size;
+		std::vector<T> m_data;
 	};
+
+	template<typename T>
+	inline void buffer<T>::unbindBuffer()
+	{
+
+	}
+
+	template<typename T>
+	inline void buffer<T>::unbindBufferArray()
+	{
+
+	}
+
+	template<typename T>
+	inline void buffer<T>::unbindAll()
+	{
+		unbindBuffer();
+		unbindBufferArray();
+	}
 }

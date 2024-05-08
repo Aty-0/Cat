@@ -1,5 +1,6 @@
 #include "graphics/vertex_buffer.h"
 #include "core/utils/logger.h"
+#include "graphics/vertex.h"
 
 namespace cat::graphics
 {
@@ -40,7 +41,8 @@ namespace cat::graphics
 			glDeleteBuffers(1, &m_vbo);
 		}
 
-		m_data = nullptr; // reset data pointer
+		m_data.clear();
+		m_data.shrink_to_fit();
 	}
 
 	void vertex_buffer::setAttrib(std::uint32_t num, std::uint32_t size,
@@ -58,5 +60,13 @@ namespace cat::graphics
 	void vertex_buffer::unbindBufferArray()
 	{
 		glBindVertexArray(0);
+	}
+
+	void vertex_buffer::setBufferData(const std::vector<graphics::vertex>& data, std::uint32_t draw)
+	{
+		m_data = data;
+		CAT_ASSERT(!m_data.empty());
+		glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
+		glBufferData(GL_ARRAY_BUFFER, size() * sizeof(graphics::vertex), &data[0], GL_STATIC_DRAW);
 	}
 }

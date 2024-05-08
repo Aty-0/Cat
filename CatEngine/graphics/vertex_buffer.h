@@ -3,7 +3,8 @@
 
 namespace cat::graphics
 {
-	class CATENGINE_API vertex_buffer : public buffer
+	struct vertex;
+	class CATENGINE_API vertex_buffer : public buffer<graphics::vertex>
 	{
 	public:
 		vertex_buffer();
@@ -14,10 +15,7 @@ namespace cat::graphics
 		void clear() override;
 		void setAttrib(std::uint32_t num, std::uint32_t size,
 			GLenum type, std::int32_t typesize, const void* offset);
-
-		template<typename type>
-		bool setBufferData(std::vector<type> _data, std::uint32_t draw);
-
+		void setBufferData(const std::vector<graphics::vertex>& _data, std::uint32_t draw);
 		void unbindBuffer() override;
 		void unbindBufferArray() override;
 
@@ -28,5 +26,3 @@ namespace cat::graphics
 
 	};
 }
-
-#include "vertex_buffer_inline.h"

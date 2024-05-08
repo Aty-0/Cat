@@ -42,13 +42,13 @@ namespace cat::graphics
 		m_vertex_buffer = std::make_shared<graphics::vertex_buffer>();
 
 		m_vertex_buffer->gen();
-		m_vertex_buffer->setBufferData<graphics::vertex>(vertices, GL_STATIC_DRAW);
+		m_vertex_buffer->setBufferData(vertices, GL_STATIC_DRAW);
 		
 		if (!indices.empty())
 		{
 			m_index_buffer = std::make_shared<graphics::index_buffer>();
 			m_index_buffer->gen();
-			m_index_buffer->setBufferData<std::uint32_t>(indices, GL_STATIC_DRAW);
+			m_index_buffer->setBufferData(indices, GL_STATIC_DRAW);
 		}
 
 		m_vertex_buffer->setAttrib(0, 3, GL_FLOAT, sizeof(graphics::vertex), reinterpret_cast<void*>(offsetof(graphics::vertex, pos)));
@@ -78,6 +78,28 @@ namespace cat::graphics
 
 		m_textures.clear();
 		m_textures.shrink_to_fit();
+	}
+
+	// TODO: Dynamic gl buffer update 
+	void piece::addNewVertices(const std::vector<vertex>& vertices)
+	{
+		m_vertex_buffer->unbindBuffer();
+
+		auto concatenated_vertices = m_vertex_buffer->getVector();
+		concatenated_vertices.reserve(concatenated_vertices.size() + vertices.size());
+		concatenated_vertices.insert(concatenated_vertices.end(), vertices.begin(), vertices.end());
+
+		m_vertex_buffer->clear();
+
+		m_vertex_buffer->gen();
+		
+		m_vertex_buffer->setBufferData(concatenated_vertices, GL_STATIC_DRAW);
+
+		m_vertex_buffer->setAttrib(0, 3, GL_FLOAT, sizeof(graphics::vertex), reinterpret_cast<void*>(offsetof(graphics::vertex, pos)));
+		m_vertex_buffer->setAttrib(1, 4, GL_FLOAT, sizeof(graphics::vertex), reinterpret_cast<void*>(offsetof(graphics::vertex, color)));
+		m_vertex_buffer->setAttrib(2, 2, GL_FLOAT, sizeof(graphics::vertex), reinterpret_cast<void*>(offsetof(graphics::vertex, uv)));
+
+		m_vertex_buffer->unbindBuffer();
 	}
 
 	void piece::reloadTextures()

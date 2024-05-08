@@ -4,7 +4,7 @@
 namespace cat::graphics
 {
 	class texture;
-	class CATENGINE_API frame_buffer : public buffer
+	class CATENGINE_API frame_buffer : public buffer<std::shared_ptr<texture>>
 	{
 	public:
 		frame_buffer();
@@ -21,6 +21,5 @@ namespace cat::graphics
 	private:
 		std::uint32_t m_fbo;
 		std::uint32_t m_rbo;
-		std::shared_ptr<texture> m_frameTexture;
 	};
 }

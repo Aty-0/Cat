@@ -36,6 +36,8 @@ namespace cat::graphics
 		virtual void loadShader(const char* name);
 		virtual void reloadTextures();
 		void setPolyMode(std::int32_t mode);
+
+		void addNewVertices(const std::vector<vertex>& vertices);
 		
 		[[nodiscard]] inline graphics::shader* getShader()const;
 		[[nodiscard]] inline graphics::vertex_buffer* getVertexBuffer() const;

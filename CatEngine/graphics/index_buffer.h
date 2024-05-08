@@ -3,7 +3,7 @@
 
 namespace cat::graphics
 {
-	class CATENGINE_API index_buffer : public buffer
+	class CATENGINE_API index_buffer : public buffer<std::uint32_t>
 	{
 	public:
 		index_buffer();
@@ -12,8 +12,7 @@ namespace cat::graphics
 		void gen() override;
 		void bind() override;
 		void clear() override;
-		template<typename type>
-		bool setBufferData(std::vector<type> _data, std::uint32_t draw);
+		void setBufferData(const std::vector<std::uint32_t>& data, std::uint32_t draw);
 	
 		void unbindBuffer() override;
 		void unbindBufferArray() override;
@@ -22,5 +21,3 @@ namespace cat::graphics
 		std::uint32_t m_ebo;
 	};
 }
-
-#include "index_buffer_inline.h"
