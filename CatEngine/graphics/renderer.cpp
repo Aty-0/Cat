@@ -169,8 +169,10 @@ namespace cat::graphics
 			WARN("GL: %s %s %s %s", source_str, type_str, severity_str, message);
 			break;
 		default:
-			if(verbose)
+			if (verbose)
+			{
 				VERB("GL: %s %s %s %s", source_str, type_str, severity_str, message);
+			}
 			break;
 		}
 

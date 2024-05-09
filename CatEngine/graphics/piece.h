@@ -15,8 +15,8 @@ namespace cat::graphics
 	class CATENGINE_API piece
 	{
 	public:
-		// Make a sprite
-		piece();
+		// Creates a empty piece or square 
+		piece(bool makeSquare = true);
 
 		// Custom form
 		explicit piece(
@@ -36,7 +36,7 @@ namespace cat::graphics
 		virtual void loadShader(const char* name);
 		virtual void reloadTextures();
 		void setPolyMode(std::int32_t mode);
-
+		void setCullMode(std::int32_t cullmode = GL_BACK, std::int32_t frontface = GL_CW);
 		void addNewVertices(const std::vector<vertex>& vertices);
 		
 		[[nodiscard]] inline graphics::shader* getShader()const;
@@ -52,6 +52,9 @@ namespace cat::graphics
 			const std::vector<std::uint32_t>& indices,
 			const std::vector<const char*>& texture_names,
 			const char* shader_name);
+		
+		std::int32_t m_cullFace;
+		std::int32_t m_cullMode;
 		std::int32_t m_polyMode;
 		std::shared_ptr<graphics::shader> m_shader;
 		std::shared_ptr<graphics::vertex_buffer> m_vertex_buffer;

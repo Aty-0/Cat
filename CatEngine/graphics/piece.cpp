@@ -5,21 +5,30 @@
 namespace cat::graphics
 {
 	// By default we are making a sprite
-	piece::piece() : m_polyMode(GL_FILL)
+	piece::piece(bool makeSquare) : m_polyMode(GL_FILL), m_cullFace(GL_CW), m_cullMode(GL_BACK)
 	{
-		const std::vector<graphics::vertex> vertices = { { glm::vec3(0.5f,  1.0f, 0.0f), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), glm::vec2(0.0f, -1.0f) },      // top right
-										{ glm::vec3(0.5f, -1.0f, 0.0f),   glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 0.0f) },      // bottom right
-										{ glm::vec3(-1.0f, -1.0f, 0.0f),  glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), glm::vec2(-1.0f, 0.0f) },      // bottom left
-										{ glm::vec3(-1.0f,  1.0f, 0.0f),  glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), glm::vec2(-1.0f, -1.0f) }       // top left 
-		};
-
-		const std::vector<std::uint32_t> indices =
+		if (makeSquare)
 		{
-			0, 1, 3,  // first triangle
-			1, 2, 3   // second triangle
-		};
-		
-		createPiece(vertices, indices, { "default_texture" }, "piece");
+			const std::vector<graphics::vertex> vertices = { { glm::vec3(0.5f,  1.0f, 0.0f), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), glm::vec2(0.0f, -1.0f) },      // top right
+											{ glm::vec3(0.5f, -1.0f, 0.0f),   glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 0.0f) },      // bottom right
+											{ glm::vec3(-1.0f, -1.0f, 0.0f),  glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), glm::vec2(-1.0f, 0.0f) },      // bottom left
+											{ glm::vec3(-1.0f,  1.0f, 0.0f),  glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), glm::vec2(-1.0f, -1.0f) }       // top left 
+			};
+
+			const std::vector<std::uint32_t> indices =
+			{
+				0, 1, 3,  // first triangle
+				1, 2, 3   // second triangle
+			};
+
+			createPiece(vertices, indices, { "default_texture" }, "piece");
+
+		}
+		else
+		{
+			m_vertex_buffer = std::make_shared<graphics::vertex_buffer>();
+			m_shader = std::make_shared<graphics::shader>();
+		}
 	}
 
 	piece::piece(
@@ -27,7 +36,7 @@ namespace cat::graphics
 		const std::vector<std::uint32_t>& indices,
 		const std::vector<const char*>& texture_names,
 		const char* shader_name
-		) : m_polyMode(GL_FILL)
+	) : m_polyMode(GL_FILL), m_cullFace(GL_CW), m_cullMode(GL_BACK)
 	{
 		createPiece(vertices, indices, texture_names, shader_name);
 	}
@@ -43,7 +52,7 @@ namespace cat::graphics
 
 		m_vertex_buffer->gen();
 		m_vertex_buffer->setBufferData(vertices, GL_STATIC_DRAW);
-		
+
 		if (!indices.empty())
 		{
 			m_index_buffer = std::make_shared<graphics::index_buffer>();
@@ -70,7 +79,7 @@ namespace cat::graphics
 	}
 
 	piece::~piece()
-	{		
+	{
 		m_vertex_buffer.reset();
 		m_index_buffer.reset();
 
@@ -92,7 +101,7 @@ namespace cat::graphics
 		m_vertex_buffer->clear();
 
 		m_vertex_buffer->gen();
-		
+
 		m_vertex_buffer->setBufferData(concatenated_vertices, GL_STATIC_DRAW);
 
 		m_vertex_buffer->setAttrib(0, 3, GL_FLOAT, sizeof(graphics::vertex), reinterpret_cast<void*>(offsetof(graphics::vertex, pos)));
@@ -101,7 +110,13 @@ namespace cat::graphics
 
 		m_vertex_buffer->unbindBuffer();
 	}
-
+	
+	void piece::setCullMode(std::int32_t cullmode, std::int32_t frontface)
+	{
+		m_cullFace = frontface;
+		m_cullMode = cullmode;
+	}
+	
 	void piece::reloadTextures()
 	{
 		// TODO: 
@@ -175,7 +190,7 @@ namespace cat::graphics
 
 		m_vertex_buffer->bind();
 		
-		render->cull();
+		render->cull(m_cullMode, m_cullFace);
 		if (m_index_buffer != nullptr)
 		{
 			render->setPolygonMode(m_polyMode);
