@@ -362,9 +362,6 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 
-# Don't include libs 
-Libs/
-Garbage/
 
 *.obj
 *.pdb
