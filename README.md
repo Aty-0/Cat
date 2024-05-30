@@ -3,7 +3,7 @@ A "Cat" is a experimental project for me to build a game engine.
 Features:
  - This engine is supports a scripting LUA programming language and have a basic API for scripts
  - In engine game editor
- - Components system 
+ - Component system for game objects
 
 ## What's will be added 
   - Serialization
