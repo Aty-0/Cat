@@ -10,8 +10,7 @@ target_include_directories(Cat
     PUBLIC ${CAT_SOURCES_DIR}
     )
 target_compile_features(Cat PRIVATE cxx_std_20)
-target_sources(Cat PRIVATE ../libs/glew/src/glew.c)
-    
+   
 target_link_libraries(Cat
     CatEngine
     Jolt 
