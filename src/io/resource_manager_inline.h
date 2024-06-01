@@ -60,14 +60,14 @@ namespace cat::io
 		const auto type_name = core::utils::getClassNameStr<data_type>();
 		VERB("resource_manager::is_exist %s %s", type_name.c_str(), name);
 		auto file = get_file(type_name.c_str(), name, ext);
-		auto is_open = file.is_open();
+		const auto is_open = file.is_open();
 		file.close();
 
 		return is_open;
 	}
 
 	template<typename data_type>
-	inline std::int64_t resource_manager::size(const char* name, std::vector<const char*> ext)
+	inline std::size_t resource_manager::size(const char* name, std::vector<const char*> ext)
 	{
 		const auto type_name = core::utils::getClassNameStr<data_type>();
 		VERB("resource_manager::size %s %s", type_name.c_str(), name);
@@ -76,7 +76,7 @@ namespace cat::io
 		
 		if (file.is_open())
 		{
-			auto size = file.tellg();
+			const auto size = file.tellg();
 			file.close();
 			return size;
 		}

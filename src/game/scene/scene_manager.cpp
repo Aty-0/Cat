@@ -31,88 +31,102 @@ namespace cat::game::scene
 
 	void scene_manager::drawEditorSceneInspector()
 	{
-		ImGui::Begin("scene");
+		ImGui::Begin("Scene");
 		ImGui::Text("GameObject's:");
 
 		static game::game_object* prev = nullptr;
 		
 		ImGui::Dummy(ImVec2(0.0f, 20.0f));
 		ImGui::Separator();
-
-		for (const auto& object : m_scene->getStorage())
+		
+		const auto rootSceneName = m_scene->m_name.c_str(); 
+		if (ImGui::TreeNodeEx(rootSceneName, 
+			ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_DefaultOpen))
 		{
-			if (ImGui::Selectable(object.second->m_name.c_str(), object.second->m_select))
+			for (const auto& object : m_scene->getStorage())
 			{
-				object.second->m_select = !object.second->m_select;
-				m_selected = object.second.get();
-				// TODO: Show game object childrens 
-			}	
+				const auto gameObjectName = object.second->m_name.c_str();
+				if (ImGui::TreeNode(gameObjectName))
+				{
+					if (ImGui::Selectable(gameObjectName, object.second->m_select))
+					{
+						object.second->m_select = !object.second->m_select;
+						m_selected = object.second.get();
+						// TODO: Show game object childrens 
+					}	
 
-			ImGui::Spacing();
-			ImGui::Separator();
+					if (prev && prev != m_selected)
+						prev->m_select = false;
 
-			if (prev && prev != m_selected)
-				prev->m_select = false;
+
+					prev = m_selected;
+					
+					ImGui::TreePop();  
+				}   				
+			}
 			
-
-			prev = m_selected;
+   			ImGui::TreePop();  
 		}
+
 		ImGui::End();
+
 
 		if (m_selected == nullptr)
 			return;
-
-		ImGui::Begin("object inspector");
-
-		if (m_selected->m_select)
-		{
-			ImGui::Text("GameObject propeties:");
-			ImGui::Dummy(ImVec2(0.0f, 5.0f));
-			auto name = (char*)m_selected->m_name.c_str();
-			if (ImGui::InputText("Name", name, IM_ARRAYSIZE(name)))
-			{
-				m_selected->m_name = name;
-			}
-
-			ImGui::Text("uuid: %s", m_selected->m_uuid.getIDStr().c_str());
-			ImGui::Checkbox("visible", &m_selected->m_visible);
-			ImGui::Checkbox("enabled", &m_selected->m_enabled);
+		
+		ImGui::Begin("ObjectInspector");
+		{		
 			
-			ImGui::Dummy(ImVec2(0.0f, 20.0f));
-			ImGui::Separator();
-
-			ImGui::Text("Components:");
-			ImGui::Dummy(ImVec2(0.0f, 5.0f));
-			ImGui::Separator();
-			
-			for (const auto& component : m_selected->getComponents())
+			if (m_selected->m_select)
 			{
-				if (ImGui::Selectable(component.second->m_name.c_str(),
-					component.second->m_select))
+				ImGui::Text("GameObject propeties:");
+				ImGui::Dummy(ImVec2(0.0f, 5.0f));
+				auto name = (char*)m_selected->m_name.c_str();
+				if (ImGui::InputText("Name", name, IM_ARRAYSIZE(name)))
 				{
-					component.second->m_select = !component.second->m_select;
+					m_selected->m_name = name;
 				}
 
+				ImGui::Text("uuid: %s", m_selected->m_uuid.getIDStr().c_str());
+				ImGui::Checkbox("visible", &m_selected->m_visible);
+				ImGui::Checkbox("enabled", &m_selected->m_enabled);
+
+				ImGui::Dummy(ImVec2(0.0f, 20.0f));
+				ImGui::Separator();
+
+				ImGui::Text("Components:");
 				ImGui::Dummy(ImVec2(0.0f, 5.0f));
 				ImGui::Separator();
 
-				if (component.second->m_select)
+				for (const auto& component : m_selected->getComponents())
 				{
-					const auto callback = component.second->onEditGuiDraw;
-					if (callback.size() == 0)
+					if (ImGui::Selectable(component.second->m_name.c_str(),
+						component.second->m_select))
 					{
-						ImGui::Text("None");
-						continue;
+						component.second->m_select = !component.second->m_select;
 					}
 
-					component.second->onEditGuiDraw();
+					ImGui::Dummy(ImVec2(0.0f, 5.0f));
 					ImGui::Separator();
+
+					if (component.second->m_select)
+					{
+						const auto callback = component.second->onEditGuiDraw;
+						if (callback.size() == 0)
+						{
+							ImGui::Text("None");
+							continue;
+						}
+
+						component.second->onEditGuiDraw();
+						ImGui::Separator();
+					}
+
 				}
-
 			}
-		}
 
-		ImGui::End();
+			ImGui::End();
+		}
 	}
 
 	bool scene_manager::load(std::string name)
@@ -200,15 +214,12 @@ namespace cat::game::scene
 		auto newName = std::string();
 
 		// How much objects we found with the same name
-		auto count = 0;
-
-		scene_go_storage::iterator it = { };
-
+		std::int32_t count = 0;
 		while (true)
 		{
 			count != 0 ? newName = name + std::to_string(count) : newName = name;
-			it = findGameObjectStr(newName);
 
+			auto it = findGameObjectStr(newName);
 			if (it == m_scene->m_storage.end())
 			{
 				break;

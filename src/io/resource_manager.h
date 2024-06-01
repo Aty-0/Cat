@@ -24,7 +24,7 @@ namespace cat::io
 
 		// get file size in bytes
 		template<typename data_type>
-		inline std::int64_t size(const char* name, std::vector<const char*> ext);
+		inline std::size_t size(const char* name, std::vector<const char*> ext);
 
 		void moveFilesToData(std::int32_t count, const char** paths);
 	private:

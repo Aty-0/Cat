@@ -8,7 +8,8 @@ namespace cat::game
 		m_type(CAT_DEFAULT_GAMEOBJECT_TYPE),
 		m_prefix(CAT_DEFAULT_GAMEOBJECT_PREFIX),
 		m_visible(true),
-		m_enabled(true)
+		m_enabled(true),
+		m_select(false)
 	{
 		// This is the basic setup for game object 
 		m_transform = createComponent<components::transform>();
@@ -19,7 +20,8 @@ namespace cat::game
 		m_type(std::string()),
 		m_prefix(0),
 		m_visible(true),
-		m_enabled(true)
+		m_enabled(true),
+		m_select(false)
 	{
 		// Basic setup: set name, type and prefix 
 		setName(name);
