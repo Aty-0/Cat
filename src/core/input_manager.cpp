@@ -88,7 +88,10 @@ namespace cat::core
 	{
 		if (device == input_device::Keyboard ||
 			device == input_device::Unknown)
+		{
+			ERR("Invalid special case listener, device cannot be a keyboard or unknown");
 			return;
+		}
 
 		m_listeners_storage.push_back(std::move(std::make_unique<input_event>(input_key_code::KEYBOARD_UNKNOWN, 
 			keyState, device, inputevent)));
