@@ -10,7 +10,11 @@ namespace cat::game::components
         m_position(VEC3_ZERO),
         m_rotation(VEC3_ZERO),
         m_velocity(VEC3_ZERO),
-        m_scale(VEC3_ONE),
+        m_scale(VEC3_ONE),        
+        m_localPosition(VEC3_ZERO),
+        m_localRotation(VEC3_ZERO),
+        m_localVelocity(VEC3_ZERO),
+        m_localScale(VEC3_ONE),
         m_scale_factor(VEC3_ONE),
         m_world_matrix(glm::mat4(1.0f))
     {
@@ -21,49 +25,63 @@ namespace cat::game::components
     {
 
     }
+    
+    glm::mat4 transform::makeRotationMatrix(const glm::mat4& world, const glm::vec3& rotation)
+    {
+        return glm::rotate(world, glm::radians(rotation.z), glm::vec3(0, 0, 1))
+            * glm::rotate(world, glm::radians(rotation.y), glm::vec3(0, 1, 0))
+            * glm::rotate(world, glm::radians(rotation.x), glm::vec3(1, 0, 0));
+    }
 
     glm::mat4 transform::getTransformation()
     {
+        // TODO: So, we need to apply a local vars for child somehow 
         m_world_matrix = glm::mat4(1);
-        auto pos = VEC3_ZERO;
-        auto rot = VEC3_ZERO;
-        auto scale = VEC3_ONE;
-        // if (m_parent)
-        // {
-        //     auto transform = m_parent->getTransform();
-        //     pos = transform->m_position;
-        //     rot = transform->m_rotation;
-        //     scale = transform->m_scale;
-        // }
-
-        const auto rotation_matrix = glm::rotate(m_world_matrix, glm::radians(m_rotation.z + rot.z), glm::vec3(0, 0, 1))
-            * glm::rotate(m_world_matrix, glm::radians(m_rotation.y + rot.y), glm::vec3(0, 1, 0))
-            * glm::rotate(m_world_matrix, glm::radians(m_rotation.x + rot.x), glm::vec3(1, 0, 0));
-
-        return glm::translate(m_world_matrix, m_position + pos) * rotation_matrix * glm::scale(m_world_matrix, m_scale * m_scale_factor * scale);
+        const auto rotation_matrix = makeRotationMatrix(m_world_matrix, m_rotation);
+        return glm::translate(m_world_matrix, m_position) * rotation_matrix * glm::scale(m_world_matrix, m_scale * m_scale_factor);
     }
 
-    void transform::setPosition(glm::vec3 pos)
+    void transform::setPosition(const glm::vec3& pos)
     {
         m_position = pos;
         onPositionChanged();
     }
 
-    void transform::setRotation(glm::vec3 rot)
+    void transform::setRotation(const glm::vec3& rot)
     {
         m_rotation = rot;
         onRotationChanged();
     }
 
-    void transform::setScale(glm::vec3 scale)
+    void transform::setScale(const glm::vec3& scale)
     {
         m_scale = scale;
         onScaleChanged();
     }
 
-    void transform::setScaleFactor(glm::vec3 scale)
+    void transform::setScaleFactor(const glm::vec3& scale)
     {
         m_scale_factor = scale;
+    }
+
+    void transform::setLocalPosition(const glm::vec3& pos)
+    {
+        m_localPosition = pos;
+    }
+    
+    void transform::setLocalVelocity(const glm::vec3& vel)
+    {
+        m_localVelocity = vel;
+    }
+    
+    void transform::setLocalRotation(const glm::vec3& rot)
+    {
+        m_localRotation = rot;
+    }
+
+    void transform::setLocalScale(const glm::vec3& scale)
+    {
+        m_localScale = scale;
     }
 
     void transform::reset()
@@ -71,6 +89,11 @@ namespace cat::game::components
         m_position  = VEC3_ZERO;
         m_rotation  = VEC3_ZERO;
         m_scale     = VEC3_ONE;
+
+        m_localPosition  = VEC3_ZERO;
+        m_localRotation  = VEC3_ZERO;
+        m_localScale     = VEC3_ONE;
+        
         m_scale_factor = VEC3_ONE;
 
         onPositionChanged();
@@ -155,7 +178,7 @@ namespace cat::game::components
         return m_parent;
     }
 
-    void transform::setVelocity(glm::vec3 vel)
+    void transform::setVelocity(const glm::vec3& vel)
     {
         m_velocity = vel;
         onVelocityChanged();

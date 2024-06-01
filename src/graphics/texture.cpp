@@ -42,7 +42,7 @@ namespace cat::graphics
 		setFilter(texture::filter::Linear, texture::filter::Linear);
 
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_instance, 0);
-		VERB("texture::create_framebuffer_texture %i %i %i", m_instance, m_width, m_height);
+		VERB("Create a framebuffer texture | instance: %i w: %i h: %i", m_instance, m_width, m_height);
 	}
 
 	bool texture::load(const char* name)
@@ -89,7 +89,7 @@ namespace cat::graphics
 
 	void texture::create(std::uint32_t tex_type, std::uint32_t format, std::uint32_t width, std::uint32_t height, void* data)
 	{
-		VERB("texture::create %i %i %i %i", tex_type, format, width, height);
+		VERB("Create texture | instance: %i type: %i format: %i w: %i h: %i", m_instance, tex_type, format, width, height);
 
 		m_width  = width;
 		m_height = height;
@@ -100,8 +100,7 @@ namespace cat::graphics
 		glBindTexture(m_tex_type, m_instance);
 
 		setWrap(texture::wrap::Repeat);
-		setFilter(texture::filter::Linear,
-			texture::filter::Linear);
+		setFilter(texture::filter::Linear, texture::filter::Linear);
 
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 		glTexImage2D(m_tex_type, 0, GL_RGBA, m_width, m_height, 0, format, GL_UNSIGNED_BYTE, data);
