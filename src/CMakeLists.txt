@@ -76,6 +76,7 @@ target_include_directories(CatEngine
     PUBLIC ${LIBS_SOL2_DIR}/include
     PUBLIC ${LIBS_LUA_DIR} 
     PUBLIC ${CAT_SOURCES_DIR}
+    PUBLIC ${LIBS_REFLECT_CPP_DIR}
     )
     
     
@@ -85,6 +86,7 @@ target_link_libraries(CatEngine
     sol2 
     glfw
     glew
+    reflectcpp
 )
 
 target_compile_definitions(CatEngine

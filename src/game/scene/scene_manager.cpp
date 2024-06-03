@@ -2,6 +2,11 @@
 #include "game/components/camera.h"
 #include "graphics/renderer.h"
 
+#include "io/resource_manager.h"
+
+// FIXME: Remove
+#include "core/input_manager.h"
+
 namespace cat::game::scene
 {
 	scene_manager::scene_manager() :
@@ -14,19 +19,26 @@ namespace cat::game::scene
 	scene_manager::~scene_manager()
 	{
 		m_scene->destroy();
-		core::utils::safeDelete(m_scene);
+		m_scene.reset();
 	}
 
 	void scene_manager::create()
 	{
 		INFO("[SceneManager] Create new scene.");
 
-		m_scene = new scene();
+		m_scene = std::make_shared<game::scene::scene>();
 
 		createGameObject<game::game_object>(game::components::camera::EngineCameraName, CAT_ENGINE_GAMEOBJECT_TYPE, -1)->createComponent<game::components::camera>();
 		// TODO: Callbacks
 
 		graphics::renderer::onImGuiRender.add(std::bind(&scene_manager::drawEditorSceneInspector, this));
+
+		// TODO: Remove
+		const auto input = core::input_manager::getInstance();
+		input->addListener(core::input_key_code::KEYBOARD_F10, core::input_key_state::Press, core::input_device::Keyboard, std::bind(&scene_manager::save, this));
+		input->addListener(core::input_key_code::KEYBOARD_F9, core::input_key_state::Press, core::input_device::Keyboard, std::bind([this]() {
+			load(m_scene->getName());
+		}));
 	}
 
 	void scene_manager::drawEditorSceneInspector()
@@ -129,15 +141,40 @@ namespace cat::game::scene
 		}
 	}
 
-	bool scene_manager::load(std::string name)
+	bool scene_manager::load(const std::string& name)
 	{
-		CAT_NO_IMPL();
+		INFO("[Scene Manager] Load scene %s", name.c_str());
+
+		m_scene->clear();
+		const auto sceneFileName = core::utils::toStr("%s/scene/%s.scene", io::resource_manager::DATA_NAME.c_str(), name.c_str());
+		std::ifstream file = std::ifstream(sceneFileName, std::ios::in);
+		CAT_ASSERT(file.is_open());
+		std::stringstream buffer;
+		buffer << file.rdbuf();
+		const auto data = buffer.str();
+		auto sceneFromFile = rfl::json::read<std::shared_ptr<scene>>(data).value();
+		//INFO(sceneFromFile->getName().c_str());
+		m_scene = sceneFromFile;
+		file.close();
+
+		// TODO: .REMOVE
+		const auto input = core::input_manager::getInstance();
+		input->clearListeners();
 		return true;
 	}
 
 	bool scene_manager::save()
 	{
-		CAT_NO_IMPL();
+		INFO("[Scene Manager] Save scene");
+		// TODO: Create folder if folder is not exist 
+
+		const auto sceneFileName = core::utils::toStr("%s/scene/%s.scene", io::resource_manager::DATA_NAME.c_str(), m_scene->m_name.c_str());
+		const std::string json_string = rfl::json::write(std::move(m_scene));
+		
+		std::ofstream file = std::ofstream(sceneFileName, std::ios::out);
+		file << json_string;
+		file.close();
+		
 		return true;
 	}
 
@@ -171,7 +208,7 @@ namespace cat::game::scene
 
 	inline scene* scene_manager::getScene() const
 	{
-		return m_scene;
+		return m_scene.get();
 	}
 
 	void scene_manager::clear()
@@ -231,7 +268,7 @@ namespace cat::game::scene
 		return newName;
 	}
 
-	void scene_manager::rename(game::game_object* go, std::string new_name)
+	void scene_manager::rename(game::game_object* go, const std::string& new_name)
 	{
 		CAT_NO_IMPL();
 	}
@@ -262,7 +299,7 @@ namespace cat::game::scene
 		ERR("[Scene Manager] Object is not found in scene storage");
 	}
 
-	void scene_manager::replace(game::game_object* go_first, game::game_object* go_second)
+	void scene_manager::replace(game::game_object* first, game::game_object* second)
 	{
 		CAT_NO_IMPL();
 	}

@@ -28,3 +28,6 @@
 #include "core/engine_api.h"
 #include "core/utils/utilsbase.h"
 #include "core/utils/singleton.h"
+
+#include <rfl/json.hpp>
+#include <rfl.hpp>

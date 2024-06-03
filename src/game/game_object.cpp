@@ -39,7 +39,6 @@ namespace cat::game
 		for (const auto component : m_components)
 		{
 			component.second->onDestroy();
-			delete component.second;
 		}
 
 		m_transform = nullptr;

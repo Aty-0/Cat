@@ -6,7 +6,7 @@
 
 
 namespace cat::core
-{
+{		
 	class CATENGINE_API uuid_object
 	{
 	public:
@@ -39,5 +39,5 @@ namespace cat::core
 		
 	private:
 		uuids::uuid m_id;
-	};
+	};	
 }

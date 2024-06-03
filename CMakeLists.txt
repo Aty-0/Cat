@@ -72,19 +72,22 @@ add_library(
     ${LIBS_LUA_DIR}/lutf8lib.c
     ${LIBS_LUA_DIR}/lvm.c
     ${LIBS_LUA_DIR}/lzio.c
-)
+    )
+    
+    # Add OpenGL and GLEW
+    find_package(OpenGL REQUIRED)
+    set(LIBS_GLEW_DIR "${PROJECT_SOURCE_DIR}/libs/glew")
+    add_subdirectory("${LIBS_GLEW_DIR}/build/cmake")
+    #add_library(glew STATIC ${LIBS_GLEW_DIR}/src/glew.c)
+    target_include_directories(glew PUBLIC ${LIBS_GLEW_DIR}/include)
+    #target_link_libraries(glew OpenGL::GL)
 
-# Add OpenGL and GLEW
-find_package(OpenGL REQUIRED)
-set(LIBS_GLEW_DIR "${PROJECT_SOURCE_DIR}/libs/glew")
-add_subdirectory("${LIBS_GLEW_DIR}/build/cmake")
-#add_library(glew STATIC ${LIBS_GLEW_DIR}/src/glew.c)
-target_include_directories(glew PUBLIC ${LIBS_GLEW_DIR}/include)
-#target_link_libraries(glew OpenGL::GL)
+    set(LIBS_REFLECT_CPP_DIR "${LIBS_DIR_PATH}/reflect-cpp-0.9.0")
+    add_subdirectory(${LIBS_REFLECT_CPP_DIR})
 
-set(CAT_SOURCES_DIR "${PROJECT_SOURCE_DIR}/src")
-message(${CAT_SOURCES_DIR})
-add_subdirectory(application)
-add_subdirectory(src)
-
-include(CPack)
+    set(CAT_SOURCES_DIR "${PROJECT_SOURCE_DIR}/src")
+    message(${CAT_SOURCES_DIR})
+    add_subdirectory(application)
+    add_subdirectory(src)
+    
+    include(CPack)

@@ -9,6 +9,12 @@ namespace cat::game::scene
 
 	}
 
+	scene::scene(const std::string& name, const scene_go_storage& storage) : m_name(name), 
+		m_storage(storage)
+	{
+		
+	}	
+
 	scene::~scene()
 	{
 

@@ -6,6 +6,7 @@
 namespace cat::game
 {
 	class game_object;
+	class serialization_game_object_impl;
 	namespace scene
 	{
 		class scene_manager;
@@ -20,11 +21,15 @@ namespace cat::graphics
 namespace cat::game::components
 {
 	class transform;
-
+	class serialization_component_impl;
+	
 	class CATENGINE_API component
 	{
 		friend game_object;
 		friend scene::scene_manager;
+		friend serialization_component_impl;
+		friend serialization_game_object_impl;
+
 	public:
 		component();
 		virtual ~component();
@@ -51,4 +56,43 @@ namespace cat::game::components
 
 		core::callback_storage onEditGuiDraw;
 	};
+
+	class serialization_component_impl
+	{
+		public:
+    		rfl::Field<"Name", std::string> name;
+    		rfl::Field<"Selected", bool> selected;
+    		rfl::Field<"UUID", std::string> uuid;
+
+		    static serialization_component_impl from_class(const game::components::component& component) noexcept
+			{
+    		    return serialization_component_impl {
+					.name = component.m_name,
+					.selected = component.m_select,
+					.uuid = component.m_uuid.getIDStr(),
+				};
+    		}		
+
+    		game::components::component to_class() const 
+			{ 
+				auto component = game::components::component(); 
+				
+				component.m_name = name(); 
+				component.m_uuid.set(uuid()); 
+				component.m_select = selected(); 
+
+								
+				return component;
+			}
+	};
 }
+
+
+
+namespace rfl::parsing 
+{
+	template <class ReaderType, class WriterType>
+	struct Parser<ReaderType, WriterType, cat::game::components::component>
+	    : public CustomParser<ReaderType, WriterType, cat::game::components::component,
+	                          cat::game::components::serialization_component_impl> {};
+}  

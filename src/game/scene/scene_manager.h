@@ -23,7 +23,7 @@ namespace cat::game::scene
 		// Create new scene 
 		void create();
 		// Load scene from file 
-		bool load(std::string name);
+		bool load(const std::string& name);
 		// Save current scene
 		bool save();
 		// Render game objects 
@@ -37,8 +37,8 @@ namespace cat::game::scene
 
 		[[nodiscard]] inline scene* getScene() const;
 
-		void rename(game::game_object* go, std::string new_name);
-		void replace(game::game_object* go_first, game::game_object* go_second);
+		void rename(game::game_object* go, const std::string& new_name);
+		void replace(game::game_object* first, game::game_object* second);
 		void del(game::game_object* go);
 
 		// Create game object in scene
@@ -76,7 +76,7 @@ namespace cat::game::scene
 		// Check name on uniqueness, if we found object with same name we are add num prefix 
 		inline std::string makeGameObjectNameUnique(const std::string& name);
 	private:
-		scene* m_scene;
+		std::shared_ptr<scene> m_scene;
 		game::game_object* m_selected;
 	};
 }

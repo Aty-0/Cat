@@ -5,7 +5,7 @@
 namespace cat::game
 {
 	template<typename T>
-	inline decltype(auto) game_object::addComponent(T* component, std::uint32_t priority)
+	inline decltype(auto) game_object::addComponent(std::shared_ptr<T> component, std::uint32_t priority)
 	{
 		static_assert(!std::is_base_of<T, components::component>::value || std::is_same<T, components::component>::value,
 			"This is not Component or Component based class");
@@ -23,8 +23,8 @@ namespace cat::game
 
 		VERB("game_object::add_component %s -> %s", getName().c_str(), component->getName().c_str());
 
-		m_components.emplace(std::make_pair(component->m_uuid->getID(), std::type_index(typeid(T)), component));
-		return component;
+		m_components.emplace(std::make_pair(component->m_uuid.getID(), component));
+		return component.get();
 	}
 
 	// TODO: delete by priority ?
@@ -35,19 +35,18 @@ namespace cat::game
 		static_assert(!std::is_base_of<T, components::component>::value || std::is_same<T, components::component>::value,
 			"This is not Component or Component based class");
 
-		std::type_index type = typeid(T);
-
-		components_list::iterator it = std::find_if(m_components.begin(), m_components.end(), [&type](std::pair<std::pair<uuids::uuid,
-			std::type_index>, components::component*> const& elem)
+		const std::type_index type = typeid(T);
+		components_list::iterator it = std::find_if(m_components.begin(), m_components.end(), [&type](std::pair<uuids::uuid, std::shared_ptr<components::component>> const& elem)
+		{
+			// If we try to get object based on component type
+			if (dynamic_cast<T*>(elem.second.get()) != nullptr)
 			{
-				// If we try to get object based on component type
-				if (dynamic_cast<T*>(elem.second) != nullptr)
-				{
-					return true;
-				}
+				return true;
+			}
 
-				return elem.first.second == type;
-			});
+			return typeid(elem.second) == type;
+		});
+
 
 		if (it == m_components.end())
 		{
@@ -62,17 +61,16 @@ namespace cat::game
 	}
 
 	template<typename T>
-	inline decltype(auto) game_object::initComponent(T* component)
+	inline std::shared_ptr<T> game_object::initComponent(std::shared_ptr<T> component)
 	{
 		static_assert(!std::is_base_of<T, components::component>::value || std::is_same<T, components::component>::value,
 			"This is not Component or Component based class");
 
 		VERB("game_object::init_component in %s -> %s ", getName().c_str(), core::utils::getClassNameStr<T>().c_str());
 
-		component = new T();
 		component->setOwner(this);
 		component->setName(core::utils::getClassNameStr(component));
-		component->m_uuid->setID(component->make_new());
+		component->m_uuid.set(component->m_uuid.make_new());
 
 		// When name and owner is setted
 		component->onCreate();
@@ -86,19 +84,11 @@ namespace cat::game
 		static_assert(!std::is_base_of<T, components::component>::value || std::is_same<T, components::component>::value,
 			"This is not Component or Component based class");
 
-		auto component = new T();
-
-		component->setOwner(this);
-		component->setName(core::utils::getClassNameStr(component));
-		component->m_uuid.set(component->m_uuid.make_new());
-
-		// When name and owner is setted
-		component->onCreate();
-
-		m_components.push_back(std::make_pair(std::make_pair(component->m_uuid.getID(), std::type_index(typeid(*component))), component));
+		auto component = initComponent<T>(std::make_shared<T>());	
+		m_components.push_back(std::make_pair(component->m_uuid.getID(), component));
 
 		VERB("game_object::create_component %s -> %s", getName().c_str(), component->getName().c_str());
-		return component;
+		return component.get();
 	}
 
 	template<typename T>
@@ -107,26 +97,19 @@ namespace cat::game
 		static_assert(!std::is_base_of<T, components::component>::value || std::is_same<T, components::component>::value,
 			"This is not Component or Component based class");
 
-		std::type_index type = typeid(T);
-
-		components_list::iterator it = std::find_if(m_components.begin(), m_components.end(), [&type](std::pair<std::pair<uuids::uuid,
-			std::type_index>, components::component*> const& elem)
-			{
-				// If we try to get object based on component type
-				if (dynamic_cast<T*>(elem.second) != nullptr)
-				{
-					return true;
-				}
-
-				return elem.first.second == type;
-			});
-
-		if (it == m_components.end())
+		const std::type_index type = typeid(T);
+		components_list::iterator it = std::find_if(m_components.begin(), m_components.end(), [&type](std::pair<uuids::uuid, std::shared_ptr<components::component>> const& elem)
 		{
-			return nullptr;
-		}
+			// If we try to get object based on component type
+			if (dynamic_cast<T*>(elem.second.get()) != nullptr)
+			{
+				return true;
+			}
 
-		return dynamic_cast<T*>(it->second);
+			return typeid(elem.second.get()) == type;
+		});
+
+		return dynamic_cast<T*>(it->second.get());
 	}
 
 	template<typename T>
